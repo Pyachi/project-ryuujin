@@ -11,6 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
@@ -45,7 +46,9 @@ public class Game extends JPanel implements Runnable {
 
         //ConcurrentModificationException is caused by Swing and does not break anything, and as such can be ignored.
         try {
-            objects.forEach(it -> it.paint(graphics));
+            List<GameObject> updates = new ArrayList<>(objects);
+            updates.sort(Comparator.comparingInt(GameObject::getZ));
+            updates.forEach(it -> it.paint(graphics));
         } catch (ConcurrentModificationException ignored) {
         }
 

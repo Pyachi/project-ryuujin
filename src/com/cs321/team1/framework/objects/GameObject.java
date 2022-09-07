@@ -12,8 +12,8 @@ import java.util.List;
 public abstract class GameObject {
     private int locX;
     private int locY;
+    protected int locZ;
     private boolean update = true;
-    protected int zValue;
     protected Textures texture;
 
     public int getX() {
@@ -22,6 +22,10 @@ public abstract class GameObject {
 
     public int getY() {
         return locY / Game.scale;
+    }
+
+    public int getZ() {
+        return locZ;
     }
 
     public void setPosition(int locX, int locY) {

@@ -13,11 +13,7 @@ public class Player extends GameObject implements Movement, Collision {
 
     public Player() {
         setTilePosition(9, 9);
-    }
-
-    @Override
-    protected Textures getTexture() {
-        return dir.texture;
+        locZ = 3;
     }
 
     @Override
@@ -33,6 +29,7 @@ public class Player extends GameObject implements Movement, Collision {
         else if (dY > 0) dir = Direction.DOWN;
         else if (dX < 0) dir = Direction.LEFT;
         else if (dX > 0) dir = Direction.RIGHT;
+        texture = dir.texture;
 
         if (dX != 0 || dY != 0) move(dX, dY);
     }

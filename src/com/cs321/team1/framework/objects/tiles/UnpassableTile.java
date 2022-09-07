@@ -7,5 +7,6 @@ public class UnpassableTile extends GameObject {
     public UnpassableTile(int locX, int locY, Textures texture) {
         this.texture = texture;
         setTilePosition(locX, locY);
+        locZ = 1;
     }
 }

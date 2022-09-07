@@ -10,6 +10,7 @@ public class MovableTile extends GameObject implements Collision {
     public MovableTile(int locX, int locY, Textures texture) {
         this.texture = texture;
         setTilePosition(locX, locY);
+        locZ = 2;
     }
 
     @Override
