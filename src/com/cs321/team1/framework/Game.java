@@ -28,7 +28,6 @@ public class Game extends JPanel implements Runnable {
     public static final int screenHeight = tileSize * screenRow;
 
     //Fields for interaction with Swing
-    private final Thread gameThread = new Thread(this);
     private final BufferedImage screen = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_RGB);
     private final Graphics2D graphics = screen.createGraphics();
 
@@ -37,7 +36,7 @@ public class Game extends JPanel implements Runnable {
         setPreferredSize(new Dimension(screenWidth, screenHeight));
         setBackground(Color.BLACK);
         setDoubleBuffered(true);
-        gameThread.start();
+        new Thread(this).start();
     }
 
     @Override
@@ -53,7 +52,7 @@ public class Game extends JPanel implements Runnable {
         g.drawImage(screen, 0, 0, null);
     }
 
-    @SuppressWarnings("InfiniteLoopStatement")
+    @SuppressWarnings({"InfiniteLoopStatement", "BusyWait"})
     @Override
     public void run() {
         start();

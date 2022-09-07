@@ -33,8 +33,7 @@ public abstract class GameObject {
     }
 
     public void move(int locX, int locY) {
-        this.locX += locX * Game.scale;
-        this.locY += locY * Game.scale;
+        setPosition(getX() + locX, getY() + locY);
     }
 
     public boolean collidesWith(GameObject other) {

@@ -1,6 +1,5 @@
 package com.cs321.team1.framework.objects;
 
-import com.cs321.team1.framework.Game;
 import com.cs321.team1.framework.Textures;
 import com.cs321.team1.framework.objects.tiles.UnpassableTile;
 import com.cs321.team1.framework.objects.tiles.tags.Collision;
