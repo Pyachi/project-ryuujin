@@ -7,16 +7,9 @@ import com.cs321.team1.framework.objects.Player;
 import com.cs321.team1.framework.objects.tiles.tags.Collision;
 
 public class MovableTile extends GameObject implements Collision {
-    private final Textures texture;
-
     public MovableTile(int locX, int locY, Textures texture) {
         this.texture = texture;
         setTilePosition(locX, locY);
-    }
-
-    @Override
-    protected Textures getTexture() {
-        return texture;
     }
 
     @Override

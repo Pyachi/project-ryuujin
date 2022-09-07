@@ -13,6 +13,8 @@ public abstract class GameObject {
     private int locX;
     private int locY;
     private boolean update = true;
+    protected int zValue;
+    protected Textures texture;
 
     public int getX() {
         return locX / Game.scale;
@@ -57,7 +59,7 @@ public abstract class GameObject {
     public void paint(Graphics2D g) {
         if (update) {
             try {
-                g.drawImage(ImageIO.read(new File(getTexture().path)), locX, locY, Game.tileSize, Game.tileSize, null);
+                g.drawImage(ImageIO.read(new File(texture.path)), locX, locY, Game.tileSize, Game.tileSize, null);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -68,6 +70,4 @@ public abstract class GameObject {
     public void update() {
         update = true;
     }
-
-    abstract protected Textures getTexture();
 }
