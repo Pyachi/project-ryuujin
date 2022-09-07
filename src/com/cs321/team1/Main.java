@@ -9,16 +9,11 @@ public class Main {
        JFrame window = new JFrame();
        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
        window.setResizable(false);
-       window.setTitle("Engine 2D Test");
-
+       window.setTitle("CS321");
        Game game = new Game();
        window.add(game);
-
        window.pack();
-
        window.setLocationRelativeTo(null);
        window.setVisible(true);
-
-       game.start();
     }
 }

@@ -2,12 +2,14 @@ package com.cs321.team1.framework.objects;
 
 import com.cs321.team1.framework.Game;
 import com.cs321.team1.framework.Textures;
-import com.cs321.team1.framework.Tickable;
+import com.cs321.team1.framework.objects.tiles.UnpassableTile;
+import com.cs321.team1.framework.objects.tiles.tags.Collision;
+import com.cs321.team1.framework.objects.tiles.tags.Movement;
 import com.cs321.team1.util.Keyboard;
 
 import java.util.List;
 
-public class Player extends GameObject implements Tickable {
+public class Player extends GameObject implements Movement, Collision {
     private Direction dir = Direction.UP;
 
     public Player() {
@@ -20,13 +22,7 @@ public class Player extends GameObject implements Tickable {
     }
 
     @Override
-    public void tick() {
-        Game.i.getObjects().stream().filter(this::collidesWith).forEach(GameObject::update);
-        calculateMovement();
-        calculateCollision();
-    }
-
-    private void calculateMovement() {
+    public void calculateMovement() {
         int dX = 0, dY = 0;
 
         if (Keyboard.isKeyPressed('w')) dY -= 2;
@@ -42,8 +38,9 @@ public class Player extends GameObject implements Tickable {
         if (dX != 0 || dY != 0) move(dX, dY);
     }
 
-    private void calculateCollision() {
-        List<GameObject> collisions = Game.i.getObjects().stream().filter(it -> it instanceof UnpassableTile && collidesWith(it)).toList();
+    @Override
+    public void calculateCollision() {
+        List<UnpassableTile> collisions = getCollisionsOfType(UnpassableTile.class);
         while (!collisions.isEmpty()) {
             GameObject closestTile = collisions.get(0);
             int closestDis = getDistanceSqr(closestTile);
@@ -62,7 +59,7 @@ public class Player extends GameObject implements Tickable {
                 if (dY >= 0) move(0, 1);
                 else move(0, -1);
             }
-            collisions = Game.i.getObjects().stream().filter(it -> it instanceof UnpassableTile && collidesWith(it)).toList();
+            collisions = getCollisionsOfType(UnpassableTile.class);
         }
     }
 

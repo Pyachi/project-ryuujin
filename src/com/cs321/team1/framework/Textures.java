@@ -7,7 +7,8 @@ public enum Textures {
     PLAYER_RIGHT("src/resources/player_right.png"),
 
     WALL_TILE("src/resources/tile.png"),
-    FLOOR_TILE("src/resources/floor_tile.png");
+    FLOOR_TILE("src/resources/floor_tile.png"),
+    MOVABLE_TILE("src/resources/moving_tile.png");
 
     public final String path;
 

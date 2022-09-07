@@ -7,6 +7,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public abstract class GameObject {
     private int locX;
@@ -38,6 +39,14 @@ public abstract class GameObject {
 
     public boolean collidesWith(GameObject other) {
         return Math.abs(locX - other.locX) < Game.tileSize && Math.abs(locY - other.locY) < Game.tileSize;
+    }
+
+    public List<GameObject> getCollisions() {
+        return Game.i.getObjects().stream().filter(this::collidesWith).toList();
+    }
+
+    public <T> List<T> getCollisionsOfType(Class<T> clazz) {
+        return getCollisions().stream().filter(clazz::isInstance).map(clazz::cast).toList();
     }
 
     public int getDistanceSqr(GameObject other) {
