@@ -19,7 +19,7 @@ public class Game extends JPanel implements Runnable {
     //Singleton class setup
     public static Game i;
 
-    //Global variables
+    //Screen size constants
     public static final int baseTileSize = 16;
     public static final int scale = 4;
     public static final int screenCol = 16;
