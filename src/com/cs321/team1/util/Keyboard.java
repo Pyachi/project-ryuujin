@@ -17,6 +17,6 @@ public class Keyboard {
     }
 
     public static boolean isKeyPressed(int key) {
-        return pressedKeys.getOrDefault(KeyEvent.getExtendedKeyCodeForChar(key), false);
+        return pressedKeys.getOrDefault(key, false);
     }
 }

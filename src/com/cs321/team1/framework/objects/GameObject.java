@@ -24,18 +24,30 @@ public abstract class GameObject {
         return locY / Game.scale;
     }
 
+    public int getTileX() {
+        return locX / Game.tileSize;
+    }
+
+    public int getTileY() {
+        return locY / Game.tileSize;
+    }
+
     public int getZ() {
         return locZ;
     }
 
     public void setPosition(int locX, int locY) {
+        update();
         this.locX = locX * Game.scale;
         this.locY = locY * Game.scale;
+        update();
     }
 
     public void setTilePosition(int locX, int locY) {
+        update();
         this.locX = locX * Game.tileSize;
         this.locY = locY * Game.tileSize;
+        update();
     }
 
     public void move(int locX, int locY) {
@@ -43,21 +55,35 @@ public abstract class GameObject {
     }
 
     public boolean collidesWith(GameObject other) {
-        return Math.abs(locX - other.locX) < Game.tileSize && Math.abs(locY - other.locY) < Game.tileSize;
+        return this != other && Math.abs(locX - other.locX) < Game.tileSize && Math.abs(locY - other.locY) < Game.tileSize;
+    }
+
+    public boolean collidesWith(Class<?> clazz) {
+        return !getCollisions(clazz).isEmpty();
     }
 
     public List<GameObject> getCollisions() {
         return Game.i.getObjects().stream().filter(this::collidesWith).toList();
     }
 
-    public <T> List<T> getCollisionsOfType(Class<T> clazz) {
+    public <T> List<T> getCollisions(Class<T> clazz) {
         return getCollisions().stream().filter(clazz::isInstance).map(clazz::cast).toList();
     }
 
-    public int getDistanceSqr(GameObject other) {
-        int x = getX() - other.getX();
-        int y = getY() - other.getY();
-        return x * x + y * y;
+    public boolean isTouching(GameObject other) {
+        return this != other && Math.abs(locX - other.locX) < Game.tileSize + 1 && Math.abs(locY - other.locY) < Game.tileSize + 1;
+    }
+
+    public boolean isTouching(Class<?> clazz) {
+        return !getTouching(clazz).isEmpty();
+    }
+
+    public List<GameObject> getTouching() {
+        return Game.i.getObjects().stream().filter(this::isTouching).toList();
+    }
+
+    public <T> List<T> getTouching(Class<T> clazz) {
+        return getCollisions().stream().filter(clazz::isInstance).map(clazz::cast).toList();
     }
 
     public void paint(Graphics2D g) {
@@ -72,6 +98,9 @@ public abstract class GameObject {
     }
 
     public void update() {
-        update = true;
+        if (!update) {
+            update = true;
+            getCollisions().forEach(GameObject::update);
+        }
     }
 }

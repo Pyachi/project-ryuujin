@@ -1,14 +1,16 @@
 package com.cs321.team1.framework.objects;
 
+import com.cs321.team1.framework.Game;
 import com.cs321.team1.framework.Textures;
+import com.cs321.team1.framework.objects.tiles.MovableTile;
 import com.cs321.team1.framework.objects.tiles.UnpassableTile;
-import com.cs321.team1.framework.objects.tiles.tags.Collision;
-import com.cs321.team1.framework.objects.tiles.tags.Movement;
 import com.cs321.team1.util.Keyboard;
 
+import java.awt.event.KeyEvent;
 import java.util.List;
+import java.util.Optional;
 
-public class Player extends GameObject implements Movement, Collision {
+public class Player extends GameObject implements Runnable {
     private Direction dir = Direction.UP;
 
     public Player() {
@@ -17,47 +19,90 @@ public class Player extends GameObject implements Movement, Collision {
     }
 
     @Override
-    public void calculateMovement() {
-        int dX = 0, dY = 0;
+    public void run() {
+        update();
+        calculateMovement();
+    }
 
-        if (Keyboard.isKeyPressed('w')) dY -= 2;
-        if (Keyboard.isKeyPressed('s')) dY += 2;
-        if (Keyboard.isKeyPressed('a')) dX -= 2;
-        if (Keyboard.isKeyPressed('d')) dX += 2;
+    private void calculateMovement() {
+        int dx = 0, dy = 0;
 
-        if (dY < 0) dir = Direction.UP;
-        else if (dY > 0) dir = Direction.DOWN;
-        else if (dX < 0) dir = Direction.LEFT;
-        else if (dX > 0) dir = Direction.RIGHT;
+        if (Keyboard.isKeyPressed(KeyEvent.VK_W)) dy -= 2;
+        if (Keyboard.isKeyPressed(KeyEvent.VK_S)) dy += 2;
+        if (Keyboard.isKeyPressed(KeyEvent.VK_A)) dx -= 2;
+        if (Keyboard.isKeyPressed(KeyEvent.VK_D)) dx += 2;
+
+        if (dy < 0) dir = Direction.UP;
+        else if (dy > 0) dir = Direction.DOWN;
+        else if (dx < 0) dir = Direction.LEFT;
+        else if (dx > 0) dir = Direction.RIGHT;
         texture = dir.texture;
 
-        if (dX != 0 || dY != 0) move(dX, dY);
-    }
+        List<MovableTile> tiles = getTouching(MovableTile.class);
 
-    @Override
-    public void calculateCollision() {
-        List<UnpassableTile> collisions = getCollisionsOfType(UnpassableTile.class);
-        while (!collisions.isEmpty()) {
-            GameObject closestTile = collisions.get(0);
-            int closestDis = getDistanceSqr(closestTile);
-            for (GameObject tile : collisions) {
-                if (getDistanceSqr(tile) < closestDis) {
-                    closestTile = tile;
-                    closestDis = getDistanceSqr(tile);
+        if (dx != 0) {
+            move(dx, 0);
+            if (collidesWith(UnpassableTile.class)) move(-dx, 0);
+            else if (Keyboard.isKeyPressed(KeyEvent.VK_SHIFT)) for (MovableTile tile : tiles) {
+                tile.move(dx, 0);
+                if (tile.collidesWith(UnpassableTile.class)) {
+                    move(-dx, 0);
+                    tile.move(-dx, 0);
                 }
             }
-            int dX = getX() - closestTile.getX();
-            int dY = getY() - closestTile.getY();
-            if (Math.abs(dX) >= Math.abs(dY)) {
-                if (dX >= 0) move(1, 0);
-                else move(-1, 0);
-            } else {
-                if (dY >= 0) move(0, 1);
-                else move(0, -1);
+            else if (collidesWith(MovableTile.class)) for (MovableTile tile : getCollisions(MovableTile.class)) {
+                tile.move(dx, 0);
+                if (tile.collidesWith(UnpassableTile.class)) {
+                    move(-dx, 0);
+                    tile.move(-dx, 0);
+                }
             }
-            collisions = getCollisionsOfType(UnpassableTile.class);
+        }
+
+        if (dy != 0) {
+            move(0, dy);
+            if (collidesWith(UnpassableTile.class)) move(0, -dy);
+            else if (Keyboard.isKeyPressed(KeyEvent.VK_SHIFT)) for (MovableTile tile : tiles) {
+                tile.move(0, dy);
+                if (tile.collidesWith(UnpassableTile.class)) {
+                    move(0, -dy);
+                    tile.move(0, -dy);
+                }
+            }
+            else if (collidesWith(MovableTile.class)) {
+                for (MovableTile tile : getCollisions(MovableTile.class)) {
+                    tile.move(0, dy);
+                    if (tile.collidesWith(UnpassableTile.class)) {
+                        move(0, -dy);
+                        tile.move(0, -dy);
+                    }
+                }
+            }
         }
     }
+
+//    private Optional<MovableTile> getFacing() {
+//        int x, y;
+//        switch (dir) {
+//            case UP -> {
+//                x = getTileX();
+//                y = getTileY() - 1;
+//            }
+//            case DOWN -> {
+//                x = getTileX();
+//                y = getTileY() + 1;
+//            }
+//            case LEFT -> {
+//                x = getTileX() - 1;
+//                y = getTileY();
+//            }
+//            case RIGHT -> {
+//                x = getTileX() + 1;
+//                y = getTileY();
+//            }
+//        }
+//        Game.i.getObjectsOfType(MovableTile.class).stream().filter(it -> it.getTileX() == x && it.getTileY() == y)
+//    }
 
     private enum Direction {
         UP(Textures.PLAYER_UP), DOWN(Textures.PLAYER_DOWN), LEFT(Textures.PLAYER_LEFT), RIGHT(Textures.PLAYER_RIGHT);

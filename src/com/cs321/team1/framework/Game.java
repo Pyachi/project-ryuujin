@@ -1,11 +1,10 @@
 package com.cs321.team1.framework;
 
-import com.cs321.team1.framework.objects.*;
+import com.cs321.team1.framework.objects.GameObject;
+import com.cs321.team1.framework.objects.Player;
 import com.cs321.team1.framework.objects.tiles.MovableTile;
 import com.cs321.team1.framework.objects.tiles.PassableTile;
 import com.cs321.team1.framework.objects.tiles.UnpassableTile;
-import com.cs321.team1.framework.objects.tiles.tags.Collision;
-import com.cs321.team1.framework.objects.tiles.tags.Movement;
 
 import javax.swing.*;
 import java.awt.*;
@@ -102,11 +101,7 @@ public class Game extends JPanel implements Runnable {
     }
 
     private void update() {
-        getObjectsOfType(Collision.class).forEach(it -> {
-            if (it instanceof GameObject) ((GameObject) it).getCollisions().forEach(GameObject::update);
-        });
-        getObjectsOfType(Movement.class).forEach(Movement::calculateMovement);
-        getObjectsOfType(Collision.class).forEach(Collision::calculateCollision);
+        getObjectsOfType(Runnable.class).forEach(Runnable::run);
     }
 
     public void addObject(GameObject obj) {
@@ -119,9 +114,5 @@ public class Game extends JPanel implements Runnable {
 
     public <T> List<T> getObjectsOfType(Class<T> clazz) {
         return objects.stream().filter(clazz::isInstance).map(clazz::cast).toList();
-    }
-
-    public Player getPlayer() {
-        return (Player) objects.stream().filter(it -> it instanceof Player).findFirst().orElseThrow();
     }
 }
