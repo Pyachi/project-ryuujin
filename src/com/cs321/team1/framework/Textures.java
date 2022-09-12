@@ -8,7 +8,9 @@ public enum Textures {
 
     WALL_TILE("src/resources/tile.png"),
     FLOOR_TILE("src/resources/floor_tile.png"),
-    MOVABLE_TILE("src/resources/moving_tile.png");
+    CRATE_ONE("src/resources/crate_one.png"),
+    CRATE_TWO("src/resources/crate_two.png"),
+    CRATE_THREE("src/resources/crate_three.png");
 
     public final String path;
 

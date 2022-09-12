@@ -10,18 +10,25 @@ import java.io.IOException;
 import java.util.List;
 
 public abstract class GameObject {
+    //Location of object in raw pixels
     private int locX;
     private int locY;
+    //Render priority of object
     protected int locZ;
-    private boolean update = true;
     protected Textures texture;
 
+    //******************************************************************************************************************
+    //Getters
     public int getX() {
         return locX / Game.scale;
     }
 
     public int getY() {
         return locY / Game.scale;
+    }
+
+    public int getZ() {
+        return locZ;
     }
 
     public int getTileX() {
@@ -32,10 +39,8 @@ public abstract class GameObject {
         return locY / Game.tileSize;
     }
 
-    public int getZ() {
-        return locZ;
-    }
-
+    //******************************************************************************************************************
+    //Movement methods
     public void setPosition(int locX, int locY) {
         update();
         this.locX = locX * Game.scale;
@@ -54,6 +59,8 @@ public abstract class GameObject {
         setPosition(getX() + locX, getY() + locY);
     }
 
+    //******************************************************************************************************************
+    //Collision methods
     public boolean collidesWith(GameObject other) {
         return this != other && Math.abs(locX - other.locX) < Game.tileSize && Math.abs(locY - other.locY) < Game.tileSize;
     }
@@ -63,7 +70,7 @@ public abstract class GameObject {
     }
 
     public List<GameObject> getCollisions() {
-        return Game.i.getObjects().stream().filter(this::collidesWith).toList();
+        return Game.getObjects().stream().filter(this::collidesWith).toList();
     }
 
     public <T> List<T> getCollisions(Class<T> clazz) {
@@ -71,7 +78,7 @@ public abstract class GameObject {
     }
 
     public boolean isTouching(GameObject other) {
-        return this != other && Math.abs(locX - other.locX) < Game.tileSize + 1 && Math.abs(locY - other.locY) < Game.tileSize + 1;
+        return this != other && Math.abs(locX - other.locX) < Game.tileSize + Game.scale && Math.abs(locY - other.locY) < Game.tileSize + Game.scale;
     }
 
     public boolean isTouching(Class<?> clazz) {
@@ -79,12 +86,17 @@ public abstract class GameObject {
     }
 
     public List<GameObject> getTouching() {
-        return Game.i.getObjects().stream().filter(this::isTouching).toList();
+        return Game.getObjects().stream().filter(this::isTouching).toList();
     }
 
     public <T> List<T> getTouching(Class<T> clazz) {
-        return getCollisions().stream().filter(clazz::isInstance).map(clazz::cast).toList();
+        return getTouching().stream().filter(clazz::isInstance).map(clazz::cast).toList();
     }
+
+    //******************************************************************************************************************
+    //Framework
+    private boolean update;
+    private boolean killed;
 
     public void paint(Graphics2D g) {
         if (update) {
@@ -95,6 +107,17 @@ public abstract class GameObject {
             }
             update = false;
         }
+    }
+
+    public void cleanup() {
+        if (!killed) {
+            killed = true;
+            Game.removeObject(this);
+        }
+    }
+
+    public boolean isKilled() {
+        return killed;
     }
 
     public void update() {

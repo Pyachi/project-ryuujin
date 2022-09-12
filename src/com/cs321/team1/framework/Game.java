@@ -2,21 +2,20 @@ package com.cs321.team1.framework;
 
 import com.cs321.team1.framework.objects.GameObject;
 import com.cs321.team1.framework.objects.Player;
-import com.cs321.team1.framework.objects.tiles.MovableTile;
-import com.cs321.team1.framework.objects.tiles.PassableTile;
-import com.cs321.team1.framework.objects.tiles.UnpassableTile;
+import com.cs321.team1.framework.objects.tiles.Crate;
+import com.cs321.team1.framework.objects.tiles.GroundTile;
+import com.cs321.team1.framework.objects.tiles.IntegerCrate;
+import com.cs321.team1.framework.objects.tiles.WallTile;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.ConcurrentModificationException;
+import java.util.*;
 import java.util.List;
 
 public class Game extends JPanel implements Runnable {
     //Singleton class setup
-    public static Game i;
+    private static Game i;
 
     //Screen size constants
     public static final int baseTileSize = 16;
@@ -28,7 +27,7 @@ public class Game extends JPanel implements Runnable {
     public static final int screenHeight = tileSize * screenRow;
 
     //Fields for interaction with Swing
-    private final BufferedImage screen = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_RGB);
+    private final BufferedImage screen = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_ARGB);
     private final Graphics2D graphics = screen.createGraphics();
 
     public Game() {
@@ -79,40 +78,44 @@ public class Game extends JPanel implements Runnable {
 
     private void start() {
         for (int i = 0; i < 16; i++) {
-            addObject(new UnpassableTile(i, 0, Textures.WALL_TILE));
-            addObject(new UnpassableTile(i, 1, Textures.WALL_TILE));
-            addObject(new UnpassableTile(i, 10, Textures.WALL_TILE));
-            addObject(new UnpassableTile(i, 11, Textures.WALL_TILE));
+            addObject(new WallTile(i, 0, Textures.WALL_TILE));
+            addObject(new WallTile(i, 1, Textures.WALL_TILE));
+            addObject(new WallTile(i, 10, Textures.WALL_TILE));
+            addObject(new WallTile(i, 11, Textures.WALL_TILE));
         }
         for (int j = 2; j < 10; j++) {
-            addObject(new UnpassableTile(0, j, Textures.WALL_TILE));
-            addObject(new UnpassableTile(1, j, Textures.WALL_TILE));
-            addObject(new UnpassableTile(14, j, Textures.WALL_TILE));
-            addObject(new UnpassableTile(15, j, Textures.WALL_TILE));
+            addObject(new WallTile(0, j, Textures.WALL_TILE));
+            addObject(new WallTile(1, j, Textures.WALL_TILE));
+            addObject(new WallTile(14, j, Textures.WALL_TILE));
+            addObject(new WallTile(15, j, Textures.WALL_TILE));
         }
         for (int i = 2; i < 14; i++)
             for (int j = 2; j < 10; j++)
-                addObject(new PassableTile(i, j, Textures.FLOOR_TILE));
+                addObject(new GroundTile(i, j, Textures.FLOOR_TILE));
         for (int i = 5; i < 7; i++)
             for (int j = 5; j < 7; j++)
-                addObject(new UnpassableTile(i, j, Textures.WALL_TILE));
-        addObject(new MovableTile(8, 8, Textures.MOVABLE_TILE));
+                addObject(new WallTile(i, j, Textures.WALL_TILE));
+        addObject(new IntegerCrate(8, 8, 1));
+        addObject(new IntegerCrate(6, 8, 2));
         addObject(new Player());
     }
 
     private void update() {
-        getObjectsOfType(Runnable.class).forEach(Runnable::run);
+        List<GameObject> list = new ArrayList<>(objects);
+        list.stream().filter(it -> it instanceof Runnable).map(it -> (Runnable) it).forEach(Runnable::run);
     }
 
-    public void addObject(GameObject obj) {
-        objects.add(obj);
+    public static void addObject(GameObject obj) {
+        obj.update();
+        i.objects.add(obj);
     }
 
-    public List<GameObject> getObjects() {
-        return new ArrayList<>(objects);
+    public static void removeObject(GameObject obj) {
+        obj.update();
+        i.objects.remove(obj);
     }
 
-    public <T> List<T> getObjectsOfType(Class<T> clazz) {
-        return objects.stream().filter(clazz::isInstance).map(clazz::cast).toList();
+    public static List<GameObject> getObjects() {
+        return new ArrayList<>(i.objects);
     }
 }

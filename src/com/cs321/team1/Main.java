@@ -9,7 +9,7 @@ public class Main {
        JFrame window = new JFrame();
        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
        window.setResizable(false);
-       window.setTitle("CS321");
+       window.setTitle("Project 龍神");
        Game game = new Game();
        window.add(game);
        window.pack();
