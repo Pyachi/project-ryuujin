@@ -1,12 +1,7 @@
-package com.cs321.team1.framework.objects.tiles;
+package com.cs321.team1.framework.objects.crates;
 
-import com.cs321.team1.framework.Game;
 import com.cs321.team1.framework.Textures;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 public class IntegerCrate extends Crate implements Runnable {
@@ -29,7 +24,7 @@ public class IntegerCrate extends Crate implements Runnable {
         if (list.isEmpty()) return;
         list.forEach(it -> {
             value += it.getValue();
-            it.cleanup();
+            it.kill();
         });
         texture = getTexture();
     }

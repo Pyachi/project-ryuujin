@@ -1,21 +1,32 @@
 package com.cs321.team1.util;
 
-import java.awt.*;
+import javax.swing.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Keyboard {
     private static final Map<Integer, Boolean> pressedKeys = new HashMap<>();
-
-    static {
-        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(event -> {
-            if (event.getID() == KeyEvent.KEY_PRESSED) pressedKeys.put(event.getKeyCode(), true);
-            else if (event.getID() == KeyEvent.KEY_RELEASED) pressedKeys.put(event.getKeyCode(), false);
-            return false;
+    
+    public static void init(JFrame window) {
+        window.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+            }
+            
+            @Override
+            public void keyPressed(KeyEvent e) {
+                Keyboard.pressedKeys.put(e.getKeyCode(), true);
+            }
+            
+            @Override
+            public void keyReleased(KeyEvent e) {
+                Keyboard.pressedKeys.put(e.getKeyCode(), false);
+            }
         });
     }
-
+    
     public static boolean isKeyPressed(int key) {
         return pressedKeys.getOrDefault(key, false);
     }

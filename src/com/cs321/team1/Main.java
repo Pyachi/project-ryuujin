@@ -1,8 +1,11 @@
 package com.cs321.team1;
 
 import com.cs321.team1.framework.Game;
+import com.cs321.team1.util.Keyboard;
 
 import javax.swing.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 public class Main {
     public static void main(String[] args) {
@@ -15,5 +18,6 @@ public class Main {
        window.pack();
        window.setLocationRelativeTo(null);
        window.setVisible(true);
+       Keyboard.init(window);
     }
 }

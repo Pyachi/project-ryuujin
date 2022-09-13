@@ -1,11 +1,10 @@
 package com.cs321.team1.framework.objects;
 
 import com.cs321.team1.framework.Textures;
-import com.cs321.team1.framework.objects.tiles.Crate;
-import com.cs321.team1.framework.objects.tiles.WallTile;
+import com.cs321.team1.framework.objects.crates.Crate;
+import com.cs321.team1.framework.objects.tiles.UnpassableTile;
 import com.cs321.team1.util.Keyboard;
 
-import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.function.Predicate;
@@ -16,19 +15,18 @@ public class Player extends GameObject implements Runnable {
     private int speed = 2;
 
     public Player() {
-        setTilePosition(9, 9);
-        locZ = 3;
+        super(3);
+        setTilePosition(10, 6);
     }
 
     @Override
     public void run() {
-        update();
-        calculateMovement();
         if (grabbed == null && Keyboard.isKeyPressed(KeyEvent.VK_SHIFT)) grabFacingTile();
-        if (grabbed != null && (!Keyboard.isKeyPressed(KeyEvent.VK_SHIFT) || grabbed.isKilled())) {
+        if (grabbed != null && (!Keyboard.isKeyPressed(KeyEvent.VK_SHIFT) || grabbed.isDead())) {
             grabbed.grabbed = false;
             grabbed = null;
         }
+        calculateMovement();
     }
 
     private void grabFacingTile() {
@@ -36,10 +34,10 @@ public class Player extends GameObject implements Runnable {
         if (touchedCrates.isEmpty()) return;
         Predicate<Crate> pred = it -> true;
         switch (dir) {
-            case UP -> pred = it -> it.getY() - getY() == -16;
-            case DOWN -> pred = it -> it.getY() - getY() == 16;
-            case LEFT -> pred = it -> it.getX() - getX() == -16;
-            case RIGHT -> pred = it -> it.getX() - getX() == 16;
+            case UP -> pred = it -> it.getY() - getY() <= -16;
+            case DOWN -> pred = it -> it.getY() - getY() >= 16;
+            case LEFT -> pred = it -> it.getX() - getX() <= -16;
+            case RIGHT -> pred = it -> it.getX() - getX() >= 16;
         }
         touchedCrates.stream().filter(pred).findFirst().ifPresent(it -> {
             grabbed = it;
@@ -65,11 +63,11 @@ public class Player extends GameObject implements Runnable {
 
         if (dx != 0) {
             move(dx, 0);
-            if (collidesWith(WallTile.class) || collidesWith(Crate.class) && getCollisions(Crate.class).stream().anyMatch(it -> it != grabbed))
+            if (collidesWith(UnpassableTile.class) || collidesWith(Crate.class) && getCollisions(Crate.class).stream().anyMatch(it -> it != grabbed))
                 move(-dx, 0);
             else if (grabbed != null) {
                 grabbed.move(dx, 0);
-                if (grabbed.collidesWith(WallTile.class)) {
+                if (grabbed.collidesWith(UnpassableTile.class)) {
                     move(-dx, 0);
                     grabbed.move(-dx, 0);
                 }
@@ -78,11 +76,11 @@ public class Player extends GameObject implements Runnable {
 
         if (dy != 0) {
             move(0, dy);
-            if (collidesWith(WallTile.class) || collidesWith(Crate.class) && getCollisions(Crate.class).stream().anyMatch(it -> it != grabbed))
+            if (collidesWith(UnpassableTile.class) || collidesWith(Crate.class) && getCollisions(Crate.class).stream().anyMatch(it -> it != grabbed))
                 move(0, -dy);
             else if (grabbed != null) {
                 grabbed.move(0, dy);
-                if (grabbed.collidesWith(WallTile.class)) {
+                if (grabbed.collidesWith(UnpassableTile.class)) {
                     move(0, -dy);
                     grabbed.move(0, -dy);
                 }
