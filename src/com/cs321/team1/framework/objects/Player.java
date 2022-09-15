@@ -1,8 +1,12 @@
 package com.cs321.team1.framework.objects;
 
-import com.cs321.team1.framework.Textures;
+import com.cs321.team1.framework.Game;
+import com.cs321.team1.framework.map.Room;
+import com.cs321.team1.framework.textures.Texture;
+import com.cs321.team1.framework.textures.Textures;
 import com.cs321.team1.framework.objects.crates.Crate;
 import com.cs321.team1.framework.objects.tiles.UnpassableTile;
+import com.cs321.team1.util.Direction;
 import com.cs321.team1.util.Keyboard;
 
 import java.awt.event.KeyEvent;
@@ -10,15 +14,20 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class Player extends GameObject implements Runnable {
-    private PlayerDirection dir = PlayerDirection.UP;
+    private Direction dir = Direction.NORTH;
     private Crate grabbed = null;
-    private int speed = 2;
-
+    
     public Player() {
-        super(3);
-        setTilePosition(10, 6);
+        super(null);
+        setTexture(Textures.PLAYER_UP);
+        getLocation().setTile(10, 6);
     }
-
+    
+    @Override
+    public Room getRoom() {
+        return Game.getDungeon().getActiveRoom();
+    }
+    
     @Override
     public void run() {
         if (grabbed == null && Keyboard.isKeyPressed(KeyEvent.VK_SHIFT)) grabFacingTile();
@@ -28,73 +37,70 @@ public class Player extends GameObject implements Runnable {
         }
         calculateMovement();
     }
-
+    
+    private void calculateMovement() {
+        int x = 0, y = 0;
+        int speed = 2;
+        if (Keyboard.isKeyPressed(KeyEvent.VK_W)) y -= speed;
+        if (Keyboard.isKeyPressed(KeyEvent.VK_S)) y += speed;
+        if (Keyboard.isKeyPressed(KeyEvent.VK_A)) x -= speed;
+        if (Keyboard.isKeyPressed(KeyEvent.VK_D)) x += speed;
+        if (grabbed == null) {
+            if (y < 0) {
+                dir = Direction.NORTH;
+                setTexture(Textures.PLAYER_UP);
+            } else if (y > 0) {
+                dir = Direction.SOUTH;
+                setTexture(Textures.PLAYER_DOWN);
+            } else if (x < 0) {
+                dir = Direction.WEST;
+                setTexture(Textures.PLAYER_LEFT);
+            } else if (x > 0) {
+                dir = Direction.EAST;
+                setTexture(Textures.PLAYER_RIGHT);
+            }
+        }
+        move(x, y);
+    }
+    
     private void grabFacingTile() {
         List<Crate> touchedCrates = getTouching(Crate.class);
         if (touchedCrates.isEmpty()) return;
         Predicate<Crate> pred = it -> true;
         switch (dir) {
-            case UP -> pred = it -> it.getY() - getY() <= -16;
-            case DOWN -> pred = it -> it.getY() - getY() >= 16;
-            case LEFT -> pred = it -> it.getX() - getX() <= -16;
-            case RIGHT -> pred = it -> it.getX() - getX() >= 16;
+            case NORTH -> pred = it -> it.getLocation().getY() - getLocation().getY() <= -16;
+            case SOUTH -> pred = it -> it.getLocation().getY() - getLocation().getY() >= 16;
+            case WEST -> pred = it -> it.getLocation().getX() - getLocation().getX() <= -16;
+            case EAST -> pred = it -> it.getLocation().getX() - getLocation().getX() >= 16;
         }
         touchedCrates.stream().filter(pred).findFirst().ifPresent(it -> {
             grabbed = it;
             it.grabbed = true;
         });
     }
-
-    private void calculateMovement() {
-        int dx = 0, dy = 0;
-
-        if (Keyboard.isKeyPressed(KeyEvent.VK_W)) dy -= speed;
-        if (Keyboard.isKeyPressed(KeyEvent.VK_S)) dy += speed;
-        if (Keyboard.isKeyPressed(KeyEvent.VK_A)) dx -= speed;
-        if (Keyboard.isKeyPressed(KeyEvent.VK_D)) dx += speed;
-
-        if (grabbed == null) {
-            if (dy < 0) dir = PlayerDirection.UP;
-            else if (dy > 0) dir = PlayerDirection.DOWN;
-            else if (dx < 0) dir = PlayerDirection.LEFT;
-            else if (dx > 0) dir = PlayerDirection.RIGHT;
-            texture = dir.texture;
-        }
-
-        if (dx != 0) {
-            move(dx, 0);
-            if (collidesWith(UnpassableTile.class) || collidesWith(Crate.class) && getCollisions(Crate.class).stream().anyMatch(it -> it != grabbed))
-                move(-dx, 0);
-            else if (grabbed != null) {
-                grabbed.move(dx, 0);
-                if (grabbed.collidesWith(UnpassableTile.class)) {
-                    move(-dx, 0);
-                    grabbed.move(-dx, 0);
-                }
-            }
-        }
-
-        if (dy != 0) {
-            move(0, dy);
-            if (collidesWith(UnpassableTile.class) || collidesWith(Crate.class) && getCollisions(Crate.class).stream().anyMatch(it -> it != grabbed))
-                move(0, -dy);
-            else if (grabbed != null) {
-                grabbed.move(0, dy);
-                if (grabbed.collidesWith(UnpassableTile.class)) {
-                    move(0, -dy);
-                    grabbed.move(0, -dy);
-                }
-            }
-        }
+    
+    public boolean canMove(int x, int y) {
+        super.move(x, y);
+        boolean collision = collidesWith(UnpassableTile.class) ||
+                collidesWith(Crate.class) && getCollisions(Crate.class).stream().anyMatch(it -> it != grabbed);
+        super.move(-x, -y);
+        return !collision;
     }
-
-    private enum PlayerDirection {
-        UP(Textures.PLAYER_UP), DOWN(Textures.PLAYER_DOWN), LEFT(Textures.PLAYER_LEFT), RIGHT(Textures.PLAYER_RIGHT);
-
-        public final Textures texture;
-
-        PlayerDirection(Textures texture) {
-            this.texture = texture;
+    
+    @Override
+    public void move(int x, int y) {
+        if (grabbed == null) {
+            if (canMove(x, 0)) super.move(x, 0);
+            if (canMove(0, y)) super.move(0, y);
+        } else {
+            if (canMove(x, 0) && grabbed.canMove(x, 0)) {
+                super.move(x, 0);
+                grabbed.move(x, 0);
+            }
+            if (canMove(0, y) && grabbed.canMove(0, y)) {
+                super.move(0, y);
+                grabbed.move(0, y);
+            }
         }
     }
 }
