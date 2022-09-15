@@ -73,9 +73,7 @@ public class Player extends GameObject implements Runnable {
             case WEST -> pred = it -> it.getLocation().getX() - getLocation().getX() <= -16;
             case EAST -> pred = it -> it.getLocation().getX() - getLocation().getX() >= 16;
         }
-        touchedCrates.stream().filter(pred).findFirst().ifPresent(it -> {
-            grabbedCrate = it;
-        });
+        touchedCrates.stream().filter(pred).findFirst().ifPresent(it -> grabbedCrate = it);
     }
     
     public boolean canMove(int x, int y) {
