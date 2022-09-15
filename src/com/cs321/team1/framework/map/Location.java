@@ -6,6 +6,10 @@ public class Location {
     private int x;
     private int y;
     
+    public static Location fromTile(int x, int y) {
+        return new Location(x * Game.tileSize, y * Game.tileSize);
+    }
+    
     public Location(int x, int y) {
         this.x = x;
         this.y = y;
@@ -51,5 +55,14 @@ public class Location {
     public void setTile(int x, int y) {
         this.x = x * Game.tileSize;
         this.y = y * Game.tileSize;
+    }
+    
+    @Override
+    public Location clone() {
+        return new Location(getX(), getY());
+    }
+    
+    public Location getMidpoint(Location other) {
+        return new Location((getX() + other.getX()) / 2, (getY() + other.getY()) / 2);
     }
 }

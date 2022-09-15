@@ -8,6 +8,8 @@ import javax.swing.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 public class Game extends JPanel implements Runnable {
@@ -51,6 +53,15 @@ public class Game extends JPanel implements Runnable {
     
     private final BufferedImage screen = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_ARGB);
     private final Graphics2D graphics = screen.createGraphics();
+    public static final Font font;
+    
+    static {
+        try {
+            font = Font.createFont(Font.TRUETYPE_FONT, new File("src/resources/PressStart.ttf"));
+        } catch (FontFormatException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
     
     public Game() {
         i = this;

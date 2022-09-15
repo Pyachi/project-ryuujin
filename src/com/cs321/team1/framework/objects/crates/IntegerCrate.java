@@ -1,17 +1,19 @@
 package com.cs321.team1.framework.objects.crates;
 
+import com.cs321.team1.framework.Game;
+import com.cs321.team1.framework.map.Location;
 import com.cs321.team1.framework.map.Room;
+import com.cs321.team1.framework.objects.tiles.Door;
+import com.cs321.team1.framework.objects.tiles.UnpassableTile;
 import com.cs321.team1.framework.textures.Textures;
 
-import java.util.List;
-
 public class IntegerCrate extends Crate implements Runnable {
-    private int value;
+    private final int value;
     
-    public IntegerCrate(Room room, int locX, int locY, int value) {
-        super(room, locX, locY);
+    public IntegerCrate(Room room, Location loc, int value) {
+        super(room, loc);
         this.value = value;
-        refreshTexture();
+        setTexture(Textures.CRATE);
     }
     
     public int getValue() {
@@ -20,21 +22,25 @@ public class IntegerCrate extends Crate implements Runnable {
     
     @Override
     public void run() {
-        if (grabbed) return;
-        List<IntegerCrate> list = getCollisions(IntegerCrate.class);
-        if (list.isEmpty()) return;
-        list.forEach(it -> {
-            value += it.getValue();
-            it.kill();
-        });
-        refreshTexture();
+        if (collidesWith(IntegerCrate.class)) {
+            IntegerCrate crate = getCollisions(IntegerCrate.class).get(0);
+            Location location;
+            if (Game.getPlayer().getGrabbedCrate() == this) location = crate.getLocation().clone();
+            else location = this.getLocation().clone();
+            new IntegerCrate(getRoom(), location, crate.getValue() + getValue());
+            crate.kill();
+            kill();
+        }
     }
     
-    private void refreshTexture() {
-        setTexture(switch (value) {
-            default -> Textures.CRATE_ONE;
-            case 2 -> Textures.CRATE_TWO;
-            case 3 -> Textures.CRATE_THREE;
-        });
+    @Override
+    boolean shouldCollide() {
+        return collidesWith(UnpassableTile.class) || collidesWith(Door.class) ||
+                getCollisions(ScaleCrate.class).stream().anyMatch(Crate::shouldCollide);
+    }
+    
+    @Override
+    public String getString() {
+        return Integer.toString(value);
     }
 }

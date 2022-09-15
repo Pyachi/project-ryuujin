@@ -19,9 +19,7 @@ public enum Textures {
     //Object textures
     WALL_TILE("src/resources/tile.png", 1),
     FLOOR_TILE("src/resources/floor_tile.png", 0),
-    CRATE_ONE("src/resources/crate_one.png", 2),
-    CRATE_TWO("src/resources/crate_two.png", 2),
-    CRATE_THREE("src/resources/crate_three.png", 2);
+    CRATE("src/resources/crate.png", 2);
     
     public final String path;
     public final int priority;

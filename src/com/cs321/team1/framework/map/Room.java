@@ -3,6 +3,7 @@ package com.cs321.team1.framework.map;
 import com.cs321.team1.framework.Game;
 import com.cs321.team1.framework.objects.GameObject;
 import com.cs321.team1.framework.objects.crates.IntegerCrate;
+import com.cs321.team1.framework.objects.crates.ScaleCrate;
 import com.cs321.team1.framework.objects.tiles.Door;
 import com.cs321.team1.framework.objects.tiles.PassableTile;
 import com.cs321.team1.framework.objects.tiles.UnpassableTile;
@@ -48,7 +49,7 @@ public class Room {
         objsToUpdate.clear();
         list.removeIf(it -> !objs.contains(it));
         list.sort(Comparator.comparingInt(it -> it.getTexture().getTexture().priority));
-        list.forEach(it -> it.getTexture().paint(it.getLocation(), g));
+        list.forEach(it -> it.paint(g));
     }
     
     /**
@@ -72,7 +73,10 @@ public class Room {
             for (int j = 2; j < 10; j++)
                 new PassableTile(room, i, j, Textures.FLOOR_TILE);
         Arrays.stream(dir).forEach(it -> new Door(room, it));
-        new IntegerCrate(room, 5, 5, 1);
+        new IntegerCrate(room, Location.fromTile(5, 5), 1);
+        new IntegerCrate(room, Location.fromTile(7, 5), 3);
+        new ScaleCrate(room, Location.fromTile(5, 7), ScaleCrate.Values.NEGATE);
+        new ScaleCrate(room, Location.fromTile(7, 7), ScaleCrate.Values.QUARTER);
         return room;
     }
     

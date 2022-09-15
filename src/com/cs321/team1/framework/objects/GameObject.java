@@ -6,6 +6,7 @@ import com.cs321.team1.framework.map.Room;
 import com.cs321.team1.framework.textures.Texture;
 import com.cs321.team1.framework.textures.Textures;
 
+import java.awt.Graphics2D;
 import java.util.List;
 
 public abstract class GameObject {
@@ -59,8 +60,11 @@ public abstract class GameObject {
     }
     
     public void moveTiles(int x, int y) {
-        if (!dead)
-            getLocation().set(getLocation().getX() + x * Game.tileSize, getLocation().getY() + y * Game.tileSize);
+        if (!dead) move(x * Game.tileSize, y & Game.tileSize);
+    }
+    
+    public void paint(Graphics2D g) {
+        getTexture().paint(getLocation(), g);
     }
     //******************************************************************************************************************
     //Collision handling
