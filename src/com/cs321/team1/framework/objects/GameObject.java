@@ -17,7 +17,7 @@ public abstract class GameObject {
     
     public GameObject(Room room) {
         this.room = room;
-        if (room != null) room.objs.add(this);
+        if (room != null) room.addObject(this);
     }
     
     public Room getRoom() {
@@ -45,7 +45,7 @@ public abstract class GameObject {
     }
     
     public void kill() {
-        getRoom().objs.remove(this);
+        getRoom().removeObject(this);
         texture = null;
         location = null;
         dead = true;
@@ -82,7 +82,7 @@ public abstract class GameObject {
     }
     
     public List<GameObject> getCollisions() {
-        return getRoom().objs.stream().filter(this::collidesWith).toList();
+        return getRoom().getObjects().stream().filter(this::collidesWith).toList();
     }
     
     public <T> List<T> getCollisions(Class<T> clazz) {
@@ -106,7 +106,7 @@ public abstract class GameObject {
     }
     
     public List<GameObject> getTouching() {
-        return getRoom().objs.stream().filter(this::isTouching).toList();
+        return getRoom().getObjects().stream().filter(this::isTouching).toList();
     }
     
     public <T> List<T> getTouching(Class<T> clazz) {

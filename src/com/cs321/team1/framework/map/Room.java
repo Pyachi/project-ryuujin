@@ -20,11 +20,25 @@ import java.util.Set;
 
 //TODO add random generation
 public class Room {
-    public final Set<GameObject> objs = new HashSet<>();
+    private final Set<GameObject> objs = new HashSet<>();
     private final Set<GameObject> objsToUpdate = new HashSet<>();
     private boolean refresh = true;
     
     private Room() {
+    }
+    
+    public void addObject(GameObject obj) {
+        objs.add(obj);
+        objsToUpdate.add(obj);
+    }
+    
+    public void removeObject(GameObject obj) {
+        objs.remove(obj);
+        objsToUpdate.remove(obj);
+    }
+    
+    public Set<GameObject> getObjects() {
+        return new HashSet<>(objs);
     }
     
     public void refresh() {
@@ -47,7 +61,6 @@ public class Room {
     public void paint(Graphics2D g) {
         List<GameObject> list = new ArrayList<>(objsToUpdate);
         objsToUpdate.clear();
-        list.removeIf(it -> !objs.contains(it));
         list.sort(Comparator.comparingInt(it -> it.getTexture().getTexture().priority));
         list.forEach(it -> it.paint(g));
     }

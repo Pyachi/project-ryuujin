@@ -29,8 +29,8 @@ public class Game extends JPanel implements Runnable {
     private void update() {
         player.run();
         dungeon.getActiveRoom().update();
-        Set<GameObject> set = new HashSet<>(dungeon.getActiveRoom().objs);
-        set.stream().filter(Runnable.class::isInstance).map(Runnable.class::cast).forEach(Runnable::run);
+        dungeon.getActiveRoom().getObjects().stream().filter(Runnable.class::isInstance).map(Runnable.class::cast)
+                .forEach(Runnable::run);
     }
     
     public static Player getPlayer() {
