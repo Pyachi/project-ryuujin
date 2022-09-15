@@ -1,7 +1,6 @@
 package com.cs321.team1.framework.objects.crates;
 
 import com.cs321.team1.framework.map.Room;
-import com.cs321.team1.framework.textures.Texture;
 import com.cs321.team1.framework.textures.Textures;
 
 import java.util.List;

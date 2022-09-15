@@ -2,7 +2,6 @@ package com.cs321.team1.framework.textures;
 
 import com.cs321.team1.framework.Game;
 import com.cs321.team1.framework.map.Location;
-import com.cs321.team1.framework.objects.Player;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;

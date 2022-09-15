@@ -7,7 +7,7 @@ public class Dungeon {
     public static final int maxDungeonWidth = 8;
     public static final int maxDungeonHeight = 5;
     
-    public Room[][] layout = new Room[maxDungeonWidth][maxDungeonHeight];
+    public final Room[][] layout = new Room[maxDungeonWidth][maxDungeonHeight];
     private int x = 0;
     private int y = 1;
     
