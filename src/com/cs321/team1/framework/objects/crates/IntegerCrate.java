@@ -3,11 +3,9 @@ package com.cs321.team1.framework.objects.crates;
 import com.cs321.team1.framework.Game;
 import com.cs321.team1.framework.map.Location;
 import com.cs321.team1.framework.map.Room;
-import com.cs321.team1.framework.objects.tiles.Door;
-import com.cs321.team1.framework.objects.tiles.UnpassableTile;
 import com.cs321.team1.framework.textures.Textures;
 
-public class IntegerCrate extends Crate implements Runnable {
+public class IntegerCrate extends Crate   {
     private final int value;
     
     public IntegerCrate(Room room, Location loc, int value) {
@@ -22,6 +20,7 @@ public class IntegerCrate extends Crate implements Runnable {
     
     @Override
     public void run() {
+        super.run();
         if (collidesWith(IntegerCrate.class)) {
             IntegerCrate crate = getCollisions(IntegerCrate.class).get(0);
             Location location;
@@ -34,9 +33,8 @@ public class IntegerCrate extends Crate implements Runnable {
     }
     
     @Override
-    boolean shouldCollide() {
-        return collidesWith(UnpassableTile.class) || collidesWith(Door.class) ||
-                getCollisions(ScaleCrate.class).stream().anyMatch(Crate::shouldCollide);
+    boolean canInteractWith(Crate crate) {
+        return crate instanceof IntegerCrate || crate != null && crate.canInteractWith(this);
     }
     
     @Override

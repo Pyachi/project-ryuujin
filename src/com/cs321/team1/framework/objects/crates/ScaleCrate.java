@@ -7,7 +7,7 @@ import com.cs321.team1.framework.objects.tiles.Door;
 import com.cs321.team1.framework.objects.tiles.UnpassableTile;
 import com.cs321.team1.framework.textures.Textures;
 
-public class ScaleCrate extends Crate implements Runnable {
+public class ScaleCrate extends Crate {
     private final Values value;
     
     public ScaleCrate(Room room, Location loc, Values value) {
@@ -18,6 +18,7 @@ public class ScaleCrate extends Crate implements Runnable {
     
     @Override
     public void run() {
+        super.run();
         if (collidesWith(IntegerCrate.class)) {
             IntegerCrate crate = getCollisions(IntegerCrate.class).get(0);
             int value = crate.getValue();
@@ -38,13 +39,12 @@ public class ScaleCrate extends Crate implements Runnable {
     }
     
     @Override
-    boolean shouldCollide() {
-        return collidesWith(UnpassableTile.class) || collidesWith(Door.class) || collidesWith(ScaleCrate.class) ||
-                getCollisions(IntegerCrate.class).stream().anyMatch(it -> switch (value) {
-                    case NEGATE, DOUBLE, TRIPLE -> false;
-                    case HALF -> (it.getValue() % 2 != 0);
-                    case QUARTER -> (it.getValue() % 4 != 0);
-                });
+    boolean canInteractWith(Crate crate) {
+        return crate instanceof IntegerCrate && switch (value) {
+            case NEGATE, DOUBLE, TRIPLE -> true;
+            case HALF -> (((IntegerCrate) crate).getValue() % 2 == 0);
+            case QUARTER -> (((IntegerCrate) crate).getValue() % 4 == 0);
+        };
     }
     
     @Override

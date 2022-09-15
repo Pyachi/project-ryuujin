@@ -30,8 +30,9 @@ public class Player extends GameObject implements Runnable {
     @Override
     public void run() {
         if (grabbedCrate == null && Keyboard.isKeyPressed(KeyEvent.VK_SHIFT)) grabFacingTile();
-        if (grabbedCrate != null && (!Keyboard.isKeyPressed(KeyEvent.VK_SHIFT) || grabbedCrate.isDead()))
+        if (grabbedCrate != null && (!Keyboard.isKeyPressed(KeyEvent.VK_SHIFT) || grabbedCrate.isDead())) {
             grabbedCrate = null;
+        }
         calculateMovement();
     }
     
