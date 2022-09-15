@@ -34,8 +34,7 @@ public class Room {
         if (refresh) {
             objsToUpdate.addAll(objs);
             objs.forEach(it -> it.getTexture().reset());
-        }
-        else {
+        } else {
             objs.stream().filter(Runnable.class::isInstance).forEach(it -> {
                 objsToUpdate.add(it);
                 objsToUpdate.addAll(it.getCollisions());
@@ -47,6 +46,7 @@ public class Room {
     public void paint(Graphics2D g) {
         List<GameObject> list = new ArrayList<>(objsToUpdate);
         objsToUpdate.clear();
+        list.removeIf(it -> !objs.contains(it));
         list.sort(Comparator.comparingInt(it -> it.getTexture().getTexture().priority));
         list.forEach(it -> it.getTexture().paint(it.getLocation(), g));
     }

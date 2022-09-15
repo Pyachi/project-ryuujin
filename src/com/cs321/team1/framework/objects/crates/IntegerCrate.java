@@ -20,7 +20,7 @@ public class IntegerCrate extends Crate implements Runnable {
     
     @Override
     public void run() {
-        if (!grabbed) return;
+        if (grabbed) return;
         List<IntegerCrate> list = getCollisions(IntegerCrate.class);
         if (list.isEmpty()) return;
         list.forEach(it -> {
