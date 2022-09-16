@@ -1,6 +1,7 @@
 package com.cs321.team1.framework.objects;
 
 import com.cs321.team1.framework.Game;
+import com.cs321.team1.framework.map.Location;
 import com.cs321.team1.framework.map.Room;
 import com.cs321.team1.framework.sounds.Sounds;
 import com.cs321.team1.framework.textures.Textures;
@@ -69,13 +70,12 @@ public class Player extends GameObject implements Runnable {
     private void grabFacingTile() {
         List<Crate> touchedCrates = getTouching(Crate.class);
         if (touchedCrates.isEmpty()) return;
-        Predicate<Crate> pred = it -> true;
-        switch (dir) {
-            case NORTH -> pred = it -> it.getLocation().getY() - getLocation().getY() <= -16;
-            case SOUTH -> pred = it -> it.getLocation().getY() - getLocation().getY() >= 16;
-            case WEST -> pred = it -> it.getLocation().getX() - getLocation().getX() <= -16;
-            case EAST -> pred = it -> it.getLocation().getX() - getLocation().getX() >= 16;
-        }
+        Predicate<Crate> pred = it -> it.collidesWith(switch (dir) {
+            case NORTH -> new Location(getLocation().getX() + 8, getLocation().getY() - 8);
+            case SOUTH -> new Location(getLocation().getX() + 8, getLocation().getY() + 24);
+            case WEST -> new Location(getLocation().getX() - 8, getLocation().getY() + 8);
+            case EAST -> new Location(getLocation().getX() + 24, getLocation().getY() + 8);
+        });
         touchedCrates.stream().filter(pred).findFirst().ifPresent(it -> {
             Sounds.PICKUP.play();
             grabbedCrate = it;

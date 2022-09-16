@@ -69,6 +69,13 @@ public abstract class GameObject {
     //******************************************************************************************************************
     //Collision handling
     
+    public boolean collidesWith(Location location) {
+        return getLocation().getX() < location.getX() + 1 &&
+                getLocation().getX() + getTexture().getWidth() > location.getX() &&
+                getLocation().getY() < location.getY() + 1 &&
+                getLocation().getY() + getTexture().getHeight() > location.getY();
+    }
+    
     public boolean collidesWith(GameObject other) {
         if (this == other || isDead() || getRoom() != other.getRoom()) return false;
         return getLocation().getX() < other.getLocation().getX() + other.getTexture().getWidth() &&
