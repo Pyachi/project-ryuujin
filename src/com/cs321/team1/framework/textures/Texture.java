@@ -54,7 +54,7 @@ public class Texture {
     
     private void calculateSize() {
         try {
-            image = ImageIO.read(new File(texture.path));
+            image = ImageIO.read(texture.path);
             width = image.getWidth();
             height = image.getHeight();
         } catch (IOException e) {

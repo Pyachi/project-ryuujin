@@ -2,6 +2,7 @@ package com.cs321.team1.framework.objects;
 
 import com.cs321.team1.framework.Game;
 import com.cs321.team1.framework.map.Room;
+import com.cs321.team1.framework.sounds.Sounds;
 import com.cs321.team1.framework.textures.Textures;
 import com.cs321.team1.framework.objects.crates.Crate;
 import com.cs321.team1.framework.objects.tiles.UnpassableTile;
@@ -31,6 +32,7 @@ public class Player extends GameObject implements Runnable {
     public void run() {
         if (grabbedCrate == null && Keyboard.isKeyPressed(KeyEvent.VK_SHIFT)) grabFacingTile();
         if (grabbedCrate != null && (!Keyboard.isKeyPressed(KeyEvent.VK_SHIFT) || grabbedCrate.isDead())) {
+            Sounds.DROP.play();
             grabbedCrate = null;
         }
         calculateMovement();
@@ -74,7 +76,10 @@ public class Player extends GameObject implements Runnable {
             case WEST -> pred = it -> it.getLocation().getX() - getLocation().getX() <= -16;
             case EAST -> pred = it -> it.getLocation().getX() - getLocation().getX() >= 16;
         }
-        touchedCrates.stream().filter(pred).findFirst().ifPresent(it -> grabbedCrate = it);
+        touchedCrates.stream().filter(pred).findFirst().ifPresent(it -> {
+            Sounds.PICKUP.play();
+            grabbedCrate = it;
+        });
     }
     
     public boolean canMove(int x, int y) {
