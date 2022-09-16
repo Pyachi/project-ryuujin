@@ -64,7 +64,7 @@ public abstract class GameObject {
     }
     
     public void paint(Graphics2D g) {
-        getTexture().paint(getLocation(), g);
+        if (!dead) getTexture().paint(getLocation(), g);
     }
     //******************************************************************************************************************
     //Collision handling

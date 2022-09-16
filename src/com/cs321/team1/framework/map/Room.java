@@ -86,10 +86,16 @@ public class Room {
             for (int j = 2; j < 10; j++)
                 new PassableTile(room, i, j, Textures.FLOOR_TILE);
         Arrays.stream(dir).forEach(it -> new Door(room, it));
-        new IntegerCrate(room, Location.fromTile(5, 5), 1);
-        new IntegerCrate(room, Location.fromTile(7, 5), 3);
-        new ScaleCrate(room, Location.fromTile(5, 7), ScaleCrate.Values.NEGATE);
-        new ScaleCrate(room, Location.fromTile(7, 7), ScaleCrate.Values.QUARTER);
+        new IntegerCrate(room,Location.fromTile(3,3),1);
+        new IntegerCrate(room,Location.fromTile(5,3),2);
+        new IntegerCrate(room,Location.fromTile(7,3),3);
+        new IntegerCrate(room,Location.fromTile(9,3),5);
+        new IntegerCrate(room,Location.fromTile(11,3),5);
+        ScaleCrate.NegateCrate(room, Location.fromTile(3,8));
+        ScaleCrate.NegateCrate(room, Location.fromTile(5,8));
+        ScaleCrate.ScaleUpCrate(room, Location.fromTile(7,8),3);
+        ScaleCrate.ScaleDownCrate(room, Location.fromTile(9,8),2);
+        ScaleCrate.ScaleDownCrate(room, Location.fromTile(11,8),3);
         return room;
     }
     
