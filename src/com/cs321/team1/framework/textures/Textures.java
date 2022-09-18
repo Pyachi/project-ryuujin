@@ -3,7 +3,7 @@ package com.cs321.team1.framework.textures;
 import java.io.File;
 
 public enum Textures {
-    NOTHING("src/resources/nothing.png", -1),
+    NOTHING("src/resources/textures/nothing.png", -1),
     
     //Room textures
     BACKGROUND("src/resources/textures/map/background.png", -1),
@@ -22,7 +22,7 @@ public enum Textures {
     WALL_TILE("src/resources/textures/map/tile.png", 1),
     FLOOR_TILE("src/resources/textures/map/floor_tile.png", 0),
     CRATE("src/resources/textures/crates/crate.png", 2),
-    CRATE_GRABBED("src/resources/textures/crates/crate_grabbed.png",2),
+    CRATE_GRABBED("src/resources/textures/crates/crate_grabbed.png", 2),
     CRATE_INTERACTABLE("src/resources/textures/crates/crate_interactable.png", 2);
     
     public final File path;

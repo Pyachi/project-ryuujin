@@ -6,38 +6,65 @@ import com.cs321.team1.framework.map.Room;
 import com.cs321.team1.framework.objects.GameObject;
 import com.cs321.team1.framework.objects.tiles.Door;
 import com.cs321.team1.framework.objects.tiles.UnpassableTile;
+import com.cs321.team1.framework.sounds.Sounds;
 import com.cs321.team1.framework.textures.Textures;
 
 import java.awt.Graphics2D;
+import java.lang.reflect.InvocationTargetException;
 
 public abstract class Crate extends GameObject implements Runnable {
-    public Crate(Room room, Location loc) {
+    private final int value;
+    
+    public Crate(Room room, Location loc, int value) {
         super(room);
-        setLocation(loc);
+        this.value = value;
+        if (loc != null) setLocation(loc);
+        setTexture(Textures.CRATE);
     }
     
+    public int getValue() {
+        return value;
+    }
+    
+    public abstract String getString();
+    
+    public abstract boolean canInteractWith(Crate crate);
+    
+    public abstract int getMergedValue(Crate crate);
+    
     public boolean canMove(int x, int y) {
-        super.move(x, y);
+        getLocation().move(x, y);
         boolean collision = collidesWith(UnpassableTile.class) || collidesWith(Door.class) ||
-                getCollisions(Crate.class).stream().anyMatch(it -> !canInteractWith(it));
-        super.move(-x, -y);
+                getCollisions(Crate.class).stream().anyMatch(it -> !canInteractWith(it) && !it.canInteractWith(this));
+        getLocation().move(-x, -y);
         return !collision;
     }
     
-    abstract boolean canInteractWith(Crate other);
-    
-    abstract String getString();
+    private void generateNew(Crate crate) {
+        if (isDead()) return;
+        Location location = getLocation().clone();
+        if (Game.getPlayer().getGrabbedCrate() == this) location = crate.getLocation().clone();
+        try {
+            crate.getClass()
+                    .getDeclaredConstructor(Room.class, Location.class, int.class)
+                    .newInstance(getRoom(), location, getMergedValue(crate));
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
+            System.out.println("This should never happen...");
+        }
+        Sounds.MERGE.play();
+        crate.kill();
+        kill();
+    }
     
     @Override
     public void run() {
-        Crate crate = Game.getPlayer().getGrabbedCrate();
-        if (this == crate) setTexture(Textures.CRATE_GRABBED);
-        else if (canInteractWith(crate)) setTexture(Textures.CRATE_INTERACTABLE);
-        else setTexture(Textures.CRATE);
+        getCollisions(Crate.class).stream().filter(this::canInteractWith).findAny().ifPresent(this::generateNew);
     }
     
     @Override
     public void paint(Graphics2D g) {
+        if (isDead()) return;
         super.paint(g);
         g.setFont(Game.font.deriveFont(
                 (float) Game.tileSize * Game.scale * 0.8F / g.getFontMetrics(Game.font).stringWidth(getString())));

@@ -1,10 +1,11 @@
 package com.cs321.team1.util;
 
-import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.swing.JFrame;
 
 public class Keyboard {
     private static final Map<Integer, Boolean> pressedKeys = new HashMap<>();

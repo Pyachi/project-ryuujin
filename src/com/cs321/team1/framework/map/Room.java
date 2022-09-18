@@ -2,8 +2,11 @@ package com.cs321.team1.framework.map;
 
 import com.cs321.team1.framework.Game;
 import com.cs321.team1.framework.objects.GameObject;
+import com.cs321.team1.framework.objects.crates.DivisionCrate;
 import com.cs321.team1.framework.objects.crates.IntegerCrate;
-import com.cs321.team1.framework.objects.crates.ScaleCrate;
+import com.cs321.team1.framework.objects.crates.ModuloCrate;
+import com.cs321.team1.framework.objects.crates.MultiplicationCrate;
+import com.cs321.team1.framework.objects.crates.NegationCrate;
 import com.cs321.team1.framework.objects.tiles.Door;
 import com.cs321.team1.framework.objects.tiles.PassableTile;
 import com.cs321.team1.framework.objects.tiles.UnpassableTile;
@@ -74,28 +77,30 @@ public class Room {
     public static Room generateRoom(Direction... dir) {
         Room room = new Room();
         new PassableTile(room, 0, 0, Textures.BACKGROUND);
-        for (int i = 1; i < 15; i++) {
+        for (int i = 1; i < 16; i++) {
             new UnpassableTile(room, i, 1, Textures.NOTHING);
-            new UnpassableTile(room, i, 10, Textures.NOTHING);
+            new UnpassableTile(room, i, 9, Textures.NOTHING);
         }
-        for (int j = 2; j < 10; j++) {
+        for (int j = 2; j < 9; j++) {
             new UnpassableTile(room, 1, j, Textures.NOTHING);
-            new UnpassableTile(room, 14, j, Textures.NOTHING);
+            new UnpassableTile(room, 15, j, Textures.NOTHING);
         }
-        for (int i = 2; i < 14; i++)
-            for (int j = 2; j < 10; j++)
+        for (int i = 2; i < 15; i++)
+            for (int j = 2; j < 9; j++)
                 new PassableTile(room, i, j, Textures.FLOOR_TILE);
         Arrays.stream(dir).forEach(it -> new Door(room, it));
-        new IntegerCrate(room,Location.fromTile(3,3),1);
-        new IntegerCrate(room,Location.fromTile(5,3),2);
-        new IntegerCrate(room,Location.fromTile(7,3),3);
-        new IntegerCrate(room,Location.fromTile(9,3),5);
-        new IntegerCrate(room,Location.fromTile(11,3),5);
-        ScaleCrate.NegateCrate(room, Location.fromTile(3,8));
-        ScaleCrate.NegateCrate(room, Location.fromTile(5,8));
-        ScaleCrate.ScaleUpCrate(room, Location.fromTile(7,8),3);
-        ScaleCrate.ScaleDownCrate(room, Location.fromTile(9,8),2);
-        ScaleCrate.ScaleDownCrate(room, Location.fromTile(11,8),3);
+        new IntegerCrate(room, Location.atTile(3, 3), 1);
+        new IntegerCrate(room, Location.atTile(5, 3), 2);
+        new IntegerCrate(room, Location.atTile(7, 3), 3);
+        new IntegerCrate(room, Location.atTile(9, 3), 4);
+        new IntegerCrate(room, Location.atTile(11, 3), 5);
+        new IntegerCrate(room, Location.atTile(13, 3), 6);
+        new NegationCrate(room, Location.atTile(3, 7));
+        new ModuloCrate(room, Location.atTile(5, 7), 3);
+        new MultiplicationCrate(room, Location.atTile(7, 7), 3);
+        new MultiplicationCrate(room, Location.atTile(9, 7), 4);
+        new DivisionCrate(room, Location.atTile(11, 7), 2);
+        new DivisionCrate(room, Location.atTile(13, 7), 3);
         return room;
     }
     

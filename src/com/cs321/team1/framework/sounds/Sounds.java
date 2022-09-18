@@ -10,7 +10,9 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 public enum Sounds {
-    PICKUP("src/resources/sounds/pickup.wav"), DROP("src/resources/sounds/drop.wav");
+    PICKUP("src/resources/sounds/pickup.wav"),
+    DROP("src/resources/sounds/drop.wav"),
+    MERGE("src/resources/sounds/merge.wav");
     
     private final File path;
     public static float volume = 0.5f;

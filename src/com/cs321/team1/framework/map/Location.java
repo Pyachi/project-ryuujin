@@ -6,63 +6,77 @@ public class Location {
     private int x;
     private int y;
     
-    public static Location fromTile(int x, int y) {
-        return new Location(x * Game.tileSize, y * Game.tileSize);
+    public static Location at(int x, int y) {
+        return new Location().set(x, y);
     }
     
-    public Location(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public static Location atTile(int x, int y) {
+        return new Location().setTile(x, y);
+    }
+    
+    private Location() {
     }
     
     public int getX() {
         return x;
     }
     
-    public void setX(int x) {
+    public Location setX(int x) {
         this.x = x;
+        return this;
     }
     
     public int getY() {
         return y;
     }
     
-    public void setY(int y) {
+    public Location setY(int y) {
         this.y = y;
+        return this;
     }
     
-    public void set(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public Location set(int x, int y) {
+        return setX(x).setY(y);
     }
     
     public int getTileX() {
-        return x / Game.tileSize;
+        return getX() / Game.tileSize;
     }
     
-    public void setTileX(int x) {
-        this.x = x * Game.tileSize;
+    public Location setTileX(int x) {
+        return setX(x * Game.tileSize);
     }
     
     public int getTileY() {
-        return y / Game.tileSize;
+        return getY() / Game.tileSize;
     }
     
-    public void setTileY(int y) {
-        this.y = y * Game.tileSize;
+    public Location setTileY(int y) {
+        return setY(y * Game.tileSize);
     }
     
-    public void setTile(int x, int y) {
-        this.x = x * Game.tileSize;
-        this.y = y * Game.tileSize;
+    public Location setTile(int x, int y) {
+        return setTileX(x).setTileY(y);
+    }
+    
+    public Location centralize() {
+        return set(getX() + Game.tileSize / 2, getY() + Game.tileSize / 2);
+    }
+    
+    public Location move(int x, int y) {
+        return set(getX() + x, getY() + y);
+    }
+    
+    public Location moveTiles(int x, int y) {
+        return set(getX() + x * Game.tileSize, getY() + y * Game.tileSize);
     }
     
     @Override
     public Location clone() {
-        return new Location(getX(), getY());
+        return Location.at(getX(), getY());
     }
     
     public Location getMidpoint(Location other) {
-        return new Location((getX() + other.getX()) / 2, (getY() + other.getY()) / 2);
+        return Location.at((getX() + other.getX()) / 2, (getY() + other.getY()) / 2);
     }
 }

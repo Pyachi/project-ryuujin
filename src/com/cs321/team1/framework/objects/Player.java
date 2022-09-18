@@ -3,25 +3,23 @@ package com.cs321.team1.framework.objects;
 import com.cs321.team1.framework.Game;
 import com.cs321.team1.framework.map.Location;
 import com.cs321.team1.framework.map.Room;
-import com.cs321.team1.framework.sounds.Sounds;
-import com.cs321.team1.framework.textures.Textures;
 import com.cs321.team1.framework.objects.crates.Crate;
 import com.cs321.team1.framework.objects.tiles.UnpassableTile;
+import com.cs321.team1.framework.sounds.Sounds;
+import com.cs321.team1.framework.textures.Textures;
 import com.cs321.team1.util.Direction;
 import com.cs321.team1.util.Keyboard;
 
 import java.awt.event.KeyEvent;
-import java.util.List;
-import java.util.function.Predicate;
 
 public class Player extends GameObject implements Runnable {
-    private Direction dir = Direction.NORTH;
+    public Direction dir = Direction.SOUTH;
     private Crate grabbedCrate = null;
     
     public Player() {
         super(null);
-        setTexture(Textures.PLAYER_UP);
-        getLocation().setTile(10, 6);
+        setTexture(Textures.PLAYER_DOWN);
+        setLocation(Location.atTile(8, 5));
     }
     
     @Override
@@ -29,18 +27,41 @@ public class Player extends GameObject implements Runnable {
         return Game.getDungeon().getActiveRoom();
     }
     
+    public Crate getGrabbedCrate() {
+        return grabbedCrate;
+    }
+    
     @Override
     public void run() {
-        if (grabbedCrate == null && Keyboard.isKeyPressed(KeyEvent.VK_SHIFT)) grabFacingTile();
-        if (grabbedCrate != null && (!Keyboard.isKeyPressed(KeyEvent.VK_SHIFT) || grabbedCrate.isDead())) {
-            Sounds.DROP.play();
-            grabbedCrate = null;
-        }
+        handleCrates();
         calculateMovement();
     }
     
-    public Crate getGrabbedCrate() {
-        return grabbedCrate;
+    private void handleCrates() {
+        if (grabbedCrate == null && Keyboard.isKeyPressed(KeyEvent.VK_SHIFT)) {
+            getTouching(Crate.class).stream().filter(it -> it.collidesWith(switch (dir) {
+                case NORTH -> getLocation().clone().centralize().move(0, -8);
+                case SOUTH -> getLocation().clone().centralize().move(0, 8);
+                case WEST -> getLocation().clone().centralize().move(-8, 0);
+                case EAST -> getLocation().clone().centralize().move(8, 0);
+            })).findFirst().ifPresent(crate -> {
+                Sounds.PICKUP.play();
+                grabbedCrate = crate;
+                getRoom().getObjects()
+                        .stream()
+                        .filter(it -> it instanceof Crate &&
+                                (((Crate) it).canInteractWith(crate) || crate.canInteractWith(((Crate) it))))
+                        .forEach(it -> it.setTexture(Textures.CRATE_INTERACTABLE));
+                crate.setTexture(Textures.CRATE_GRABBED);
+            });
+        }
+        if (grabbedCrate != null && (!Keyboard.isKeyPressed(KeyEvent.VK_SHIFT) || grabbedCrate.isDead())) {
+            grabbedCrate = null;
+            getRoom().getObjects()
+                    .stream()
+                    .filter(Crate.class::isInstance)
+                    .forEach(it -> it.setTexture(Textures.CRATE));
+        }
     }
     
     private void calculateMovement() {
@@ -67,42 +88,26 @@ public class Player extends GameObject implements Runnable {
         for (int i = 0; i < 2; i++) move(x, y);
     }
     
-    private void grabFacingTile() {
-        List<Crate> touchedCrates = getTouching(Crate.class);
-        if (touchedCrates.isEmpty()) return;
-        Predicate<Crate> pred = it -> it.collidesWith(switch (dir) {
-            case NORTH -> new Location(getLocation().getX() + 8, getLocation().getY() - 8);
-            case SOUTH -> new Location(getLocation().getX() + 8, getLocation().getY() + 24);
-            case WEST -> new Location(getLocation().getX() - 8, getLocation().getY() + 8);
-            case EAST -> new Location(getLocation().getX() + 24, getLocation().getY() + 8);
-        });
-        touchedCrates.stream().filter(pred).findFirst().ifPresent(it -> {
-            Sounds.PICKUP.play();
-            grabbedCrate = it;
-        });
-    }
-    
     public boolean canMove(int x, int y) {
-        super.move(x, y);
+        getLocation().move(x, y);
         boolean collision = collidesWith(UnpassableTile.class) ||
                 collidesWith(Crate.class) && getCollisions(Crate.class).stream().anyMatch(it -> it != grabbedCrate);
-        super.move(-x, -y);
+        getLocation().move(-x, -y);
         return !collision;
     }
     
-    @Override
     public void move(int x, int y) {
         if (grabbedCrate == null) {
-            if (canMove(x, 0)) super.move(x, 0);
-            if (canMove(0, y)) super.move(0, y);
+            if (canMove(x, 0)) getLocation().move(x, 0);
+            if (canMove(0, y)) getLocation().move(0, y);
         } else {
             if (canMove(x, 0) && grabbedCrate.canMove(x, 0)) {
-                super.move(x, 0);
-                grabbedCrate.move(x, 0);
+                getLocation().move(x, 0);
+                grabbedCrate.getLocation().move(x, 0);
             }
             if (canMove(0, y) && grabbedCrate.canMove(0, y)) {
-                super.move(0, y);
-                grabbedCrate.move(0, y);
+                getLocation().move(0, y);
+                grabbedCrate.getLocation().move(0, y);
             }
         }
     }

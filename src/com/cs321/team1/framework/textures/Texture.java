@@ -5,7 +5,6 @@ import com.cs321.team1.framework.map.Location;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -21,10 +20,12 @@ public class Texture {
         this.texture = texture;
         this.width = width * Game.tileSize;
         this.height = height * Game.tileSize;
+        loadImage();
     }
     
     public Texture(Textures texture) {
         this.texture = texture;
+        loadImage();
         calculateSize();
     }
     
@@ -32,12 +33,14 @@ public class Texture {
         this.texture = Textures.NOTHING;
         this.width = width * Game.tileSize;
         this.height = height * Game.tileSize;
+        loadImage();
     }
     
     public Texture() {
         this.texture = Textures.NOTHING;
         this.width = Game.tileSize;
         this.height = Game.tileSize;
+        loadImage();
     }
     
     public Textures getTexture() {
@@ -52,15 +55,18 @@ public class Texture {
         return height;
     }
     
-    private void calculateSize() {
+    private void loadImage() {
         try {
             image = ImageIO.read(texture.path);
-            width = image.getWidth();
-            height = image.getHeight();
         } catch (IOException e) {
-            width = Game.tileSize;
-            height = Game.tileSize;
+            System.out.println(texture.path);
+            throw new RuntimeException(e);
         }
+    }
+    
+    private void calculateSize() {
+        width = image.getWidth();
+        height = image.getHeight();
     }
     
     public void reset() {

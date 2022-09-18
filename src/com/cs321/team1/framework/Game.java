@@ -1,16 +1,19 @@
 package com.cs321.team1.framework;
 
 import com.cs321.team1.framework.map.Dungeon;
-import com.cs321.team1.framework.objects.GameObject;
 import com.cs321.team1.framework.objects.Player;
 
-import javax.swing.*;
-
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+
+import javax.swing.JPanel;
 
 public class Game extends JPanel implements Runnable {
     //******************************************************************************************************************
@@ -29,8 +32,9 @@ public class Game extends JPanel implements Runnable {
     private void update() {
         player.run();
         dungeon.getActiveRoom().update();
-        dungeon.getActiveRoom().getObjects().stream().filter(Runnable.class::isInstance).map(Runnable.class::cast)
-                .forEach(Runnable::run);
+        dungeon.getActiveRoom().getObjects().stream().filter(Runnable.class::isInstance).forEach(it -> {
+            if (!it.isDead()) ((Runnable) it).run();
+        });
     }
     
     public static Player getPlayer() {
@@ -45,8 +49,8 @@ public class Game extends JPanel implements Runnable {
     
     private static Game i;
     
-    private static final int screenCol = 16;
-    private static final int screenRow = 12;
+    private static final int screenCol = 17;
+    private static final int screenRow = 11;
     private static final int screenTileSize = tileSize * scale;
     private static final int screenWidth = screenTileSize * screenCol;
     private static final int screenHeight = screenTileSize * screenRow;

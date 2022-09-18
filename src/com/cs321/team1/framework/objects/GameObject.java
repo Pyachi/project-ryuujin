@@ -1,6 +1,5 @@
 package com.cs321.team1.framework.objects;
 
-import com.cs321.team1.framework.Game;
 import com.cs321.team1.framework.map.Location;
 import com.cs321.team1.framework.map.Room;
 import com.cs321.team1.framework.textures.Texture;
@@ -11,8 +10,8 @@ import java.util.List;
 
 public abstract class GameObject {
     private final Room room;
-    private Texture texture = new Texture(0, 0);
-    private Location location = new Location(0, 0);
+    private Texture texture;
+    private Location location = Location.at(0, 0);
     private boolean dead;
     
     public GameObject(Room room) {
@@ -55,14 +54,6 @@ public abstract class GameObject {
         return dead;
     }
     
-    public void move(int x, int y) {
-        if (!dead) getLocation().set(getLocation().getX() + x, getLocation().getY() + y);
-    }
-    
-    public void moveTiles(int x, int y) {
-        if (!dead) move(x * Game.tileSize, y & Game.tileSize);
-    }
-    
     public void paint(Graphics2D g) {
         if (!dead) getTexture().paint(getLocation(), g);
     }
@@ -70,21 +61,21 @@ public abstract class GameObject {
     //Collision handling
     
     public boolean collidesWith(Location location) {
-        return getLocation().getX() < location.getX() + 1 &&
-                getLocation().getX() + getTexture().getWidth() > location.getX() &&
+        return !isDead() && getLocation().getX() < location.getX() + 1 &&
+                getLocation().getX() + getTexture().getWidth() > location.getX() - 1 &&
                 getLocation().getY() < location.getY() + 1 &&
-                getLocation().getY() + getTexture().getHeight() > location.getY();
+                getLocation().getY() + getTexture().getHeight() > location.getY() - 1;
     }
     
     public boolean collidesWith(GameObject other) {
-        if (this == other || isDead() || getRoom() != other.getRoom()) return false;
+        if (this == other || isDead() || other.isDead() || getRoom() != other.getRoom()) return false;
         return getLocation().getX() < other.getLocation().getX() + other.getTexture().getWidth() &&
                 getLocation().getX() + getTexture().getWidth() > other.getLocation().getX() &&
                 getLocation().getY() < other.getLocation().getY() + other.getTexture().getHeight() &&
                 getLocation().getY() + getTexture().getHeight() > other.getLocation().getY();
     }
     
-    public boolean collidesWith(Class<?> clazz) {
+    public boolean collidesWith(Class<? extends GameObject> clazz) {
         return !getCollisions(clazz).isEmpty();
     }
     
@@ -92,12 +83,12 @@ public abstract class GameObject {
         return getRoom().getObjects().stream().filter(this::collidesWith).toList();
     }
     
-    public <T> List<T> getCollisions(Class<T> clazz) {
+    public <T extends GameObject> List<T> getCollisions(Class<T> clazz) {
         return getCollisions().stream().filter(clazz::isInstance).map(clazz::cast).toList();
     }
     
     public boolean isTouching(GameObject other) {
-        if (this == other || isDead() || getRoom() != other.getRoom()) return false;
+        if (this == other || isDead() || other.isDead() || getRoom() != other.getRoom()) return false;
         int locX = this.getLocation().getX() - 1;
         int locY = this.getLocation().getY() - 1;
         int width = this.getTexture().getWidth() + 2;
@@ -108,7 +99,7 @@ public abstract class GameObject {
                 locY + height > other.getLocation().getY();
     }
     
-    public boolean isTouching(Class<?> clazz) {
+    public boolean isTouching(Class<? extends GameObject> clazz) {
         return !getTouching(clazz).isEmpty();
     }
     
@@ -116,7 +107,7 @@ public abstract class GameObject {
         return getRoom().getObjects().stream().filter(this::isTouching).toList();
     }
     
-    public <T> List<T> getTouching(Class<T> clazz) {
+    public <T extends GameObject> List<T> getTouching(Class<T> clazz) {
         return getTouching().stream().filter(clazz::isInstance).map(clazz::cast).toList();
     }
 }

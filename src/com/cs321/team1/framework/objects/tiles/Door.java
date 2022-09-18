@@ -14,37 +14,49 @@ public class Door extends GameObject {
             case NORTH -> {
                 setTexture(Textures.DOOR_NORTH);
                 getLocation().setTile(7, 0);
-                getCollisions(UnpassableTile.class).forEach(room::removeObject);
-                room.addObject(new Trigger(room, 7, 0, 2, 1, () -> {
+                getCollisions(UnpassableTile.class).stream()
+                        .filter(it -> it.collidesWith(getLocation().clone().centralize().moveTiles(1, 1)))
+                        .findFirst()
+                        .ifPresent(room::removeObject);
+                room.addObject(new Trigger(room, 8, 0, 1, 1, () -> {
                     Game.getDungeon().move(0, -1);
-                    Game.getPlayer().getLocation().set(120,160);
+                    Game.getPlayer().getLocation().set(128, 144);
                 }));
             }
             case SOUTH -> {
                 setTexture(Textures.DOOR_SOUTH);
-                getLocation().setTile(7, 10);
-                getCollisions(UnpassableTile.class).forEach(room::removeObject);
-                room.addObject(new Trigger(room, 7, 11, 2, 1, () -> {
+                getLocation().setTile(7, 9);
+                getCollisions(UnpassableTile.class).stream()
+                        .filter(it -> it.collidesWith(getLocation().clone().centralize().moveTiles(1, 0)))
+                        .findFirst()
+                        .ifPresent(room::removeObject);
+                room.addObject(new Trigger(room, 8, 10, 1, 1, () -> {
                     Game.getDungeon().move(0, 1);
-                    Game.getPlayer().getLocation().set(120,16);
+                    Game.getPlayer().getLocation().set(128, 16);
                 }));
             }
             case EAST -> {
                 setTexture(Textures.DOOR_EAST);
-                getLocation().setTile(14, 5);
-                getCollisions(UnpassableTile.class).forEach(room::removeObject);
-                room.addObject(new Trigger(room, 15, 5, 1, 2, () -> {
+                getLocation().setTile(15, 4);
+                getCollisions(UnpassableTile.class).stream()
+                        .filter(it -> it.collidesWith(getLocation().clone().centralize().moveTiles(0, 1)))
+                        .findFirst()
+                        .ifPresent(room::removeObject);
+                room.addObject(new Trigger(room, 16, 5, 1, 1, () -> {
                     Game.getDungeon().move(1, 0);
-                    Game.getPlayer().getLocation().set(16,88);
+                    Game.getPlayer().getLocation().set(16, 80);
                 }));
             }
             case WEST -> {
                 setTexture(Textures.DOOR_WEST);
-                getLocation().setTile(0, 5);
-                getCollisions(UnpassableTile.class).forEach(room::removeObject);
-                room.addObject(new Trigger(room, 0, 5, 1, 2, () -> {
+                getLocation().setTile(0, 4);
+                getCollisions(UnpassableTile.class).stream()
+                        .filter(it -> it.collidesWith(getLocation().clone().centralize().moveTiles(1, 1)))
+                        .findFirst()
+                        .ifPresent(room::removeObject);
+                room.addObject(new Trigger(room, 0, 5, 1, 1, () -> {
                     Game.getDungeon().move(-1, 0);
-                    Game.getPlayer().getLocation().set(224,88);
+                    Game.getPlayer().getLocation().set(240, 80);
                 }));
             }
         }
