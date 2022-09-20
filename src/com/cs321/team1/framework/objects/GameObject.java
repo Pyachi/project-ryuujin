@@ -1,7 +1,7 @@
 package com.cs321.team1.framework.objects;
 
 import com.cs321.team1.framework.map.Location;
-import com.cs321.team1.framework.map.Room;
+import com.cs321.team1.framework.map.Level;
 import com.cs321.team1.framework.textures.Texture;
 import com.cs321.team1.framework.textures.Textures;
 
@@ -9,18 +9,18 @@ import java.awt.Graphics2D;
 import java.util.List;
 
 public abstract class GameObject {
-    private final Room room;
+    private final Level level;
     private Texture texture;
     private Location location = Location.at(0, 0);
     private boolean dead;
     
-    public GameObject(Room room) {
-        this.room = room;
-        if (room != null) room.addObject(this);
+    public GameObject(Level level) {
+        this.level = level;
+        if (level != null) level.addObject(this);
     }
     
-    public Room getRoom() {
-        return room;
+    public Level getRoom() {
+        return level;
     }
     
     public Texture getTexture() {
@@ -55,7 +55,7 @@ public abstract class GameObject {
     }
     
     public void paint(Graphics2D g) {
-        if (!dead) getTexture().paint(getLocation(), g);
+        if (!dead) getTexture().paint(this, g);
     }
     //******************************************************************************************************************
     //Collision handling

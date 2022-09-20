@@ -2,9 +2,8 @@ package com.cs321.team1.framework.objects.crates;
 
 import com.cs321.team1.framework.Game;
 import com.cs321.team1.framework.map.Location;
-import com.cs321.team1.framework.map.Room;
+import com.cs321.team1.framework.map.Level;
 import com.cs321.team1.framework.objects.GameObject;
-import com.cs321.team1.framework.objects.tiles.Door;
 import com.cs321.team1.framework.objects.tiles.UnpassableTile;
 import com.cs321.team1.framework.sounds.Sounds;
 import com.cs321.team1.framework.textures.Textures;
@@ -15,8 +14,8 @@ import java.lang.reflect.InvocationTargetException;
 public abstract class Crate extends GameObject implements Runnable {
     private final int value;
     
-    public Crate(Room room, Location loc, int value) {
-        super(room);
+    public Crate(Level level, Location loc, int value) {
+        super(level);
         this.value = value;
         if (loc != null) setLocation(loc);
         setTexture(Textures.CRATE);
@@ -34,7 +33,7 @@ public abstract class Crate extends GameObject implements Runnable {
     
     public boolean canMove(int x, int y) {
         getLocation().move(x, y);
-        boolean collision = collidesWith(UnpassableTile.class) || collidesWith(Door.class) ||
+        boolean collision = collidesWith(UnpassableTile.class) ||
                 getCollisions(Crate.class).stream().anyMatch(it -> !canInteractWith(it) && !it.canInteractWith(this));
         getLocation().move(-x, -y);
         return !collision;
@@ -43,10 +42,10 @@ public abstract class Crate extends GameObject implements Runnable {
     private void generateNew(Crate crate) {
         if (isDead()) return;
         Location location = getLocation().clone();
-        if (Game.getPlayer().getGrabbedCrate() == this) location = crate.getLocation().clone();
+        if (getRoom().getPlayer().getGrabbedCrate() == this) location = crate.getLocation().clone();
         try {
             crate.getClass()
-                    .getDeclaredConstructor(Room.class, Location.class, int.class)
+                    .getDeclaredConstructor(Level.class, Location.class, int.class)
                     .newInstance(getRoom(), location, getMergedValue(crate));
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
@@ -66,12 +65,14 @@ public abstract class Crate extends GameObject implements Runnable {
     public void paint(Graphics2D g) {
         if (isDead()) return;
         super.paint(g);
-        g.setFont(Game.font.deriveFont(
-                (float) Game.tileSize * Game.scale * 0.8F / g.getFontMetrics(Game.font).stringWidth(getString())));
+        g.setFont(Game.get().getFont().deriveFont(
+                (float) 16 * getRoom().getScale() * 0.8F / g.getFontMetrics(Game.get().getFont()).stringWidth(getString())));
         g.drawString(
                 getString(),
-                getLocation().getX() * Game.scale - g.getFontMetrics().stringWidth(getString()) / 2 + 8 * Game.scale,
-                getLocation().getY() * Game.scale + g.getFontMetrics().getHeight() / 2 + 8 * Game.scale
+                getLocation().getX() * getRoom().getScale() - g.getFontMetrics().stringWidth(getString()) / 2 +
+                        8 * getRoom().getScale(),
+                getLocation().getY() * getRoom().getScale() + g.getFontMetrics().getHeight() / 2 +
+                        8 * getRoom().getScale()
         );
     }
 }

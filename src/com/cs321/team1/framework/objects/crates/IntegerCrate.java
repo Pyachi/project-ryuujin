@@ -1,11 +1,11 @@
 package com.cs321.team1.framework.objects.crates;
 
 import com.cs321.team1.framework.map.Location;
-import com.cs321.team1.framework.map.Room;
+import com.cs321.team1.framework.map.Level;
 
 public class IntegerCrate extends Crate {
-    public IntegerCrate(Room room, Location loc, int value) {
-        super(room, loc, value);
+    public IntegerCrate(Level level, Location loc, int value) {
+        super(level, loc, value);
     }
     
     @Override

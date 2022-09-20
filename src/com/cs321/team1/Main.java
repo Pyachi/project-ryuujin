@@ -11,8 +11,7 @@ public class Main {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
         window.setTitle("Project 龍神");
-        Game game = new Game();
-        window.add(game);
+        window.add(Game.get());
         window.pack();
         window.setLocationRelativeTo(null);
         window.setVisible(true);

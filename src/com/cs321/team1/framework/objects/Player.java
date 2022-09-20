@@ -2,7 +2,7 @@ package com.cs321.team1.framework.objects;
 
 import com.cs321.team1.framework.Game;
 import com.cs321.team1.framework.map.Location;
-import com.cs321.team1.framework.map.Room;
+import com.cs321.team1.framework.map.Level;
 import com.cs321.team1.framework.objects.crates.Crate;
 import com.cs321.team1.framework.objects.tiles.UnpassableTile;
 import com.cs321.team1.framework.sounds.Sounds;
@@ -16,15 +16,10 @@ public class Player extends GameObject implements Runnable {
     public Direction dir = Direction.SOUTH;
     private Crate grabbedCrate = null;
     
-    public Player() {
-        super(null);
+    public Player(Level level, Location location) {
+        super(level);
         setTexture(Textures.PLAYER_DOWN);
-        setLocation(Location.atTile(8, 5));
-    }
-    
-    @Override
-    public Room getRoom() {
-        return Game.getDungeon().getActiveRoom();
+        setLocation(location);
     }
     
     public Crate getGrabbedCrate() {

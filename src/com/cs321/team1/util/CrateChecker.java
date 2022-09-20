@@ -1,13 +1,13 @@
 package com.cs321.team1.util;
 
 import com.cs321.team1.framework.map.Location;
-import com.cs321.team1.framework.map.Room;
+import com.cs321.team1.framework.map.Level;
 import com.cs321.team1.framework.objects.crates.Crate;
-import com.cs321.team1.framework.objects.crates.DivisionCrate;
+import com.cs321.team1.framework.objects.crates.DivideCrate;
 import com.cs321.team1.framework.objects.crates.IntegerCrate;
 import com.cs321.team1.framework.objects.crates.ModuloCrate;
-import com.cs321.team1.framework.objects.crates.MultiplicationCrate;
-import com.cs321.team1.framework.objects.crates.NegationCrate;
+import com.cs321.team1.framework.objects.crates.MultiplyCrate;
+import com.cs321.team1.framework.objects.crates.NegateCrate;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -36,15 +36,15 @@ public class CrateChecker {
                     "\nSelect Crate:\n1 -> IntegerCrate\n2 -> ModuloCrate\n3 -> NegateCrate\n4 -> ScaleUpCrate\n5 -> ScaleDownCrate\n6 -> Calculate Possibilities\n7 -> Calculate Complexity\n");
             int input = scanner.nextInt();
             if (input > 0 && input < 6 || input == 7) {
-                if (input == 3) crates.add(new NegationCrate(null, null));
+                if (input == 3) crates.add(new NegateCrate(null, null));
                 else {
                     System.out.print("Select Value: ");
                     int input2 = scanner.nextInt();
                     switch (input) {
                         case 1 -> crates.add(new IntegerCrate(null, null, input2));
                         case 2 -> crates.add(new ModuloCrate(null, null, input2));
-                        case 5 -> crates.add(new DivisionCrate(null, null, input2));
-                        case 4 -> crates.add(new MultiplicationCrate(null, null, input2));
+                        case 5 -> crates.add(new DivideCrate(null, null, input2));
+                        case 4 -> crates.add(new MultiplyCrate(null, null, input2));
                         case 7 -> {
                             BigDecimal total = new BigDecimal(1);
                             for (int i = 3; i <= input2; i++) {
@@ -107,7 +107,7 @@ public class CrateChecker {
                         newList.remove(crate1);
                         newList.remove(crate2);
                         newList.add(crate2.getClass()
-                                .getDeclaredConstructor(Room.class, Location.class, int.class)
+                                .getDeclaredConstructor(Level.class, Location.class, int.class)
                                 .newInstance(null, null, crate1.getMergedValue(crate2)));
                         results.addAll(scanCrates(newList));
                     } else if (crate2.canInteractWith(crate1)) {
@@ -115,7 +115,7 @@ public class CrateChecker {
                         newList.remove(crate1);
                         newList.remove(crate2);
                         newList.add(crate1.getClass()
-                                .getDeclaredConstructor(Room.class, Location.class, int.class)
+                                .getDeclaredConstructor(Level.class, Location.class, int.class)
                                 .newInstance(null, null, crate2.getMergedValue(crate1)));
                         results.addAll(scanCrates(newList));
                     }

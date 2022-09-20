@@ -2,6 +2,7 @@ package com.cs321.team1.framework.textures;
 
 import com.cs321.team1.framework.Game;
 import com.cs321.team1.framework.map.Location;
+import com.cs321.team1.framework.objects.GameObject;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -18,8 +19,8 @@ public class Texture {
     
     public Texture(Textures texture, int width, int height) {
         this.texture = texture;
-        this.width = width * Game.tileSize;
-        this.height = height * Game.tileSize;
+        this.width = width * 16;
+        this.height = height * 16;
         loadImage();
     }
     
@@ -31,15 +32,15 @@ public class Texture {
     
     public Texture(int width, int height) {
         this.texture = Textures.NOTHING;
-        this.width = width * Game.tileSize;
-        this.height = height * Game.tileSize;
+        this.width = width * 16;
+        this.height = height * 16;
         loadImage();
     }
     
     public Texture() {
         this.texture = Textures.NOTHING;
-        this.width = Game.tileSize;
-        this.height = Game.tileSize;
+        this.width = 16;
+        this.height = 16;
         loadImage();
     }
     
@@ -73,12 +74,13 @@ public class Texture {
         ignore = false;
     }
     
-    public void paint(Location loc, Graphics2D g) {
-        if (!ignore) g.drawImage(image,
-                loc.getX() * Game.scale,
-                loc.getY() * Game.scale,
-                width * Game.scale,
-                height * Game.scale,
+    public void paint(GameObject obj, Graphics2D g) {
+        if (!ignore) g.drawImage(
+                image,
+                (obj.getLocation().getX() - 16) * obj.getRoom().getScale(),
+                (obj.getLocation().getY() - 16) * obj.getRoom().getScale(),
+                width * obj.getRoom().getScale(),
+                height * obj.getRoom().getScale(),
                 null
         );
         if (texture.priority == -1) ignore = true;

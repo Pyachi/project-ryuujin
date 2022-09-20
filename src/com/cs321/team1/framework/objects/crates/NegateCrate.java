@@ -1,11 +1,11 @@
 package com.cs321.team1.framework.objects.crates;
 
 import com.cs321.team1.framework.map.Location;
-import com.cs321.team1.framework.map.Room;
+import com.cs321.team1.framework.map.Level;
 
-public class NegationCrate extends Crate {
-    public NegationCrate(Room room, Location loc) {
-        super(room, loc, -1);
+public class NegateCrate extends Crate {
+    public NegateCrate(Level level, Location loc) {
+        super(level, loc, -1);
     }
     
     @Override

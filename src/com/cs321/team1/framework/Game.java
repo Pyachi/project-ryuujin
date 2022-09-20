@@ -1,14 +1,12 @@
 package com.cs321.team1.framework;
 
-import com.cs321.team1.framework.map.Dungeon;
-import com.cs321.team1.framework.objects.Player;
+import com.cs321.team1.framework.map.Level;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -19,68 +17,63 @@ public class Game extends JPanel implements Runnable {
     //******************************************************************************************************************
     //Game Content
     
-    public static final int tileSize = 16;
-    public static final int scale = 4;
-    
-    private final Player player = new Player();
-    private Dungeon dungeon;
+    private Level level;
     
     private void start() {
-        dungeon = Dungeon.generateDungeon();
+        level = Level.emptyLevel(8, 9);
     }
     
     private void update() {
-        player.run();
-        dungeon.getActiveRoom().update();
-        dungeon.getActiveRoom().getObjects().stream().filter(Runnable.class::isInstance).forEach(it -> {
-            if (!it.isDead()) ((Runnable) it).run();
-        });
+        level.update();
     }
     
-    public static Player getPlayer() {
-        return i.player;
-    }
-    
-    public static Dungeon getDungeon() {
-        return i.dungeon;
+    public Level getLevel() {
+        return i.level;
     }
     //******************************************************************************************************************
     //Framework
     
     private static Game i;
+    private int screenWidth = 1280;
+    private int screenHeight = 720;
+    private final Font font;
     
-    private static final int screenCol = 17;
-    private static final int screenRow = 11;
-    private static final int screenTileSize = tileSize * scale;
-    private static final int screenWidth = screenTileSize * screenCol;
-    private static final int screenHeight = screenTileSize * screenRow;
+    public static Game get() {
+        if (i == null) i = new Game();
+        return i;
+    }
     
-    private final BufferedImage screen = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_ARGB);
-    private final Graphics2D graphics = screen.createGraphics();
-    public static final Font font;
-    
-    static {
+    private Game() {
+        setPreferredSize(new Dimension(screenWidth, screenHeight));
+        setBackground(Color.BLACK);
+        setDoubleBuffered(true);
         try {
             font = Font.createFont(Font.TRUETYPE_FONT, new File("src/resources/PressStart.ttf"));
         } catch (FontFormatException | IOException e) {
             throw new RuntimeException(e);
         }
+        new Thread(this).start();
     }
     
-    public Game() {
-        i = this;
-        setPreferredSize(new Dimension(screenWidth, screenHeight));
-        setBackground(Color.BLACK);
-        setDoubleBuffered(true);
-        new Thread(this).start();
+    public int getScreenWidth() {
+        return screenWidth;
+    }
+    
+    public int getScreenHeight() {
+        return screenHeight;
+    }
+    
+    public Font getFont() {
+        return font;
     }
     
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (dungeon != null) dungeon.getActiveRoom().paint(graphics);
-        if (player != null) player.getTexture().paint(player.getLocation(), graphics);
-        g.drawImage(screen, 0, 0, null);
+        if (level != null) {
+            BufferedImage image = level.getImage();
+            g.drawImage(image, (getScreenWidth() - image.getWidth())/2,(getScreenHeight() - image.getHeight())/2, null);
+        }
     }
     
     @SuppressWarnings({"InfiniteLoopStatement", "BusyWait"})

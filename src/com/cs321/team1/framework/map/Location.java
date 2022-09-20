@@ -40,19 +40,19 @@ public class Location {
     }
     
     public int getTileX() {
-        return getX() / Game.tileSize;
+        return getX() / 16;
     }
     
     public Location setTileX(int x) {
-        return setX(x * Game.tileSize);
+        return setX(x * 16);
     }
     
     public int getTileY() {
-        return getY() / Game.tileSize;
+        return getY() / 16;
     }
     
     public Location setTileY(int y) {
-        return setY(y * Game.tileSize);
+        return setY(y * 16);
     }
     
     public Location setTile(int x, int y) {
@@ -60,7 +60,7 @@ public class Location {
     }
     
     public Location centralize() {
-        return set(getX() + Game.tileSize / 2, getY() + Game.tileSize / 2);
+        return set(getX() + 8, getY() + 8);
     }
     
     public Location move(int x, int y) {
@@ -68,7 +68,7 @@ public class Location {
     }
     
     public Location moveTiles(int x, int y) {
-        return set(getX() + x * Game.tileSize, getY() + y * Game.tileSize);
+        return set(getX() + x * 16, getY() + y * 16);
     }
     
     @Override
