@@ -3,12 +3,15 @@ package com.cs321.team1.util;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JFrame;
 
 public class Keyboard {
-    private static final Map<Integer, Boolean> pressedKeys = new HashMap<>();
+    private static final Set<Integer> pressedKeys = new HashSet<>();
+    private static final Set<Integer> heldKeys = new HashSet<>();
     
     public static void init(JFrame window) {
         window.addKeyListener(new KeyListener() {
@@ -18,17 +21,23 @@ public class Keyboard {
             
             @Override
             public void keyPressed(KeyEvent e) {
-                Keyboard.pressedKeys.put(e.getKeyCode(), true);
+                if (!heldKeys.contains(e.getKeyCode())) pressedKeys.add(e.getKeyCode());
+                heldKeys.add(e.getKeyCode());
             }
             
             @Override
             public void keyReleased(KeyEvent e) {
-                Keyboard.pressedKeys.put(e.getKeyCode(), false);
+                pressedKeys.remove(e.getKeyCode());
+                heldKeys.remove(e.getKeyCode());
             }
         });
     }
     
     public static boolean isKeyPressed(int key) {
-        return pressedKeys.getOrDefault(key, false);
+        return pressedKeys.remove(key);
+    }
+    
+    public static boolean isKeyHeld(int key) {
+        return heldKeys.contains(key);
     }
 }

@@ -1,13 +1,17 @@
 package com.cs321.team1.framework.map;
 
 import com.cs321.team1.framework.Game;
+import com.cs321.team1.framework.GameComponent;
+import com.cs321.team1.framework.menu.Menu;
 import com.cs321.team1.framework.objects.GameObject;
 import com.cs321.team1.framework.objects.Player;
 import com.cs321.team1.framework.objects.tiles.PassableTile;
 import com.cs321.team1.framework.objects.tiles.UnpassableTile;
 import com.cs321.team1.framework.textures.Textures;
+import com.cs321.team1.util.Keyboard;
 
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -15,20 +19,24 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class Level {
+public class Level extends GameComponent {
     private final Set<GameObject> objs = new HashSet<>();
     private final Set<GameObject> objsToUpdate = new HashSet<>();
     private boolean refresh = true;
     private final int width;
     private final int height;
-    private final BufferedImage image;
-    private final Graphics2D graphics;
+    private BufferedImage image;
+    private BufferedImage level;
+    private Graphics2D graphics;
+    private Graphics2D levelGraphics;
     
     private Level(int width, int height) {
         this.width = width;
         this.height = height;
-        image = new BufferedImage(getWidth()*16*getScale(),getHeight()*16*getScale(),BufferedImage.TYPE_INT_ARGB);
+        image = new BufferedImage(Game.get().getScreenWidth(),Game.get().getScreenHeight(),BufferedImage.TYPE_INT_ARGB);
+        level = new BufferedImage(getWidth()*16*getScale(),getHeight()*16*getScale(),BufferedImage.TYPE_INT_ARGB);
         graphics = image.createGraphics();
+        levelGraphics = level.createGraphics();
     }
     
     public int getWidth() {
@@ -57,10 +65,16 @@ public class Level {
         return objs.stream().filter(Player.class::isInstance).map(Player.class::cast).findFirst().orElseThrow();
     }
     
+    @Override
     public void refresh() {
         refresh = true;
+        image = new BufferedImage(Game.get().getScreenWidth(),Game.get().getScreenHeight(),BufferedImage.TYPE_INT_ARGB);
+        level = new BufferedImage(getWidth()*16*getScale(),getHeight()*16*getScale(),BufferedImage.TYPE_INT_ARGB);
+        graphics = image.createGraphics();
+        levelGraphics = level.createGraphics();
     }
     
+    @Override
     public void update() {
         if (refresh) {
             objsToUpdate.addAll(objs);
@@ -74,6 +88,9 @@ public class Level {
         objs.stream().filter(Runnable.class::isInstance).forEach(it -> {
             if (!it.isDead()) ((Runnable) it).run();
         });
+        if (Keyboard.isKeyPressed(KeyEvent.VK_ESCAPE)) {
+            Game.get().pushSegment(new Menu(Menu.Type.LEVEL));
+        }
     }
     
     public int getScale() {
@@ -83,11 +100,13 @@ public class Level {
         return scale;
     }
     
-    public BufferedImage getImage() {
+    @Override
+    public BufferedImage render() {
         List<GameObject> list = new ArrayList<>(objsToUpdate);
         objsToUpdate.clear();
         list.sort(Comparator.comparingInt(it -> it.getTexture().getTexture().priority));
-        list.forEach(it -> it.paint(graphics));
+        list.forEach(it -> it.paint(levelGraphics));
+        graphics.drawImage(level, (image.getWidth() - level.getWidth())/2,(image.getHeight() - level.getHeight())/2, null);
         return image;
     }
     

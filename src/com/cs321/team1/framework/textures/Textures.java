@@ -5,13 +5,6 @@ import java.io.File;
 public enum Textures {
     NOTHING("src/resources/textures/nothing.png", -1),
     
-    //Room textures
-    BACKGROUND("src/resources/textures/map/background.png", -1),
-    DOOR_NORTH("src/resources/textures/map/door_north.png", 0),
-    DOOR_SOUTH("src/resources/textures/map/door_south.png", 0),
-    DOOR_EAST("src/resources/textures/map/door_east.png", 0),
-    DOOR_WEST("src/resources/textures/map/door_west.png", 0),
-    
     //Player textures
     PLAYER_UP("src/resources/textures/player/player_up.png", 3),
     PLAYER_DOWN("src/resources/textures/player/player_down.png", 3),

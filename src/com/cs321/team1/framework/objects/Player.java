@@ -33,7 +33,7 @@ public class Player extends GameObject implements Runnable {
     }
     
     private void handleCrates() {
-        if (grabbedCrate == null && Keyboard.isKeyPressed(KeyEvent.VK_SHIFT)) {
+        if (grabbedCrate == null && Keyboard.isKeyHeld(KeyEvent.VK_SHIFT)) {
             getTouching(Crate.class).stream().filter(it -> it.collidesWith(switch (dir) {
                 case NORTH -> getLocation().clone().centralize().move(0, -8);
                 case SOUTH -> getLocation().clone().centralize().move(0, 8);
@@ -50,7 +50,7 @@ public class Player extends GameObject implements Runnable {
                 crate.setTexture(Textures.CRATE_GRABBED);
             });
         }
-        if (grabbedCrate != null && (!Keyboard.isKeyPressed(KeyEvent.VK_SHIFT) || grabbedCrate.isDead())) {
+        if (grabbedCrate != null && (!Keyboard.isKeyHeld(KeyEvent.VK_SHIFT) || grabbedCrate.isDead())) {
             grabbedCrate = null;
             getRoom().getObjects()
                     .stream()
@@ -61,10 +61,10 @@ public class Player extends GameObject implements Runnable {
     
     private void calculateMovement() {
         int x = 0, y = 0;
-        if (Keyboard.isKeyPressed(KeyEvent.VK_W)) y -= 1;
-        if (Keyboard.isKeyPressed(KeyEvent.VK_S)) y += 1;
-        if (Keyboard.isKeyPressed(KeyEvent.VK_A)) x -= 1;
-        if (Keyboard.isKeyPressed(KeyEvent.VK_D)) x += 1;
+        if (Keyboard.isKeyHeld(KeyEvent.VK_W)) y -= 1;
+        if (Keyboard.isKeyHeld(KeyEvent.VK_S)) y += 1;
+        if (Keyboard.isKeyHeld(KeyEvent.VK_A)) x -= 1;
+        if (Keyboard.isKeyHeld(KeyEvent.VK_D)) x += 1;
         if (grabbedCrate == null) {
             if (y < 0) {
                 dir = Direction.NORTH;
