@@ -3,6 +3,7 @@ package com.cs321.team1.framework.menu;
 import com.cs321.team1.framework.Game;
 import com.cs321.team1.framework.Resolutions;
 import com.cs321.team1.framework.map.Level;
+import com.cs321.team1.framework.sounds.Music;
 import com.cs321.team1.framework.sounds.Sounds;
 
 import java.util.Arrays;
@@ -15,7 +16,10 @@ public class OptionsMenu extends Menu {
     
     public OptionsMenu(Level level) {
         super(level);
-        buttons.add(new MenuButton("Music Volume", () -> {
+        buttons.add(new MenuButton("Music Volume: " + Music.volume + "%", () -> {
+            Music.volume += 10;
+            Music.volume %= 110;
+            buttons.get(0).setText("Music Volume: " + Music.volume + "%");
         }));
         buttons.add(new MenuButton("Sound Volume: " + Sounds.volume + "%", () -> {
             Sounds.volume += 10;
