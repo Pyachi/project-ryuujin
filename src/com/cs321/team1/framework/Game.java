@@ -9,7 +9,6 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Frame;
 import java.awt.Graphics;
-import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,7 +49,8 @@ public class Game extends JPanel implements Runnable {
     private static Game i;
     private final JFrame window;
     private final Font font;
-    private Resolutions resolution = Resolutions._640x480;
+    private Dimension windowedSize = Resolutions._640x480.size;
+    private Dimension fullscreenSize;
     private boolean fullscreen = false;
     
     public static Game get() {
@@ -83,12 +83,13 @@ public class Game extends JPanel implements Runnable {
     }
     
     public Dimension getScreenSize() {
-        if (fullscreen) return Toolkit.getDefaultToolkit().getScreenSize();
-        else return resolution.size;
+        if (fullscreen) return fullscreenSize;
+        else return windowedSize;
     }
     
-    public void setScreenSize(Resolutions resolution) {
-        this.resolution = resolution;
+    public void setScreenSize(Dimension size) {
+        if (!fullscreen) windowedSize = size;
+        else fullscreenSize = size;
         updateScreen();
     }
     
@@ -99,14 +100,22 @@ public class Game extends JPanel implements Runnable {
             window.setExtendedState(JFrame.MAXIMIZED_BOTH);
             window.setUndecorated(true);
             window.setVisible(true);
+            setScreenSize(new Dimension(
+                    window.getGraphicsConfiguration().getDevice().getDisplayMode().getWidth(),
+                    window.getGraphicsConfiguration().getDevice().getDisplayMode().getHeight()
+            ));
         } else {
             fullscreen = false;
             window.dispose();
             window.setExtendedState(Frame.NORMAL);
             window.setUndecorated(false);
             window.setVisible(true);
+            setScreenSize(windowedSize);
         }
-        updateScreen();
+    }
+    
+    public boolean isFullscreen() {
+        return fullscreen;
     }
     
     public void updateScreen() {

@@ -9,10 +9,7 @@ import com.cs321.team1.framework.sounds.Sounds;
 import java.util.Arrays;
 
 public class OptionsMenu extends Menu {
-    private int chosenResolution = Arrays.stream(Resolutions.values())
-            .filter(it -> it.size.equals(Game.get().getScreenSize()))
-            .findAny()
-            .orElseThrow().index;
+    private int chosenResolution;
     
     public OptionsMenu(Level level) {
         super(level);
@@ -27,8 +24,7 @@ public class OptionsMenu extends Menu {
             Sounds.SELECT.play();
             buttons.get(1).setText("Sound Volume: " + Sounds.volume + "%");
         }));
-        buttons.add(new MenuButton(
-                "Resolution: " + Game.get().getScreenSize().width + "x" + Game.get().getScreenSize().height, () -> {
+        buttons.add(new MenuButton("Resolution: ", () -> {
             chosenResolution++;
             chosenResolution %= Resolutions.values().length;
             buttons.get(2)
@@ -37,18 +33,27 @@ public class OptionsMenu extends Menu {
         }));
         buttons.add(new MenuButton("Toggle Fullscreen", () -> {
             Game.get().toggleFullscreen();
-            buttons.get(2)
-                    .setText("Resolution: " + Game.get().getScreenSize().width + "x" +
-                            Game.get().getScreenSize().height);
+            resetChosenResolution();
         }));
         buttons.add(new MenuButton("Back", () -> {
             Game.get().popSegment();
             Sounds.DESELECT.play();
         }));
+        resetChosenResolution();
+    }
+    
+    private void resetChosenResolution() {
+        chosenResolution = Arrays.stream(Resolutions.values())
+                .filter(it -> it.size.equals(Game.get().getScreenSize()))
+                .findAny()
+                .orElse(Resolutions._640x480).index;
+        buttons.get(2)
+                .setText("Resolution: " + Resolutions.values()[chosenResolution].size.width + "x" +
+                        Resolutions.values()[chosenResolution].size.height);
     }
     
     @Override
     public void onClose() {
-        Game.get().setScreenSize(Resolutions.values()[chosenResolution]);
+        if (!Game.get().isFullscreen()) Game.get().setScreenSize(Resolutions.values()[chosenResolution].size);
     }
 }
