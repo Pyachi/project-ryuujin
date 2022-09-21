@@ -2,7 +2,7 @@ package com.cs321.team1.framework.map;
 
 import com.cs321.team1.framework.Game;
 import com.cs321.team1.framework.GameComponent;
-import com.cs321.team1.framework.menu.Menu;
+import com.cs321.team1.framework.menu.LevelMenu;
 import com.cs321.team1.framework.objects.GameObject;
 import com.cs321.team1.framework.objects.Player;
 import com.cs321.team1.framework.objects.tiles.PassableTile;
@@ -10,6 +10,7 @@ import com.cs321.team1.framework.objects.tiles.UnpassableTile;
 import com.cs321.team1.framework.textures.Textures;
 import com.cs321.team1.util.Keyboard;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -33,8 +34,12 @@ public class Level extends GameComponent {
     private Level(int width, int height) {
         this.width = width;
         this.height = height;
-        image = new BufferedImage(Game.get().getScreenWidth(),Game.get().getScreenHeight(),BufferedImage.TYPE_INT_ARGB);
-        level = new BufferedImage(getWidth()*16*getScale(),getHeight()*16*getScale(),BufferedImage.TYPE_INT_ARGB);
+        Dimension screenSize = Game.get().getScreenSize();
+        image = new BufferedImage(screenSize.width, screenSize.height, BufferedImage.TYPE_INT_ARGB);
+        level = new BufferedImage(getWidth() * 16 * getScale(),
+                getHeight() * 16 * getScale(),
+                BufferedImage.TYPE_INT_ARGB
+        );
         graphics = image.createGraphics();
         levelGraphics = level.createGraphics();
     }
@@ -68,45 +73,55 @@ public class Level extends GameComponent {
     @Override
     public void refresh() {
         refresh = true;
-        image = new BufferedImage(Game.get().getScreenWidth(),Game.get().getScreenHeight(),BufferedImage.TYPE_INT_ARGB);
-        level = new BufferedImage(getWidth()*16*getScale(),getHeight()*16*getScale(),BufferedImage.TYPE_INT_ARGB);
+        Dimension screenSize = Game.get().getScreenSize();
+        image = new BufferedImage(screenSize.width, screenSize.height, BufferedImage.TYPE_INT_ARGB);
+        level = new BufferedImage(getWidth() * 16 * getScale(),
+                getHeight() * 16 * getScale(),
+                BufferedImage.TYPE_INT_ARGB
+        );
         graphics = image.createGraphics();
         levelGraphics = level.createGraphics();
     }
     
     @Override
     public void update() {
-        if (refresh) {
-            objsToUpdate.addAll(objs);
-            objs.forEach(it -> it.getTexture().reset());
-        } else {
-            objs.stream().filter(Runnable.class::isInstance).forEach(it -> {
-                objsToUpdate.add(it);
-                objsToUpdate.addAll(it.getCollisions());
-            });
-        }
+        objs.stream().filter(Runnable.class::isInstance).forEach(it -> {
+            objsToUpdate.add(it);
+            objsToUpdate.addAll(it.getCollisions());
+        });
         objs.stream().filter(Runnable.class::isInstance).forEach(it -> {
             if (!it.isDead()) ((Runnable) it).run();
         });
         if (Keyboard.isKeyPressed(KeyEvent.VK_ESCAPE)) {
-            Game.get().pushSegment(new Menu(Menu.Type.LEVEL));
+            Game.get().pushSegment(new LevelMenu(this));
         }
+    }
+    
+    @Override
+    public void onClose() {
     }
     
     public int getScale() {
         int scale = 10;
-        while (scale * 16 * width > Game.get().getScreenWidth() || scale * 16 * height > Game.get().getScreenHeight())
-            scale--;
+        Dimension screenSize = Game.get().getScreenSize();
+        while (scale * 16 * width > screenSize.width ||
+                scale * 16 * height > screenSize.height) scale--;
         return scale;
     }
     
     @Override
     public BufferedImage render() {
-        List<GameObject> list = new ArrayList<>(objsToUpdate);
+        List<GameObject> list = new ArrayList<>();
+        if (refresh) list.addAll(objs);
+        else list.addAll(objsToUpdate);
         objsToUpdate.clear();
         list.sort(Comparator.comparingInt(it -> it.getTexture().getTexture().priority));
         list.forEach(it -> it.paint(levelGraphics));
-        graphics.drawImage(level, (image.getWidth() - level.getWidth())/2,(image.getHeight() - level.getHeight())/2, null);
+        graphics.drawImage(level,
+                (image.getWidth() - level.getWidth()) / 2,
+                (image.getHeight() - level.getHeight()) / 2,
+                null
+        );
         return image;
     }
     

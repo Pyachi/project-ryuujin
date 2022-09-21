@@ -1,7 +1,7 @@
 package com.cs321.team1.framework.menu;
 
 public class MenuButton {
-    private final String text;
+    private String text;
     private final Runnable run;
     
     public MenuButton(String text, Runnable run) {
@@ -11,6 +11,10 @@ public class MenuButton {
     
     public String getText() {
         return text;
+    }
+    
+    public void setText(String text) {
+        this.text = text;
     }
     
     public void run() {

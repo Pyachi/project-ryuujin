@@ -6,4 +6,5 @@ public abstract class GameComponent {
     public abstract void update();
     public abstract BufferedImage render();
     public abstract void refresh();
+    public abstract void onClose();
 }

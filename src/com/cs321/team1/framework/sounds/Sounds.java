@@ -10,12 +10,14 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 public enum Sounds {
+    SELECT("src/resources/sounds/select.wav"),
+    DESELECT("src/resources/sounds/deselect.wav"),
+    ERROR("src/resources/sounds/error.wav"),
     PICKUP("src/resources/sounds/pickup.wav"),
-    DROP("src/resources/sounds/drop.wav"),
     MERGE("src/resources/sounds/merge.wav");
     
     private final File path;
-    public static float volume = 0.5f;
+    public static int volume = 50;
     
     Sounds(String path) {
         this.path = new File(path).getAbsoluteFile();
@@ -25,7 +27,8 @@ public enum Sounds {
         try {
             Clip clip = AudioSystem.getClip();
             clip.open(AudioSystem.getAudioInputStream(path));
-            ((FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN)).setValue((float) (20 * Math.log10(volume)));
+            ((FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN)).setValue((float) (20 *
+                    Math.log10(volume / 100.0)));
             clip.start();
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ignored) {
         }

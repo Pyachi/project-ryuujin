@@ -42,16 +42,16 @@ public class Game extends JPanel implements Runnable {
     }
     
     public void popSegment() {
-        segments.remove(0);
+        segments.remove(0).onClose();
     }
     //******************************************************************************************************************
     //Framework
     
     private static Game i;
-    private JFrame window;
-    private int screenWidth = 1280;
-    private int screenHeight = 720;
+    private final JFrame window;
     private final Font font;
+    private Resolutions resolution = Resolutions._640x480;
+    private boolean fullscreen = false;
     
     public static Game get() {
         if (i == null) i = new Game();
@@ -64,8 +64,9 @@ public class Game extends JPanel implements Runnable {
         window.setResizable(false);
         window.setTitle("Project 龍神");
         window.add(this);
+        window.setLocationRelativeTo(null);
+        window.setVisible(true);
         Keyboard.init(window);
-        setPreferredSize(new Dimension(screenWidth, screenHeight));
         setBackground(Color.BLACK);
         setDoubleBuffered(true);
         try {
@@ -73,44 +74,43 @@ public class Game extends JPanel implements Runnable {
         } catch (FontFormatException | IOException e) {
             throw new RuntimeException(e);
         }
-        window.pack();
-        window.setLocationRelativeTo(null);
-        window.setVisible(true);
+        updateScreen();
         new Thread(this).start();
-    }
-    
-    public int getScreenWidth() {
-        return screenWidth;
-    }
-    
-    public int getScreenHeight() {
-        return screenHeight;
     }
     
     public Font getFont() {
         return font;
     }
     
-    public void setFullscreen(boolean flag) {
-        if (flag) {
+    public Dimension getScreenSize() {
+        if (fullscreen) return Toolkit.getDefaultToolkit().getScreenSize();
+        else return resolution.size;
+    }
+    
+    public void setScreenSize(Resolutions resolution) {
+        this.resolution = resolution;
+        updateScreen();
+    }
+    
+    public void toggleFullscreen() {
+        if (!fullscreen) {
+            fullscreen = true;
             window.dispose();
             window.setExtendedState(JFrame.MAXIMIZED_BOTH);
             window.setUndecorated(true);
             window.setVisible(true);
-            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            setScreenSize((int) screenSize.getWidth(), (int) screenSize.getHeight());
         } else {
+            fullscreen = false;
             window.dispose();
             window.setExtendedState(Frame.NORMAL);
             window.setUndecorated(false);
             window.setVisible(true);
         }
+        updateScreen();
     }
     
-    public void setScreenSize(int width, int height) {
-        screenWidth = width;
-        screenHeight = height;
-        setPreferredSize(new Dimension(screenWidth, screenHeight));
+    public void updateScreen() {
+        setPreferredSize(getScreenSize());
         window.pack();
         segments.forEach(GameComponent::refresh);
     }
