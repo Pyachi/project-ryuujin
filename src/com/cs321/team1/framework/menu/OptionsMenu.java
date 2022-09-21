@@ -25,6 +25,7 @@ public class OptionsMenu extends Menu {
             buttons.get(1).setText("Sound Volume: " + Sounds.volume + "%");
         }));
         buttons.add(new MenuButton("Resolution: ", () -> {
+            if (Game.get().isFullscreen()) return;
             chosenResolution++;
             chosenResolution %= Resolutions.values().length;
             buttons.get(2)
