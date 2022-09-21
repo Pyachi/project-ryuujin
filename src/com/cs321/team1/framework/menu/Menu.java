@@ -43,7 +43,7 @@ public abstract class Menu extends GameComponent {
         BufferedImage image = new BufferedImage(screenSize.width, screenSize.height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = image.createGraphics();
         graphics.drawImage(level.render(), 0, 0, screenSize.width, screenSize.height, null);
-        graphics.setColor(new Color(0.2f, 0.2f, 0.2f, 0.5f));
+        graphics.setColor(new Color(0f, 0f, 0f, 0.8f));
         graphics.fillRect(0, 0, screenSize.width, screenSize.height);
         graphics.setColor(Color.WHITE);
         float textHeight = screenSize.height / 20f;
@@ -53,7 +53,7 @@ public abstract class Menu extends GameComponent {
         for (MenuButton button : buttons) {
             int textWidth = graphics.getFontMetrics(font).stringWidth(button.getText());
             if (button == buttons.get(selected)) {
-                graphics.setColor(new Color(0.8f, 0.8f, 0.8f, 0.8f));
+                graphics.setColor(new Color(0.5f, 0.5f, 0.5f, 0.8f));
                 graphics.fillRect(
                         (screenSize.width - textWidth) / 2 - 10,
                         (int) (y - textHeight) - 10,
