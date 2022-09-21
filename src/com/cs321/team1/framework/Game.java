@@ -1,6 +1,7 @@
 package com.cs321.team1.framework;
 
 import com.cs321.team1.framework.map.Level;
+import com.cs321.team1.framework.menu.MainMenu;
 import com.cs321.team1.util.Keyboard;
 
 import java.awt.Color;
@@ -25,7 +26,7 @@ public class Game extends JPanel implements Runnable {
     private final List<GameComponent> segments = new ArrayList<>();
     
     private void start() {
-        segments.add(Level.emptyLevel(13, 7));
+        pushSegment(new MainMenu());
     }
     
     private void update() {
@@ -74,6 +75,7 @@ public class Game extends JPanel implements Runnable {
         } catch (FontFormatException | IOException e) {
             throw new RuntimeException(e);
         }
+        toggleFullscreen();
         updateScreen();
         new Thread(this).start();
     }

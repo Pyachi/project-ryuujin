@@ -19,7 +19,8 @@ public class LevelMenu extends Menu {
             Sounds.ERROR.play();
         }));
         buttons.add(new MenuButton("Quit to Menu", () -> {
-            Sounds.ERROR.play();
+            Game.get().popSegment();
+            Game.get().popSegment();
         }));
         buttons.add(new MenuButton("Quit to Desktop", () -> {
             System.exit(0);

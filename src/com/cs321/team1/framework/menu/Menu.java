@@ -31,7 +31,7 @@ public abstract class Menu extends GameComponent {
         if (selected < 0) selected = buttons.size() - 1;
         else if (selected >= buttons.size()) selected = 0;
         if (Keyboard.isKeyPressed(KeyEvent.VK_SPACE)) buttons.get(selected).run();
-        else if (Keyboard.isKeyPressed(KeyEvent.VK_ESCAPE)) {
+        else if (Keyboard.isKeyPressed(KeyEvent.VK_ESCAPE) && getIndex() != Game.get().getSegments().size() - 1) {
             Game.get().popSegment();
             Sounds.DESELECT.play();
         }
@@ -42,7 +42,7 @@ public abstract class Menu extends GameComponent {
         Dimension screenSize = Game.get().getScreenSize();
         BufferedImage image = new BufferedImage(screenSize.width, screenSize.height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = image.createGraphics();
-        graphics.drawImage(level.render(), 0, 0, screenSize.width, screenSize.height, null);
+        if (level != null) graphics.drawImage(level.render(), 0, 0, screenSize.width, screenSize.height, null);
         graphics.setColor(new Color(0f, 0f, 0f, 0.8f));
         graphics.fillRect(0, 0, screenSize.width, screenSize.height);
         graphics.setColor(Color.WHITE);

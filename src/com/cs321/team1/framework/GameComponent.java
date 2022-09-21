@@ -7,4 +7,8 @@ public abstract class GameComponent {
     public abstract BufferedImage render();
     public abstract void refresh();
     public abstract void onClose();
+    
+    public int getIndex() {
+        return Game.get().getSegments().indexOf(this);
+    }
 }
