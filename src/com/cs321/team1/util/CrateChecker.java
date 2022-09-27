@@ -27,8 +27,8 @@ public class CrateChecker {
     private static int reached;
     
     public static void main(String[] args) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        List<Crate> crates = new ArrayList<>();
-        Scanner scanner = new Scanner(System.in);
+        var crates = new ArrayList<Crate>();
+        var scanner = new Scanner(System.in);
         while (true) {
             System.out.println("Current List:");
             crates.forEach(it -> System.out.println(it.getClass().getSimpleName() + ":" + it.getValue()));
@@ -46,15 +46,15 @@ public class CrateChecker {
                         case 5 -> crates.add(new DivideCrate(null, null, input2));
                         case 4 -> crates.add(new MultiplyCrate(null, null, input2));
                         case 7 -> {
-                            BigDecimal total = new BigDecimal(1);
+                            var total = new BigDecimal(1);
                             for (int i = 3; i <= input2; i++) {
-                                BigDecimal total2 = new BigDecimal(0);
+                                var total2 = new BigDecimal(0);
                                 for (int j = 1; j < i; j++) {
                                     total2 = total2.add(new BigDecimal(j));
                                 }
                                 total = total.multiply(total2);
                             }
-                            DecimalFormat format = new DecimalFormat("0E0");
+                            var format = new DecimalFormat("0E0");
                             format.setParseBigDecimal(true);
                             System.out.println("Complexity: " + format.format(total));
                             return;
@@ -66,9 +66,9 @@ public class CrateChecker {
             }
             for (int i = 0; i < 100; i++) System.out.println();
         }
-        List<Integer> list = scanCrates(crates);
-        Set<Integer> set = new HashSet<>(list);
-        Map<Integer, Integer> map = new TreeMap<>();
+        var list = scanCrates(crates);
+        var set = new HashSet<>(list);
+        var map = new TreeMap<Integer, Integer>();
         set.forEach(i -> map.put(i, (int) list.stream().filter(it -> Objects.equals(it, i)).count()));
         System.out.println();
         map.forEach((i, count) -> {
@@ -97,13 +97,13 @@ public class CrateChecker {
                 reached = list.size();
                 System.out.print(".");
             }
-            List<Integer> results = new ArrayList<>();
+            var results = new ArrayList<Integer>();
             for (int i = 0; i < list.size() - 1; i++) {
                 for (int j = i + 1; j < list.size(); j++) {
-                    Crate crate1 = list.get(i);
-                    Crate crate2 = list.get(j);
+                    var crate1 = list.get(i);
+                    var crate2 = list.get(j);
                     if (crate1.canInteractWith(crate2)) {
-                        List<Crate> newList = new ArrayList<>(list);
+                        var newList = new ArrayList<>(list);
                         newList.remove(crate1);
                         newList.remove(crate2);
                         newList.add(crate2.getClass()
@@ -111,7 +111,7 @@ public class CrateChecker {
                                 .newInstance(null, null, crate1.getMergedValue(crate2)));
                         results.addAll(scanCrates(newList));
                     } else if (crate2.canInteractWith(crate1)) {
-                        List<Crate> newList = new ArrayList<>(list);
+                        var newList = new ArrayList<>(list);
                         newList.remove(crate1);
                         newList.remove(crate2);
                         newList.add(crate1.getClass()

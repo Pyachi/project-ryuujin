@@ -41,7 +41,7 @@ public abstract class Crate extends GameObject implements Runnable {
     
     private void generateNew(Crate crate) {
         if (isDead()) return;
-        Location location = getLocation().clone();
+        var location = getLocation().clone();
         if (getRoom().getPlayer().getGrabbedCrate() == this) location = crate.getLocation().clone();
         try {
             crate.getClass()

@@ -34,7 +34,7 @@ public class Level extends GameComponent {
     private Level(int width, int height) {
         this.width = width;
         this.height = height;
-        Dimension screenSize = Game.get().getScreenSize();
+        var screenSize = Game.get().getScreenSize();
         image = new BufferedImage(screenSize.width, screenSize.height, BufferedImage.TYPE_INT_ARGB);
         level = new BufferedImage(getWidth() * 16 * getScale(),
                 getHeight() * 16 * getScale(),
@@ -73,7 +73,7 @@ public class Level extends GameComponent {
     @Override
     public void refresh() {
         refresh = true;
-        Dimension screenSize = Game.get().getScreenSize();
+        var screenSize = Game.get().getScreenSize();
         image = new BufferedImage(screenSize.width, screenSize.height, BufferedImage.TYPE_INT_ARGB);
         level = new BufferedImage(getWidth() * 16 * getScale(),
                 getHeight() * 16 * getScale(),
@@ -103,14 +103,14 @@ public class Level extends GameComponent {
     
     public int getScale() {
         int scale = 10;
-        Dimension screenSize = Game.get().getScreenSize();
+        var screenSize = Game.get().getScreenSize();
         while (scale * 16 * width > screenSize.width || scale * 16 * height > screenSize.height) scale--;
         return scale;
     }
     
     @Override
     public void render(Graphics2D g) {
-        List<GameObject> list = new ArrayList<>();
+        var list = new ArrayList<GameObject>();
         if (refresh) list.addAll(objs);
         else list.addAll(objsToUpdate);
         objsToUpdate.clear();
@@ -125,7 +125,7 @@ public class Level extends GameComponent {
     }
     
     public static Level emptyLevel(int width, int height) {
-        Level level = new Level(width, height);
+        var level = new Level(width, height);
         for (int i = 0; i <= width + 1; i++) {
             new UnpassableTile(level, i, 0, Textures.NOTHING);
             new UnpassableTile(level, i, height + 1, Textures.NOTHING);

@@ -25,7 +25,7 @@ public enum Sounds {
     
     public void play() {
         try {
-            Clip clip = AudioSystem.getClip();
+            var clip = AudioSystem.getClip();
             clip.open(AudioSystem.getAudioInputStream(path));
             ((FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN)).setValue((float) (20 *
                     Math.log10(volume / 100.0)));
