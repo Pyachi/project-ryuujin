@@ -28,7 +28,7 @@ public class Level extends GameComponent {
     private Graphics2D graphics;
     private Graphics2D levelGraphics;
     
-    private Level(int width, int height) {
+    public Level(int width, int height) {
         this.width = width;
         this.height = height;
         var screenSize = Game.get().getScreenSize();
@@ -121,19 +121,20 @@ public class Level extends GameComponent {
         g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
     }
     
+    //TODO handle actual level generation
     public static Level emptyLevel(int width, int height) {
         var level = new Level(width, height);
         for (int i = 0; i <= width + 1; i++) {
-            new UnpassableTile(level, i, 0, Textures.NOTHING);
-            new UnpassableTile(level, i, height + 1, Textures.NOTHING);
+            new UnpassableTile(level, Location.atTile(i, 0), Textures.NOTHING);
+            new UnpassableTile(level, Location.atTile(i, height + 1), Textures.NOTHING);
         }
         for (int j = 1; j <= height; j++) {
-            new UnpassableTile(level, 0, j, Textures.NOTHING);
-            new UnpassableTile(level, width + 1, j, Textures.NOTHING);
+            new UnpassableTile(level, Location.atTile(0, j), Textures.NOTHING);
+            new UnpassableTile(level, Location.atTile(width + 1, j), Textures.NOTHING);
         }
         for (int i = 1; i <= width; i++)
             for (int j = 1; j <= height; j++)
-                new PassableTile(level, i, j, Textures.FLOOR_TILE);
+                new PassableTile(level, Location.atTile(i, j), Textures.FLOOR);
         new Player(level, Location.atTile(width / 2, height / 2));
         return level;
     }

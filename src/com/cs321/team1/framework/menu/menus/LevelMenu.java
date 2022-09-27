@@ -15,10 +15,11 @@ public class LevelMenu extends Menu {
         this.level = level;
         elements.add(new MenuButton("Resume", () -> Game.get().popSegment()));
         elements.add(new MenuButton("Options", () -> Game.get().pushSegment(new OptionsMenu(level))));
-        elements.add(new MenuButton("Return to Map", () -> Sounds.ERROR.play()));
+        if (Game.get().getSegments().size() > 2) elements.add(new MenuButton("Return to Map", () -> {
+            while (Game.get().getSegments().size() > 2) Game.get().popSegment();
+        }));
         elements.add(new MenuButton("Quit to Menu", () -> {
-            Game.get().popSegment();
-            Game.get().popSegment();
+            while (Game.get().getSegments().size() > 1) Game.get().popSegment();
         }));
         elements.add(new MenuButton("Quit to Desktop", () -> System.exit(0)));
     }
