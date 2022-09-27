@@ -2,7 +2,7 @@ package com.cs321.team1.framework.map;
 
 import com.cs321.team1.framework.Game;
 import com.cs321.team1.framework.GameComponent;
-import com.cs321.team1.framework.menu.LevelMenu;
+import com.cs321.team1.framework.menu.menus.LevelMenu;
 import com.cs321.team1.framework.objects.GameObject;
 import com.cs321.team1.framework.objects.Player;
 import com.cs321.team1.framework.objects.tiles.PassableTile;
@@ -104,13 +104,12 @@ public class Level extends GameComponent {
     public int getScale() {
         int scale = 10;
         Dimension screenSize = Game.get().getScreenSize();
-        while (scale * 16 * width > screenSize.width ||
-                scale * 16 * height > screenSize.height) scale--;
+        while (scale * 16 * width > screenSize.width || scale * 16 * height > screenSize.height) scale--;
         return scale;
     }
     
     @Override
-    public BufferedImage render() {
+    public void render(Graphics2D g) {
         List<GameObject> list = new ArrayList<>();
         if (refresh) list.addAll(objs);
         else list.addAll(objsToUpdate);
@@ -122,7 +121,7 @@ public class Level extends GameComponent {
                 (image.getHeight() - level.getHeight()) / 2,
                 null
         );
-        return image;
+        g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
     }
     
     public static Level emptyLevel(int width, int height) {

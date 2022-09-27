@@ -17,7 +17,7 @@ public enum Sounds {
     MERGE("src/resources/sounds/merge.wav");
     
     private final File path;
-    public static int volume = 50;
+    private static int volume = 50;
     
     Sounds(String path) {
         this.path = new File(path).getAbsoluteFile();
@@ -32,5 +32,13 @@ public enum Sounds {
             clip.start();
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ignored) {
         }
+    }
+    
+    public static int getVolume() {
+        return volume;
+    }
+    
+    public static void setVolume(int vol) {
+        volume = vol;
     }
 }

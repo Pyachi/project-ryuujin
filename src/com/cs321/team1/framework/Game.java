@@ -1,7 +1,6 @@
 package com.cs321.team1.framework;
 
-import com.cs321.team1.framework.map.Level;
-import com.cs321.team1.framework.menu.MainMenu;
+import com.cs321.team1.framework.menu.menus.MainMenu;
 import com.cs321.team1.util.Keyboard;
 
 import java.awt.Color;
@@ -10,6 +9,7 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Frame;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class Game extends JPanel implements Runnable {
     private static Game i;
     private final JFrame window;
     private final Font font;
-    private Dimension windowedSize = Resolutions._640x480.size;
+    private Dimension windowedSize = new Dimension(640, 480);
     private Dimension fullscreenSize;
     private boolean fullscreen = false;
     
@@ -129,7 +129,7 @@ public class Game extends JPanel implements Runnable {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (!segments.isEmpty()) g.drawImage(segments.get(0).render(), 0, 0, null);
+        if (!segments.isEmpty()) segments.get(0).render(((Graphics2D) g));
     }
     
     @SuppressWarnings({"InfiniteLoopStatement", "BusyWait"})
