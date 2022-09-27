@@ -10,14 +10,12 @@ import com.cs321.team1.framework.objects.tiles.UnpassableTile;
 import com.cs321.team1.framework.textures.Textures;
 import com.cs321.team1.util.Keyboard;
 
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class Level extends GameComponent {
