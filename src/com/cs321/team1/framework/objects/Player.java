@@ -1,8 +1,7 @@
 package com.cs321.team1.framework.objects;
 
-import com.cs321.team1.framework.Game;
-import com.cs321.team1.framework.map.Location;
 import com.cs321.team1.framework.map.Level;
+import com.cs321.team1.framework.map.Location;
 import com.cs321.team1.framework.objects.crates.Crate;
 import com.cs321.team1.framework.objects.tiles.UnpassableTile;
 import com.cs321.team1.framework.sounds.Sounds;

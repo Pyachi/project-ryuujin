@@ -1,7 +1,7 @@
 package com.cs321.team1.util;
 
-import com.cs321.team1.framework.map.Location;
 import com.cs321.team1.framework.map.Level;
+import com.cs321.team1.framework.map.Location;
 import com.cs321.team1.framework.objects.crates.Crate;
 import com.cs321.team1.framework.objects.crates.DivideCrate;
 import com.cs321.team1.framework.objects.crates.IntegerCrate;

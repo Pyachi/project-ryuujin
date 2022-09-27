@@ -1,7 +1,7 @@
 package com.cs321.team1.framework.objects.crates;
 
-import com.cs321.team1.framework.map.Location;
 import com.cs321.team1.framework.map.Level;
+import com.cs321.team1.framework.map.Location;
 
 public class IntegerCrate extends Crate {
     public IntegerCrate(Level level, Location loc, int value) {

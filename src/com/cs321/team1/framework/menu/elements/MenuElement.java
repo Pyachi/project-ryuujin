@@ -1,7 +1,6 @@
 package com.cs321.team1.framework.menu.elements;
 
 import java.awt.Font;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 public abstract class MenuElement {

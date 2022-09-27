@@ -2,15 +2,11 @@ package com.cs321.team1.framework.menu;
 
 import com.cs321.team1.framework.Game;
 import com.cs321.team1.framework.GameComponent;
-import com.cs321.team1.framework.map.Level;
-import com.cs321.team1.framework.menu.elements.MenuButton;
 import com.cs321.team1.framework.menu.elements.MenuElement;
 import com.cs321.team1.framework.sounds.Sounds;
 import com.cs321.team1.util.Keyboard;
 
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;

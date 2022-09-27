@@ -1,7 +1,7 @@
 package com.cs321.team1.framework.objects;
 
-import com.cs321.team1.framework.map.Location;
 import com.cs321.team1.framework.map.Level;
+import com.cs321.team1.framework.map.Location;
 import com.cs321.team1.framework.textures.Texture;
 import com.cs321.team1.framework.textures.Textures;
 

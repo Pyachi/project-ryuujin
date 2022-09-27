@@ -1,7 +1,5 @@
 package com.cs321.team1.framework.map;
 
-import com.cs321.team1.framework.Game;
-
 public class Location {
     private int x;
     private int y;
