@@ -1,5 +1,6 @@
 package com.cs321.team1.framework.map;
 
+import com.cs321.team1.framework.Controls;
 import com.cs321.team1.framework.Game;
 import com.cs321.team1.framework.GameComponent;
 import com.cs321.team1.framework.menu.menus.LevelMenu;
@@ -8,10 +9,8 @@ import com.cs321.team1.framework.objects.Player;
 import com.cs321.team1.framework.objects.tiles.PassableTile;
 import com.cs321.team1.framework.objects.tiles.UnpassableTile;
 import com.cs321.team1.framework.textures.Textures;
-import com.cs321.team1.util.Keyboard;
 
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -90,7 +89,7 @@ public class Level extends GameComponent {
         objs.stream().filter(Runnable.class::isInstance).forEach(it -> {
             if (!it.isDead()) ((Runnable) it).run();
         });
-        if (Keyboard.isKeyPressed(KeyEvent.VK_ESCAPE)) {
+        if (Controls.BACK.isPressed()) {
             Game.get().pushSegment(new LevelMenu(this));
         }
     }

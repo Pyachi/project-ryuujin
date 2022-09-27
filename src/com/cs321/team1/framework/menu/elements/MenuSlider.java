@@ -1,5 +1,6 @@
 package com.cs321.team1.framework.menu.elements;
 
+import com.cs321.team1.framework.Controls;
 import com.cs321.team1.util.Keyboard;
 
 import java.awt.Color;
@@ -22,10 +23,10 @@ public class MenuSlider extends MenuElement {
     
     @Override
     public void update() {
-        if (Keyboard.isKeyPressed(KeyEvent.VK_A)) {
+        if (Controls.LEFT.isPressed()) {
             selected = Math.floorMod(selected - 1, max + 1);
             run.accept(selected);
-        } else if (Keyboard.isKeyPressed(KeyEvent.VK_D)) {
+        } else if (Controls.RIGHT.isPressed()) {
             selected = (selected + 1) % (max + 1);
             run.accept(selected);
         }

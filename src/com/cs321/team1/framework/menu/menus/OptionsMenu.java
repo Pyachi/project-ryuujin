@@ -14,6 +14,7 @@ public class OptionsMenu extends Menu {
         this.level = level;
         elements.add(new MenuButton("Sound Settings", () -> Game.get().pushSegment(new VolumeMenu(level))));
         elements.add(new MenuButton("Video Settings", () -> Game.get().pushSegment(new VideoMenu(level))));
+        elements.add(new MenuButton("Controls", () -> Game.get().pushSegment(new ControlsMenu(level))));
         elements.add(new MenuButton("Back", () -> Game.get().popSegment()));
     }
     

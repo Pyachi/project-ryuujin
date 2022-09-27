@@ -31,6 +31,10 @@ public class Keyboard {
         });
     }
     
+    public static Set<Integer> getPressedKeys() {
+        return pressedKeys;
+    }
+    
     public static boolean isKeyPressed(int key) {
         return pressedKeys.remove(key);
     }

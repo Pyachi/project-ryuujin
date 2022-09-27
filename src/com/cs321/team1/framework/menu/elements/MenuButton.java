@@ -1,5 +1,6 @@
 package com.cs321.team1.framework.menu.elements;
 
+import com.cs321.team1.framework.Controls;
 import com.cs321.team1.util.Keyboard;
 
 import java.awt.Color;
@@ -17,7 +18,7 @@ public class MenuButton extends MenuElement {
     
     @Override
     public void update() {
-        if (Keyboard.isKeyPressed(KeyEvent.VK_SPACE)) run.run();
+        if (Controls.SELECT.isPressed()) run.run();
     }
     
     @Override

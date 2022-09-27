@@ -1,14 +1,13 @@
 package com.cs321.team1.framework.menu;
 
+import com.cs321.team1.framework.Controls;
 import com.cs321.team1.framework.Game;
 import com.cs321.team1.framework.GameComponent;
 import com.cs321.team1.framework.menu.elements.MenuElement;
 import com.cs321.team1.framework.sounds.Sounds;
-import com.cs321.team1.util.Keyboard;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,12 +18,12 @@ public abstract class Menu extends GameComponent {
     
     @Override
     public void update() {
-        if (Keyboard.isKeyPressed(KeyEvent.VK_S)) selected++;
-        else if (Keyboard.isKeyPressed(KeyEvent.VK_W)) selected--;
+        if (Controls.DOWN.isPressed()) selected++;
+        else if (Controls.UP.isPressed()) selected--;
         if (selected < 0) selected = elements.size() - 1;
         else if (selected >= elements.size()) selected = 0;
         elements.get(selected).update();
-        if (Keyboard.isKeyPressed(KeyEvent.VK_ESCAPE) && getIndex() != Game.get().getSegments().size() - 1) {
+        if (Controls.BACK.isPressed() && getIndex() != Game.get().getSegments().size() - 1) {
             Game.get().popSegment();
             Sounds.DESELECT.play();
         }

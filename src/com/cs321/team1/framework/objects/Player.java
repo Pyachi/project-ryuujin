@@ -1,5 +1,6 @@
 package com.cs321.team1.framework.objects;
 
+import com.cs321.team1.framework.Controls;
 import com.cs321.team1.framework.map.Level;
 import com.cs321.team1.framework.map.Location;
 import com.cs321.team1.framework.objects.crates.Crate;
@@ -32,7 +33,7 @@ public class Player extends GameObject implements Runnable {
     }
     
     private void handleCrates() {
-        if (grabbedCrate == null && Keyboard.isKeyHeld(KeyEvent.VK_SHIFT)) {
+        if (grabbedCrate == null && Controls.GRAB.isHeld()) {
             getTouching(Crate.class).stream().filter(it -> it.collidesWith(switch (dir) {
                 case NORTH -> getLocation().clone().centralize().move(0, -8);
                 case SOUTH -> getLocation().clone().centralize().move(0, 8);
@@ -49,7 +50,7 @@ public class Player extends GameObject implements Runnable {
                 crate.setTexture(Textures.CRATE_GRABBED);
             });
         }
-        if (grabbedCrate != null && (!Keyboard.isKeyHeld(KeyEvent.VK_SHIFT) || grabbedCrate.isDead())) {
+        if (grabbedCrate != null && (!Controls.GRAB.isHeld() || grabbedCrate.isDead())) {
             grabbedCrate = null;
             getRoom().getObjects()
                     .stream()
@@ -60,10 +61,10 @@ public class Player extends GameObject implements Runnable {
     
     private void calculateMovement() {
         int x = 0, y = 0;
-        if (Keyboard.isKeyHeld(KeyEvent.VK_W)) y -= 1;
-        if (Keyboard.isKeyHeld(KeyEvent.VK_S)) y += 1;
-        if (Keyboard.isKeyHeld(KeyEvent.VK_A)) x -= 1;
-        if (Keyboard.isKeyHeld(KeyEvent.VK_D)) x += 1;
+        if (Controls.UP.isHeld()) y -= 1;
+        if (Controls.DOWN.isHeld()) y += 1;
+        if (Controls.LEFT.isHeld()) x -= 1;
+        if (Controls.RIGHT.isHeld()) x += 1;
         if (grabbedCrate == null) {
             if (y < 0) {
                 dir = Direction.NORTH;
