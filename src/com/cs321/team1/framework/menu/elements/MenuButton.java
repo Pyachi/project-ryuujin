@@ -1,26 +1,23 @@
 package com.cs321.team1.framework.menu.elements;
 
 import com.cs321.team1.framework.Controls;
-import com.cs321.team1.util.Keyboard;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.event.KeyEvent;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class MenuButton extends MenuElement {
     private final Runnable run;
-    
+
     public MenuButton(String text, Runnable run) {
         super(text);
         this.run = run;
     }
-    
+
     @Override
     public void update() {
         if (Controls.SELECT.isPressed()) run.run();
     }
-    
+
     @Override
     public BufferedImage render(Font font, boolean selected) {
         var fontMetrics = new BufferedImage(1, 1, 1).createGraphics().getFontMetrics(font);

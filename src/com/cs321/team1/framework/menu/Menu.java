@@ -6,8 +6,7 @@ import com.cs321.team1.framework.GameComponent;
 import com.cs321.team1.framework.menu.elements.MenuElement;
 import com.cs321.team1.framework.sounds.Sounds;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,7 @@ import java.util.List;
 public abstract class Menu extends GameComponent {
     protected final List<MenuElement> elements = new ArrayList<>();
     private int selected = 0;
-    
+
     @Override
     public void update() {
         if (Controls.DOWN.isPressed()) selected++;
@@ -28,7 +27,7 @@ public abstract class Menu extends GameComponent {
             Sounds.DESELECT.play();
         }
     }
-    
+
     @Override
     public void render(Graphics2D g) {
         var screenSize = Game.get().getScreenSize();
@@ -50,7 +49,7 @@ public abstract class Menu extends GameComponent {
         });
         g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
     }
-    
+
     @Override
     public void refresh() {
     }

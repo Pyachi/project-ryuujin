@@ -6,15 +6,15 @@ import com.cs321.team1.framework.GameComponent;
 import com.cs321.team1.framework.menu.menus.LevelMenu;
 import com.cs321.team1.framework.objects.GameObject;
 import com.cs321.team1.framework.objects.Player;
+import com.cs321.team1.framework.objects.Tickable;
 import com.cs321.team1.framework.objects.crates.*;
 import com.cs321.team1.framework.objects.tiles.PassableTile;
 import com.cs321.team1.framework.objects.tiles.UnpassableTile;
 import com.cs321.team1.framework.textures.Textures;
 
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.*;
 
 public class Level extends GameComponent {
@@ -63,10 +63,6 @@ public class Level extends GameComponent {
         return new HashSet<>(objs);
     }
 
-    public Player getPlayer() {
-        return objs.stream().filter(Player.class::isInstance).map(Player.class::cast).findFirst().orElseThrow();
-    }
-
     @Override
     public void refresh() {
         refresh = true;
@@ -86,12 +82,13 @@ public class Level extends GameComponent {
             objsToUpdate.add(it);
             objsToUpdate.addAll(it.getCollisions());
         });
-        new ArrayList<>(objs).stream().filter(Runnable.class::isInstance).forEach(it -> {
-            if (!it.isDead()) ((Runnable) it).run();
+        var tickables = new ArrayList<>(objs.stream().filter(Tickable.class::isInstance).map(Tickable.class::cast).toList());
+        tickables.sort(Comparator.comparingInt(Tickable::getPriority));
+        tickables.stream().map(GameObject.class::cast).forEach(it -> {
+            if (!it.isDead()) ((Tickable) it).tick();
         });
-        if (Controls.BACK.isPressed()) {
-            Game.get().pushSegment(new LevelMenu(this));
-        }
+        if (Controls.BACK.isPressed()) Game.get().pushSegment(new LevelMenu(this));
+
     }
 
     @Override
@@ -156,7 +153,7 @@ public class Level extends GameComponent {
                     switch (obj[2]) {
                         case "PLAYER" -> new Player(level, loc);
                         case "FLOOR" -> new PassableTile(level, loc, Textures.valueOf(obj[3]));
-                        case "WALL" -> new UnpassableTile(level,loc,Textures.valueOf(obj[3]));
+                        case "WALL" -> new UnpassableTile(level, loc, Textures.valueOf(obj[3]));
                         case "INT" -> new IntegerCrate(level, loc, Integer.parseInt(obj[3]));
                         case "NEG" -> new NegateCrate(level, loc);
                         case "MOD" -> new ModuloCrate(level, loc, Integer.parseInt(obj[3]));

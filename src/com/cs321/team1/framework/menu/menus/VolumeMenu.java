@@ -8,11 +8,11 @@ import com.cs321.team1.framework.menu.elements.MenuSlider;
 import com.cs321.team1.framework.sounds.Music;
 import com.cs321.team1.framework.sounds.Sounds;
 
-import java.awt.Graphics2D;
+import java.awt.*;
 
 public class VolumeMenu extends Menu {
     private final Level level;
-    
+
     public VolumeMenu(Level level) {
         this.level = level;
         elements.add(new MenuSlider("Music Volume:", Music.getVolume() / 10, 10, i -> {
@@ -27,13 +27,13 @@ public class VolumeMenu extends Menu {
             Sounds.DESELECT.play();
         }));
     }
-    
+
     @Override
     public void render(Graphics2D g) {
         if (level != null) level.render(g);
         super.render(g);
     }
-    
+
     @Override
     public void onClose() {
     }

@@ -2,28 +2,17 @@ package com.cs321.team1.util;
 
 import com.cs321.team1.framework.map.Level;
 import com.cs321.team1.framework.map.Location;
-import com.cs321.team1.framework.objects.crates.Crate;
-import com.cs321.team1.framework.objects.crates.DivideCrate;
-import com.cs321.team1.framework.objects.crates.IntegerCrate;
-import com.cs321.team1.framework.objects.crates.ModuloCrate;
-import com.cs321.team1.framework.objects.crates.MultiplyCrate;
-import com.cs321.team1.framework.objects.crates.NegateCrate;
+import com.cs321.team1.framework.objects.crates.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Scanner;
-import java.util.TreeMap;
+import java.util.*;
 
 public class CrateChecker {
     private static boolean bottomed;
     private static int reached;
-    
+
     public static void main(String[] args) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         var crates = new ArrayList<Crate>();
         var scanner = new Scanner(System.in);
@@ -74,7 +63,7 @@ public class CrateChecker {
             else System.out.println(i + "\t:" + count);
         });
     }
-    
+
     private static List<Integer> scanCrates(List<Crate> list) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         if (list.size() == 1) {
             if (!bottomed) {

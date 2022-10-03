@@ -8,11 +8,8 @@ import com.cs321.team1.framework.objects.tiles.UnpassableTile;
 import com.cs321.team1.framework.sounds.Sounds;
 import com.cs321.team1.framework.textures.Textures;
 import com.cs321.team1.util.Direction;
-import com.cs321.team1.util.Keyboard;
 
-import java.awt.event.KeyEvent;
-
-public class Player extends GameObject implements Runnable {
+public class Player extends GameObject implements Tickable {
     public Direction dir = Direction.SOUTH;
     private Crate grabbedCrate = null;
 
@@ -27,9 +24,14 @@ public class Player extends GameObject implements Runnable {
     }
 
     @Override
-    public void run() {
+    public void tick() {
         handleCrates();
         calculateMovement();
+    }
+
+    @Override
+    public int getPriority() {
+        return 0;
     }
 
     private void handleCrates() {
@@ -39,23 +41,13 @@ public class Player extends GameObject implements Runnable {
                 case SOUTH -> getLocation().clone().centralize().move(0, 8);
                 case WEST -> getLocation().clone().centralize().move(-8, 0);
                 case EAST -> getLocation().clone().centralize().move(8, 0);
-            })).findFirst().ifPresent(crate -> {
+            }) && getRoom().getObjects().stream().filter(Player.class::isInstance).noneMatch(player -> ((Player) player).getGrabbedCrate() == it)).findFirst().ifPresent(crate -> {
                 Sounds.PICKUP.play();
                 grabbedCrate = crate;
-                getRoom().getObjects()
-                        .stream()
-                        .filter(it -> it instanceof Crate &&
-                                (((Crate) it).canInteractWith(crate) || crate.canInteractWith(((Crate) it))))
-                        .forEach(it -> it.setTexture(Textures.CRATE_INTERACTABLE));
-                crate.setTexture(Textures.CRATE_GRABBED);
             });
         }
         if (grabbedCrate != null && (!Controls.GRAB.isHeld() || grabbedCrate.isDead())) {
             grabbedCrate = null;
-            getRoom().getObjects()
-                    .stream()
-                    .filter(Crate.class::isInstance)
-                    .forEach(it -> it.setTexture(Textures.CRATE));
         }
     }
 
