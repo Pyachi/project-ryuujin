@@ -99,7 +99,7 @@ public class Level extends GameComponent {
     }
     
     public int getScale() {
-        int scale = 10;
+        int scale = 20;
         var screenSize = Game.get().getScreenSize();
         while (scale * 16 * width > screenSize.width || scale * 16 * height > screenSize.height) scale--;
         return scale;
