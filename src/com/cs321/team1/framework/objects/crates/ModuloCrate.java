@@ -7,20 +7,20 @@ public class ModuloCrate extends Crate {
     public ModuloCrate(Level level, Location loc, int value) {
         super(level, loc, value);
     }
-    
+
     @Override
     public String getString() {
         return "%" + getValue();
     }
-    
+
     @Override
     public boolean canInteractWith(Crate crate) {
         return crate instanceof IntegerCrate;
     }
-    
+
     @Override
     public int getMergedValue(Crate crate) {
-        if (crate instanceof IntegerCrate) return crate.getValue() % getValue();
+        if (crate instanceof IntegerCrate) return Math.floorMod(crate.getValue(), getValue());
         return 0;
     }
 }
