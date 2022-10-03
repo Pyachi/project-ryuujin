@@ -5,7 +5,8 @@ import com.cs321.team1.framework.map.Level;
 import com.cs321.team1.framework.map.Location;
 import com.cs321.team1.framework.objects.GameObject;
 import com.cs321.team1.framework.objects.Player;
-import com.cs321.team1.framework.objects.Tickable;
+import com.cs321.team1.framework.objects.intr.Tick;
+import com.cs321.team1.framework.objects.intr.Tickable;
 import com.cs321.team1.framework.objects.tiles.UnpassableTile;
 import com.cs321.team1.framework.sounds.Sounds;
 import com.cs321.team1.framework.textures.Textures;
@@ -61,7 +62,7 @@ public abstract class Crate extends GameObject implements Tickable {
         kill();
     }
 
-    @Override
+    @Tick(priority = 1)
     public void tick() {
         getCollisions(Crate.class).stream().filter(this::canInteractWith).findAny().ifPresent(this::generateNew);
         List<Crate> crates = getRoom().getObjects().stream().filter(Player.class::isInstance).map(Player.class::cast).map(Player::getGrabbedCrate).filter(Objects::nonNull).toList();
@@ -70,11 +71,6 @@ public abstract class Crate extends GameObject implements Tickable {
         else if (crates.stream().anyMatch(it -> it.canInteractWith(this) || canInteractWith(it)))
             setTexture(Textures.CRATE_INTERACTABLE);
         else setTexture(Textures.CRATE);
-    }
-
-    @Override
-    public int getPriority() {
-        return 1;
     }
 
     @Override

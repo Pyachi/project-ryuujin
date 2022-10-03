@@ -4,6 +4,8 @@ import com.cs321.team1.framework.Controls;
 import com.cs321.team1.framework.map.Level;
 import com.cs321.team1.framework.map.Location;
 import com.cs321.team1.framework.objects.crates.Crate;
+import com.cs321.team1.framework.objects.intr.Tick;
+import com.cs321.team1.framework.objects.intr.Tickable;
 import com.cs321.team1.framework.objects.tiles.UnpassableTile;
 import com.cs321.team1.framework.sounds.Sounds;
 import com.cs321.team1.framework.textures.Textures;
@@ -22,15 +24,15 @@ public class Player extends GameObject implements Tickable {
         return grabbedCrate;
     }
 
-    @Override
-    public void tick() {
+    @Tick(priority = 3)
+    public void baseTick() {
         handleCrates();
         calculateMovement();
     }
 
-    @Override
-    public int getPriority() {
-        return 0;
+    @Tick(priority = 2)
+    public void checkCollision() {
+
     }
 
     private void handleCrates() {

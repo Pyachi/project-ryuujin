@@ -6,7 +6,8 @@ import com.cs321.team1.framework.GameComponent;
 import com.cs321.team1.framework.menu.menus.LevelMenu;
 import com.cs321.team1.framework.objects.GameObject;
 import com.cs321.team1.framework.objects.Player;
-import com.cs321.team1.framework.objects.Tickable;
+import com.cs321.team1.framework.objects.intr.Tick;
+import com.cs321.team1.framework.objects.intr.Tickable;
 import com.cs321.team1.framework.objects.crates.*;
 import com.cs321.team1.framework.objects.tiles.PassableTile;
 import com.cs321.team1.framework.objects.tiles.UnpassableTile;
@@ -15,7 +16,9 @@ import com.cs321.team1.framework.textures.Textures;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Level extends GameComponent {
     private final Set<GameObject> objs = new HashSet<>();
@@ -78,15 +81,18 @@ public class Level extends GameComponent {
 
     @Override
     public void update() {
-        objs.stream().filter(Runnable.class::isInstance).forEach(it -> {
+        var tickables = objs.stream().filter(Tickable.class::isInstance).toList();
+        tickables.forEach(it -> {
             objsToUpdate.add(it);
             objsToUpdate.addAll(it.getCollisions());
         });
-        var tickables = new ArrayList<>(objs.stream().filter(Tickable.class::isInstance).map(Tickable.class::cast).toList());
-        tickables.sort(Comparator.comparingInt(Tickable::getPriority));
-        tickables.stream().map(GameObject.class::cast).forEach(it -> {
-            if (!it.isDead()) ((Tickable) it).tick();
-        });
+        tickables.stream().map(tick -> Map.entry(tick, Arrays.stream(tick.getClass().getDeclaredMethods()).filter(it -> it.isAnnotationPresent(Tick.class)).toList())).forEach(entry -> entry.getValue().forEach(it -> {
+            try {
+                if (!entry.getKey().isDead()) it.invoke(entry.getKey());
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+        }));
         if (Controls.BACK.isPressed()) Game.get().pushSegment(new LevelMenu(this));
 
     }
