@@ -1,4 +1,4 @@
-package com.cs321.team1.util;
+package com.cs321.team1;
 
 import com.cs321.team1.framework.map.Level;
 import com.cs321.team1.framework.map.Location;

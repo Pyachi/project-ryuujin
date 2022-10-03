@@ -7,7 +7,6 @@ import com.cs321.team1.framework.objects.crates.Crate;
 import com.cs321.team1.framework.objects.tiles.UnpassableTile;
 import com.cs321.team1.framework.sounds.Sounds;
 import com.cs321.team1.framework.textures.Textures;
-import com.cs321.team1.util.Direction;
 
 public class Player extends GameObject implements Tickable {
     public Direction dir = Direction.SOUTH;
@@ -97,5 +96,9 @@ public class Player extends GameObject implements Tickable {
                 grabbedCrate.getLocation().move(0, y);
             }
         }
+    }
+
+    private enum Direction {
+        NORTH, SOUTH, EAST, WEST
     }
 }

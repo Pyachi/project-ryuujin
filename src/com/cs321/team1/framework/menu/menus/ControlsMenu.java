@@ -39,7 +39,7 @@ public class ControlsMenu extends Menu {
                             if (!used) it.setKey(key);
                             else Sounds.ERROR.play();
                             elements.get(it.ordinal()).setText(it.name() + ": " + KeyEvent.getKeyText(it.getKey()));
-                            Controls.getHeldKeys().clear();
+                            Controls.clearCache();
                             Game.get().popSegment();
                         }
 
