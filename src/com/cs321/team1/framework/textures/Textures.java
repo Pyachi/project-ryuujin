@@ -11,9 +11,12 @@ public enum Textures {
     PLAYER_LEFT("src/resources/textures/player/player_left.png", 3),
     PLAYER_RIGHT("src/resources/textures/player/player_right.png", 3),
     
-    //Object textures
-    WALL("src/resources/textures/map/tile.png", 1),
-    FLOOR("src/resources/textures/map/floor_tile.png", 0),
+    //Tile Textures
+    BOULDER("src/resources/textures/map/tile.png", 1),
+    TILE("src/resources/textures/map/floor_tile.png", 1),
+    BASE("src/resources/textures/map/gray_floor.png",0),
+
+    //Crate Textures
     CRATE("src/resources/textures/crates/crate.png", 2),
     CRATE_GRABBED("src/resources/textures/crates/crate_grabbed.png", 2),
     CRATE_INTERACTABLE("src/resources/textures/crates/crate_interactable.png", 2);
