@@ -69,9 +69,9 @@ public abstract class Crate extends GameObject implements Runnable {
                 (float) 16 * getRoom().getScale() * 0.8F / g.getFontMetrics(Game.get().getFont()).stringWidth(getString())));
         g.drawString(
                 getString(),
-                getLocation().getX() * getRoom().getScale() - g.getFontMetrics().stringWidth(getString()) / 2 +
+                getLocation().getX() * getRoom().getScale() - g.getFontMetrics().stringWidth(getString()) / 2 -
                         8 * getRoom().getScale(),
-                getLocation().getY() * getRoom().getScale() + g.getFontMetrics().getHeight() / 2 +
+                getLocation().getY() * getRoom().getScale() + g.getFontMetrics().getHeight() / 2 -
                         8 * getRoom().getScale()
         );
     }
