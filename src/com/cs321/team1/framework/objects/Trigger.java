@@ -16,6 +16,6 @@ public class Trigger extends GameObject implements Runnable {
     
     @Override
     public void run() {
-        if (collidesWith(getRoom().getPlayer())) run.run();
+        if (collidesWith(Player.class)) run.run();
     }
 }

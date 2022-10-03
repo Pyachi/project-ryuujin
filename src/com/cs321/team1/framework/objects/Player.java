@@ -15,23 +15,23 @@ import java.awt.event.KeyEvent;
 public class Player extends GameObject implements Runnable {
     public Direction dir = Direction.SOUTH;
     private Crate grabbedCrate = null;
-    
+
     public Player(Level level, Location location) {
         super(level);
         setTexture(Textures.PLAYER_DOWN);
         setLocation(location);
     }
-    
+
     public Crate getGrabbedCrate() {
         return grabbedCrate;
     }
-    
+
     @Override
     public void run() {
         handleCrates();
         calculateMovement();
     }
-    
+
     private void handleCrates() {
         if (grabbedCrate == null && Controls.GRAB.isHeld()) {
             getTouching(Crate.class).stream().filter(it -> it.collidesWith(switch (dir) {
@@ -58,7 +58,7 @@ public class Player extends GameObject implements Runnable {
                     .forEach(it -> it.setTexture(Textures.CRATE));
         }
     }
-    
+
     private void calculateMovement() {
         int x = 0, y = 0;
         if (Controls.UP.isHeld()) y -= 1;
@@ -82,15 +82,15 @@ public class Player extends GameObject implements Runnable {
         }
         for (int i = 0; i < 2; i++) move(x, y);
     }
-    
+
     public boolean canMove(int x, int y) {
         getLocation().move(x, y);
-        boolean collision = collidesWith(UnpassableTile.class) ||
+        boolean collision = collidesWith(Player.class) || collidesWith(UnpassableTile.class) ||
                 collidesWith(Crate.class) && getCollisions(Crate.class).stream().anyMatch(it -> it != grabbedCrate);
         getLocation().move(-x, -y);
         return !collision;
     }
-    
+
     public void move(int x, int y) {
         if (grabbedCrate == null) {
             if (canMove(x, 0)) getLocation().move(x, 0);
