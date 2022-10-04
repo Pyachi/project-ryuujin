@@ -13,6 +13,7 @@ public enum Controls {
     RIGHT(KeyEvent.VK_D),
     GRAB(KeyEvent.VK_SHIFT),
     SELECT(KeyEvent.VK_SPACE),
+    FULLSCREEN(KeyEvent.VK_F11),
     BACK(KeyEvent.VK_ESCAPE);
     
     private static final Set<Integer> pressedKeys = new HashSet<>();

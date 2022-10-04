@@ -21,6 +21,7 @@ public class Game extends JPanel implements Runnable {
     
     private void update() {
         Controls.cache();
+        if (Controls.FULLSCREEN.isPressed()) toggleFullscreen();
         segments.get(0).update();
     }
     
