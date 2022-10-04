@@ -13,6 +13,7 @@ public abstract class GameObject {
     private Texture texture = Textures.NULL.get();
     private Location location = Location.at(1, 1);
     private boolean dead = false;
+    protected int tick = 0;
     
     public Level getLevel() {
         return level;
@@ -45,12 +46,17 @@ public abstract class GameObject {
         dead = true;
     }
     
+    @Tick
+    public void tick() {
+        tick++;
+    }
+    
     public boolean isDead() {
         return dead;
     }
     
     public void paint(Graphics2D g) {
-        if (!dead) getTexture().paint(this, g);
+        if (!dead) getTexture().paint(this, g,tick);
     }
     //******************************************************************************************************************
     //Collision handling

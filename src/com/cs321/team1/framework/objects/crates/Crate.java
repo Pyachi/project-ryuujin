@@ -3,8 +3,10 @@ package com.cs321.team1.framework.objects.crates;
 import com.cs321.team1.framework.Game;
 import com.cs321.team1.framework.map.Location;
 import com.cs321.team1.framework.objects.GameObject;
+import com.cs321.team1.framework.objects.Particle;
 import com.cs321.team1.framework.objects.Player;
 import com.cs321.team1.framework.objects.Tick;
+import com.cs321.team1.framework.objects.tiles.PassableTile;
 import com.cs321.team1.framework.objects.tiles.UnpassableTile;
 import com.cs321.team1.framework.sounds.Sounds;
 import com.cs321.team1.framework.textures.Textures;
@@ -52,7 +54,10 @@ public abstract class Crate extends GameObject {
                       .filter(Player.class::isInstance)
                       .anyMatch(it -> ((Player) it).getGrabbedCrate() == this)) location = crate.getLocation().clone();
         Crate newCrate = getMergedCrate(location,crate);
-        if (newCrate != null) getLevel().addObject(newCrate);
+        if (newCrate != null) {
+            getLevel().addObject(newCrate);
+            getLevel().addObject(new Particle(getLocation(), Textures.EXPLOSION.get()));
+        }
         Sounds.MERGE.play();
         crate.kill();
         kill();

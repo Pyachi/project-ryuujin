@@ -26,7 +26,7 @@ public class Player extends GameObject {
     }
     
     @Tick(priority = 0)
-    public void tick() {
+    public void movement() {
         blocked = false;
         tryX = 0;
         tryY = 0;
