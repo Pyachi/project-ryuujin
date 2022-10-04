@@ -157,6 +157,7 @@ public class Level extends GameComponent {
                         case "MUL" -> level.addObject(new MultiplyCrate(loc, Integer.parseInt(obj[3])));
                         case "DIV" -> level.addObject(new DivideCrate(loc, Integer.parseInt(obj[3])));
                         case "LCK" -> level.addObject(new LockedCrate(loc, Integer.parseInt(obj[3])));
+                        case "PWR" -> level.addObject(new UnpoweredCrate(loc, Integer.parseInt(obj[3])));
                     }
                 } catch (Exception ignored) {
                 }
