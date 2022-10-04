@@ -68,17 +68,6 @@ public abstract class Crate extends GameObject {
     @Tick(priority = 2)
     public void checkMerge() {
         getCollisions(Crate.class).stream().filter(this::canInteractWith).findAny().ifPresent(this::generateNew);
-        List<Crate> crates = getLevel().getObjects()
-                                       .stream()
-                                       .filter(Player.class::isInstance)
-                                       .map(Player.class::cast)
-                                       .map(Player::getGrabbedCrate)
-                                       .filter(Objects::nonNull)
-                                       .toList();
-        if (crates.stream().anyMatch(this::equals)) setTexture(Textures.CRATE_GRABBED.get());
-        else if (crates.stream().anyMatch(it -> it.canInteractWith(this) || canInteractWith(it)))
-            setTexture(Textures.CRATE_INTERACTABLE.get());
-        else setTexture(Textures.CRATE.get());
     }
     
     @Override

@@ -7,6 +7,8 @@ import com.cs321.team1.framework.objects.tiles.UnpassableTile;
 import com.cs321.team1.framework.sounds.Sounds;
 import com.cs321.team1.framework.textures.Textures;
 
+import java.util.Objects;
+
 public class Player extends GameObject {
     private Direction dir = Direction.SOUTH;
     private Crate grabbedCrate = null;
@@ -72,11 +74,30 @@ public class Player extends GameObject {
                                     .ifPresent(crate -> {
                                         Sounds.PICKUP.play();
                                         grabbedCrate = crate;
+                                        updateCrateGraphics();
                                     });
         }
         if (grabbedCrate != null && (!Controls.GRAB.isHeld() || grabbedCrate.isDead())) {
             grabbedCrate = null;
+            updateCrateGraphics();
         }
+    }
+    
+    private void updateCrateGraphics() {
+        var crates = getLevel().getObjects().stream().filter(Crate.class::isInstance).map(Crate.class::cast).toList();
+        var grabbedCrates = getLevel().getObjects()
+                                      .stream()
+                                      .filter(Player.class::isInstance)
+                                      .map(Player.class::cast)
+                                      .map(Player::getGrabbedCrate)
+                                      .filter(Objects::nonNull)
+                                      .toList();
+        crates.forEach(it -> it.setTexture(Textures.CRATE.get()));
+        crates.stream()
+              .filter(crate -> grabbedCrates.stream()
+                                            .anyMatch(it -> it.canInteractWith(crate) || crate.canInteractWith(it)))
+              .forEach(it -> it.setTexture(Textures.CRATE_INTERACTABLE.get()));
+        grabbedCrates.forEach(it -> it.setTexture(Textures.CRATE_GRABBED.get()));
     }
     
     private void calculateMovement() {
