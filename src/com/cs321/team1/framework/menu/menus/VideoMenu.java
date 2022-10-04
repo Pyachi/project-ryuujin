@@ -10,7 +10,7 @@ import java.awt.*;
 
 public class VideoMenu extends Menu {
     private final Level level;
-
+    
     public VideoMenu(Level level) {
         this.level = level;
         elements.add(new MenuSlider("Resolution:", 0, 10, i -> {
@@ -18,13 +18,13 @@ public class VideoMenu extends Menu {
         elements.add(new MenuButton("Toggle Fullscreen", () -> Game.get().toggleFullscreen()));
         elements.add(new MenuButton("Back", () -> Game.get().popSegment()));
     }
-
+    
     @Override
     public void render(Graphics2D g) {
         if (level != null) level.render(g);
         super.render(g);
     }
-
+    
     @Override
     public void onClose() {
     }

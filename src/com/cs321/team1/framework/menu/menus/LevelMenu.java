@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class LevelMenu extends Menu {
     private final Level level;
-
+    
     public LevelMenu(Level level) {
         this.level = level;
         elements.add(new MenuButton("Resume", () -> Game.get().popSegment()));
@@ -22,13 +22,13 @@ public class LevelMenu extends Menu {
         }));
         elements.add(new MenuButton("Quit to Desktop", () -> System.exit(0)));
     }
-
+    
     @Override
     public void render(Graphics2D g) {
         if (level != null) level.render(g);
         super.render(g);
     }
-
+    
     @Override
     public void onClose() {
     }

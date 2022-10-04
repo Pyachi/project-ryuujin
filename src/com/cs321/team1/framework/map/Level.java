@@ -6,8 +6,7 @@ import com.cs321.team1.framework.GameComponent;
 import com.cs321.team1.framework.menu.menus.LevelMenu;
 import com.cs321.team1.framework.objects.GameObject;
 import com.cs321.team1.framework.objects.Player;
-import com.cs321.team1.framework.objects.intr.Tick;
-import com.cs321.team1.framework.objects.intr.Tickable;
+import com.cs321.team1.framework.objects.Tick;
 import com.cs321.team1.framework.objects.crates.*;
 import com.cs321.team1.framework.objects.tiles.PassableTile;
 import com.cs321.team1.framework.objects.tiles.UnpassableTile;
@@ -17,97 +16,96 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Level extends GameComponent {
     private final Set<GameObject> objs = new HashSet<>();
     private final Set<GameObject> objsToUpdate = new HashSet<>();
-    private boolean refresh = true;
+    private final Map<Method, Set<GameObject>> ticks = new HashMap<>();
     private final int width;
     private final int height;
+    private boolean refresh = true;
     private BufferedImage image;
     private BufferedImage level;
     private Graphics2D graphics;
     private Graphics2D levelGraphics;
-
+    
     public Level(int width, int height) {
         this.width = width;
         this.height = height;
-        var screenSize = Game.get().getScreenSize();
-        image = new BufferedImage(screenSize.width, screenSize.height, BufferedImage.TYPE_INT_ARGB);
-        level = new BufferedImage(getWidth() * 16 * getScale(),
-                getHeight() * 16 * getScale(),
-                BufferedImage.TYPE_INT_ARGB
-        );
-        graphics = image.createGraphics();
-        levelGraphics = level.createGraphics();
+        refresh();
     }
-
+    
     public int getWidth() {
         return width;
     }
-
+    
     public int getHeight() {
         return height;
     }
-
+    
     public void addObject(GameObject obj) {
+        obj.setLevel(this);
         objs.add(obj);
         objsToUpdate.add(obj);
+        Arrays.stream(obj.getClass().getMethods())
+              .filter(it -> it.isAnnotationPresent(Tick.class))
+              .forEach(method -> ticks.computeIfAbsent(method, it -> new HashSet<>()).add(obj));
     }
-
+    
     public void removeObject(GameObject obj) {
         objs.remove(obj);
         objsToUpdate.remove(obj);
+        ticks.values().forEach(it -> it.remove(obj));
     }
-
+    
     public Set<GameObject> getObjects() {
         return new HashSet<>(objs);
     }
-
+    
     @Override
     public void refresh() {
         refresh = true;
         var screenSize = Game.get().getScreenSize();
         image = new BufferedImage(screenSize.width, screenSize.height, BufferedImage.TYPE_INT_ARGB);
         level = new BufferedImage(getWidth() * 16 * getScale(),
-                getHeight() * 16 * getScale(),
-                BufferedImage.TYPE_INT_ARGB
-        );
+                                  getHeight() * 16 * getScale(),
+                                  BufferedImage.TYPE_INT_ARGB);
         graphics = image.createGraphics();
         levelGraphics = level.createGraphics();
     }
-
+    
     @Override
     public void update() {
-        var tickables = objs.stream().filter(Tickable.class::isInstance).toList();
-        tickables.forEach(it -> {
+        ticks.values().stream().flatMap(Collection::stream).forEach(it -> {
             objsToUpdate.add(it);
             objsToUpdate.addAll(it.getCollisions());
         });
-        tickables.stream().map(tick -> Map.entry(tick, Arrays.stream(tick.getClass().getDeclaredMethods()).filter(it -> it.isAnnotationPresent(Tick.class)).toList())).forEach(entry -> entry.getValue().forEach(it -> {
+        var methods = new ArrayList<>(ticks.keySet().stream().toList());
+        methods.sort(Comparator.comparingInt(it -> it.getAnnotation(Tick.class).priority()));
+        methods.forEach(method -> new HashSet<>(ticks.get(method)).forEach(obj -> {
             try {
-                if (!entry.getKey().isDead()) it.invoke(entry.getKey());
+                method.invoke(obj);
             } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         }));
         if (Controls.BACK.isPressed()) Game.get().pushSegment(new LevelMenu(this));
-
+        
     }
-
+    
     @Override
     public void onClose() {
     }
-
+    
     public int getScale() {
         int scale = 20;
         var screenSize = Game.get().getScreenSize();
         while (scale * 16 * width > screenSize.width || scale * 16 * height > screenSize.height) scale--;
         return scale;
     }
-
+    
     @Override
     public void render(Graphics2D g) {
         var list = new ArrayList<GameObject>();
@@ -117,29 +115,22 @@ public class Level extends GameComponent {
         list.sort(Comparator.comparingInt(it -> it.getTexture().getTexture().priority));
         list.forEach(it -> it.paint(levelGraphics));
         graphics.drawImage(level,
-                (image.getWidth() - level.getWidth()) / 2,
-                (image.getHeight() - level.getHeight()) / 2,
-                null
-        );
+                           (image.getWidth() - level.getWidth()) / 2,
+                           (image.getHeight() - level.getHeight()) / 2,
+                           null);
         g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
     }
-
+    
     public static Level emptyLevel(int width, int height) {
         var level = new Level(width, height);
-        for (int i = 0; i <= width + 1; i++) {
-            new UnpassableTile(level, Location.atTile(i, 0), Textures.NOTHING);
-            new UnpassableTile(level, Location.atTile(i, height + 1), Textures.NOTHING);
-        }
-        for (int j = 1; j <= height; j++) {
-            new UnpassableTile(level, Location.atTile(0, j), Textures.NOTHING);
-            new UnpassableTile(level, Location.atTile(width + 1, j), Textures.NOTHING);
-        }
-        for (int i = 1; i <= width; i++)
-            for (int j = 1; j <= height; j++)
-                new PassableTile(level, Location.atTile(i, j), Textures.BASE);
+        level.addObject(new UnpassableTile(Location.atTile(1, 0), Textures.NULL.get(width, 1)));
+        level.addObject(new UnpassableTile(Location.atTile(1, height + 1), Textures.NULL.get(width, 1)));
+        level.addObject(new UnpassableTile(Location.atTile(0, 1), Textures.NULL.get(1, height)));
+        level.addObject(new UnpassableTile(Location.atTile(width + 1, 1), Textures.NULL.get(1, height)));
+        level.addObject(new PassableTile(Location.atTile(1, 1), Textures.BASE.get(width, height)));
         return level;
     }
-
+    
     public static Level loadLevel(String name) {
         try {
             String path = "src/resources/levels/" + name + ".ryu";
@@ -157,16 +148,17 @@ public class Level extends GameComponent {
                     if (x > width || x < 1 || y > height || y < 1) continue;
                     Location loc = Location.atTile(x, y);
                     switch (obj[2]) {
-                        case "PLAYER" -> new Player(level, loc);
-                        case "FLOOR" -> new PassableTile(level, loc, Textures.valueOf(obj[3]));
-                        case "WALL" -> new UnpassableTile(level, loc, Textures.valueOf(obj[3]));
-                        case "INT" -> new IntegerCrate(level, loc, Integer.parseInt(obj[3]));
-                        case "NEG" -> new NegateCrate(level, loc);
-                        case "MOD" -> new ModuloCrate(level, loc, Integer.parseInt(obj[3]));
-                        case "MUL" -> new MultiplyCrate(level, loc, Integer.parseInt(obj[3]));
-                        case "DIV" -> new DivideCrate(level, loc, Integer.parseInt(obj[3]));
+                        case "PLAYER" -> level.addObject(new Player(loc));
+                        case "FLOOR" -> level.addObject(new PassableTile(loc, Textures.valueOf(obj[3]).get()));
+                        case "WALL" -> level.addObject(new UnpassableTile(loc, Textures.valueOf(obj[3]).get()));
+                        case "INT" -> level.addObject(new IntegerCrate(loc, Integer.parseInt(obj[3])));
+                        case "NEG" -> level.addObject(new NegateCrate(loc));
+                        case "MOD" -> level.addObject(new ModuloCrate(loc, Integer.parseInt(obj[3])));
+                        case "MUL" -> level.addObject(new MultiplyCrate(loc, Integer.parseInt(obj[3])));
+                        case "DIV" -> level.addObject(new DivideCrate(loc, Integer.parseInt(obj[3])));
                     }
-                } catch (Exception ignored) {
+                } catch (Exception e) {
+                    return emptyLevel(5, 5);
                 }
             }
             return level;

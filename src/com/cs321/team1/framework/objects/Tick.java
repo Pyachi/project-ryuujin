@@ -1,4 +1,4 @@
-package com.cs321.team1.framework.objects.intr;
+package com.cs321.team1.framework.objects;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

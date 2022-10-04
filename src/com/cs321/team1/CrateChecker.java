@@ -12,8 +12,9 @@ import java.util.*;
 public class CrateChecker {
     private static boolean bottomed;
     private static int reached;
-
-    public static void main(String[] args) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    
+    public static void main(String[] args)
+            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         var crates = new ArrayList<Crate>();
         var scanner = new Scanner(System.in);
         while (true) {
@@ -23,15 +24,15 @@ public class CrateChecker {
                     "\nSelect Crate:\n1 -> IntegerCrate\n2 -> ModuloCrate\n3 -> NegateCrate\n4 -> ScaleUpCrate\n5 -> ScaleDownCrate\n6 -> Calculate Possibilities\n7 -> Calculate Complexity\n");
             int input = scanner.nextInt();
             if (input > 0 && input < 6 || input == 7) {
-                if (input == 3) crates.add(new NegateCrate(null, null));
+                if (input == 3) crates.add(new NegateCrate(null));
                 else {
                     System.out.print("Select Value: ");
                     int input2 = scanner.nextInt();
                     switch (input) {
-                        case 1 -> crates.add(new IntegerCrate(null, null, input2));
-                        case 2 -> crates.add(new ModuloCrate(null, null, input2));
-                        case 5 -> crates.add(new DivideCrate(null, null, input2));
-                        case 4 -> crates.add(new MultiplyCrate(null, null, input2));
+                        case 1 -> crates.add(new IntegerCrate(null, input2));
+                        case 2 -> crates.add(new ModuloCrate(null, input2));
+                        case 5 -> crates.add(new DivideCrate(null, input2));
+                        case 4 -> crates.add(new MultiplyCrate(null, input2));
                         case 7 -> {
                             var total = new BigDecimal(1);
                             for (int i = 3; i <= input2; i++) {
@@ -63,8 +64,9 @@ public class CrateChecker {
             else System.out.println(i + "\t:" + count);
         });
     }
-
-    private static List<Integer> scanCrates(List<Crate> list) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    
+    private static List<Integer> scanCrates(List<Crate> list)
+            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         if (list.size() == 1) {
             if (!bottomed) {
                 bottomed = true;
@@ -94,16 +96,16 @@ public class CrateChecker {
                         newList.remove(crate1);
                         newList.remove(crate2);
                         newList.add(crate2.getClass()
-                                .getDeclaredConstructor(Level.class, Location.class, int.class)
-                                .newInstance(null, null, crate1.getMergedValue(crate2)));
+                                          .getDeclaredConstructor(Level.class, Location.class, int.class)
+                                          .newInstance(null, null, crate1.getMergedValue(crate2)));
                         results.addAll(scanCrates(newList));
                     } else if (crate2.canInteractWith(crate1)) {
                         var newList = new ArrayList<>(list);
                         newList.remove(crate1);
                         newList.remove(crate2);
                         newList.add(crate1.getClass()
-                                .getDeclaredConstructor(Level.class, Location.class, int.class)
-                                .newInstance(null, null, crate2.getMergedValue(crate1)));
+                                          .getDeclaredConstructor(Level.class, Location.class, int.class)
+                                          .newInstance(null, null, crate2.getMergedValue(crate1)));
                         results.addAll(scanCrates(newList));
                     }
                 }
