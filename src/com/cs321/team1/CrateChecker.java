@@ -95,17 +95,13 @@ public class CrateChecker {
                         var newList = new ArrayList<>(list);
                         newList.remove(crate1);
                         newList.remove(crate2);
-                        newList.add(crate2.getClass()
-                                          .getDeclaredConstructor(Level.class, Location.class, int.class)
-                                          .newInstance(null, null, crate1.getMergedValue(crate2)));
+                        newList.add(crate1.getMergedCrate(null,crate2));
                         results.addAll(scanCrates(newList));
                     } else if (crate2.canInteractWith(crate1)) {
                         var newList = new ArrayList<>(list);
                         newList.remove(crate1);
                         newList.remove(crate2);
-                        newList.add(crate1.getClass()
-                                          .getDeclaredConstructor(Level.class, Location.class, int.class)
-                                          .newInstance(null, null, crate2.getMergedValue(crate1)));
+                        newList.add(crate2.getMergedCrate(null,crate1));
                         results.addAll(scanCrates(newList));
                     }
                 }

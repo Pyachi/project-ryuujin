@@ -148,17 +148,17 @@ public class Level extends GameComponent {
                     if (x > width || x < 1 || y > height || y < 1) continue;
                     Location loc = Location.atTile(x, y);
                     switch (obj[2]) {
-                        case "PLAYER" -> level.addObject(new Player(loc));
-                        case "FLOOR" -> level.addObject(new PassableTile(loc, Textures.valueOf(obj[3]).get()));
-                        case "WALL" -> level.addObject(new UnpassableTile(loc, Textures.valueOf(obj[3]).get()));
+                        case "PLR" -> level.addObject(new Player(loc));
+                        case "FLR" -> level.addObject(new PassableTile(loc, Textures.valueOf(obj[3]).get()));
+                        case "WAL" -> level.addObject(new UnpassableTile(loc, Textures.valueOf(obj[3]).get()));
                         case "INT" -> level.addObject(new IntegerCrate(loc, Integer.parseInt(obj[3])));
                         case "NEG" -> level.addObject(new NegateCrate(loc));
                         case "MOD" -> level.addObject(new ModuloCrate(loc, Integer.parseInt(obj[3])));
                         case "MUL" -> level.addObject(new MultiplyCrate(loc, Integer.parseInt(obj[3])));
                         case "DIV" -> level.addObject(new DivideCrate(loc, Integer.parseInt(obj[3])));
+                        case "LCK" -> level.addObject(new LockedCrate(loc, Integer.parseInt(obj[3])));
                     }
-                } catch (Exception e) {
-                    return emptyLevel(5, 5);
+                } catch (Exception ignored) {
                 }
             }
             return level;

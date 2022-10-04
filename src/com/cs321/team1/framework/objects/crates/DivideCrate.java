@@ -19,10 +19,11 @@ public class DivideCrate extends Crate {
     }
     
     @Override
-    public int getMergedValue(Crate crate) {
-        if (crate instanceof IntegerCrate || crate instanceof ModuloCrate || crate instanceof MultiplyCrate)
-            return crate.getValue() / getValue();
-        if (crate instanceof DivideCrate) return crate.getValue() * getValue();
-        return 0;
+    public Crate getMergedCrate(Location loc, Crate crate) {
+        if (crate instanceof IntegerCrate) return new IntegerCrate(loc,crate.getValue() / getValue());
+        if (crate instanceof ModuloCrate) return new ModuloCrate(loc,crate.getValue() / getValue());
+        if (crate instanceof MultiplyCrate) return new MultiplyCrate(loc,crate.getValue() / getValue());
+        if (crate instanceof DivideCrate) return new DivideCrate(loc,crate.getValue() * getValue());
+        return null;
     }
 }

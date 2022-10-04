@@ -18,8 +18,8 @@ public class ModuloCrate extends Crate {
     }
     
     @Override
-    public int getMergedValue(Crate crate) {
-        if (crate instanceof IntegerCrate) return Math.floorMod(crate.getValue(), getValue());
-        return 0;
+    public Crate getMergedCrate(Location loc, Crate crate) {
+        if (crate instanceof IntegerCrate) return new IntegerCrate(loc, Math.floorMod(crate.getValue(), getValue()));
+        return null;
     }
 }

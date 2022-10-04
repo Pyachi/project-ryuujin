@@ -10,9 +10,6 @@ import com.cs321.team1.framework.sounds.Sounds;
 import com.cs321.team1.framework.textures.Textures;
 
 import java.awt.*;
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-import java.util.Objects;
 
 public abstract class Crate extends GameObject {
     private final int value;
@@ -31,7 +28,11 @@ public abstract class Crate extends GameObject {
     
     public abstract boolean canInteractWith(Crate crate);
     
-    public abstract int getMergedValue(Crate crate);
+    public abstract Crate getMergedCrate(Location loc, Crate crate);
+    
+    public boolean canGrab() {
+        return true;
+    }
     
     public boolean canMove(int x, int y) {
         getLocation().move(x, y);
@@ -50,16 +51,8 @@ public abstract class Crate extends GameObject {
                       .stream()
                       .filter(Player.class::isInstance)
                       .anyMatch(it -> ((Player) it).getGrabbedCrate() == this)) location = crate.getLocation().clone();
-        try {
-            getLevel().addObject(crate.getClass()
-                                      .getDeclaredConstructor(Location.class, int.class)
-                                      .newInstance(location, getMergedValue(crate)));
-        } catch (InstantiationException |
-                 IllegalAccessException |
-                 InvocationTargetException |
-                 NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        Crate newCrate = getMergedCrate(location,crate);
+        if (newCrate != null) getLevel().addObject(newCrate);
         Sounds.MERGE.play();
         crate.kill();
         kill();

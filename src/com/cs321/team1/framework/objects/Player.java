@@ -66,10 +66,11 @@ public class Player extends GameObject {
                                         case SOUTH -> getLocation().clone().centralize().move(0, 8);
                                         case WEST -> getLocation().clone().centralize().move(-8, 0);
                                         case EAST -> getLocation().clone().centralize().move(8, 0);
-                                    }) && getLevel().getObjects()
-                                                    .stream()
-                                                    .filter(Player.class::isInstance)
-                                                    .noneMatch(player -> ((Player) player).getGrabbedCrate() == it))
+                                    }) && it.canGrab() && getLevel().getObjects()
+                                                                    .stream()
+                                                                    .filter(Player.class::isInstance)
+                                                                    .noneMatch(player -> ((Player) player).getGrabbedCrate()
+                                                                            == it))
                                     .findFirst()
                                     .ifPresent(crate -> {
                                         Sounds.PICKUP.play();
@@ -84,7 +85,12 @@ public class Player extends GameObject {
     }
     
     private void updateCrateGraphics() {
-        var crates = getLevel().getObjects().stream().filter(Crate.class::isInstance).map(Crate.class::cast).toList();
+        var crates = getLevel().getObjects()
+                               .stream()
+                               .filter(Crate.class::isInstance)
+                               .map(Crate.class::cast)
+                               .filter(Crate::canGrab)
+                               .toList();
         var grabbedCrates = getLevel().getObjects()
                                       .stream()
                                       .filter(Player.class::isInstance)

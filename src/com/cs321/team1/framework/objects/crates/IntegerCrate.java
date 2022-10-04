@@ -14,12 +14,12 @@ public class IntegerCrate extends Crate {
     
     @Override
     public boolean canInteractWith(Crate crate) {
-        return crate instanceof IntegerCrate;
+        return crate instanceof IntegerCrate || crate instanceof LockedCrate && crate.getValue() == getValue();
     }
     
     @Override
-    public int getMergedValue(Crate crate) {
-        if (crate instanceof IntegerCrate) return getValue() + crate.getValue();
-        return 0;
+    public Crate getMergedCrate(Location loc, Crate crate) {
+        if (crate instanceof IntegerCrate) return new IntegerCrate(loc,crate.getValue() + getValue());
+        return null;
     }
 }

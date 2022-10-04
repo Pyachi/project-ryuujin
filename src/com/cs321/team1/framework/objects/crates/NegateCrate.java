@@ -18,8 +18,8 @@ public class NegateCrate extends Crate {
     }
     
     @Override
-    public int getMergedValue(Crate crate) {
-        if (crate instanceof IntegerCrate) return crate.getValue() * getValue();
-        return 0;
+    public Crate getMergedCrate(Location loc, Crate crate) {
+        if (crate instanceof IntegerCrate) return new IntegerCrate(loc, crate.getValue() * getValue());
+        return null;
     }
 }
