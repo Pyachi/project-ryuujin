@@ -23,8 +23,8 @@ public class VolumeMenu extends Menu {
             Sounds.SELECT.play();
         }));
         elements.add(new MenuButton("Back", () -> {
-            Game.get().popSegment();
             Sounds.DESELECT.play();
+            Game.get().popSegment();
         }));
     }
     

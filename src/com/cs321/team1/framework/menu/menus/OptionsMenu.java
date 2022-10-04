@@ -4,6 +4,7 @@ import com.cs321.team1.framework.Game;
 import com.cs321.team1.framework.map.Level;
 import com.cs321.team1.framework.menu.Menu;
 import com.cs321.team1.framework.menu.elements.MenuButton;
+import com.cs321.team1.framework.sounds.Sounds;
 
 import java.awt.*;
 
@@ -12,10 +13,22 @@ public class OptionsMenu extends Menu {
     
     public OptionsMenu(Level level) {
         this.level = level;
-        elements.add(new MenuButton("Sound Settings", () -> Game.get().pushSegment(new VolumeMenu(level))));
-        elements.add(new MenuButton("Video Settings", () -> Game.get().pushSegment(new VideoMenu(level))));
-        elements.add(new MenuButton("Controls", () -> Game.get().pushSegment(new ControlsMenu(level))));
-        elements.add(new MenuButton("Back", () -> Game.get().popSegment()));
+        elements.add(new MenuButton("Sound Settings", () -> {
+            Sounds.SELECT.play();
+            Game.get().pushSegment(new VolumeMenu(level));
+        }));
+        elements.add(new MenuButton("Video Settings", () -> {
+            Sounds.SELECT.play();
+            Game.get().pushSegment(new VideoMenu(level));
+        }));
+        elements.add(new MenuButton("Controls", () -> {
+            Sounds.SELECT.play();
+            Game.get().pushSegment(new ControlsMenu(level));
+        }));
+        elements.add(new MenuButton("Back", () -> {
+            Sounds.DESELECT.play();
+            Game.get().popSegment();
+        }));
     }
     
     @Override

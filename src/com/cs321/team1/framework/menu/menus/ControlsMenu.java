@@ -19,6 +19,7 @@ public class ControlsMenu extends Menu {
         this.level = level;
         Arrays.stream(Controls.values())
               .forEach(it -> elements.add(new MenuButton(it.name() + ": " + KeyEvent.getKeyText(it.getKey()), () -> {
+                  Sounds.SELECT.play();
                   Game.get().pushSegment(new GameComponent() {
                       int tick = 0;
                 
@@ -36,7 +37,10 @@ public class ControlsMenu extends Menu {
                                   break;
                               }
                           }
-                          if (!used) it.setKey(key);
+                          if (!used) {
+                              Sounds.SELECT.play();
+                              it.setKey(key);
+                          }
                           else Sounds.ERROR.play();
                           elements.get(it.ordinal()).setText(it.name() + ": " + KeyEvent.getKeyText(it.getKey()));
                           Controls.clearCache();
@@ -57,7 +61,10 @@ public class ControlsMenu extends Menu {
                       }
                   });
               })));
-        elements.add(new MenuButton("Back", () -> Game.get().popSegment()));
+        elements.add(new MenuButton("Back", () -> {
+            Sounds.DESELECT.play();
+            Game.get().popSegment();
+        }));
     }
     
     @Override

@@ -5,6 +5,7 @@ import com.cs321.team1.framework.map.Level;
 import com.cs321.team1.framework.menu.Menu;
 import com.cs321.team1.framework.menu.elements.MenuButton;
 import com.cs321.team1.framework.menu.elements.MenuSlider;
+import com.cs321.team1.framework.sounds.Sounds;
 
 import java.awt.*;
 
@@ -16,7 +17,10 @@ public class VideoMenu extends Menu {
         elements.add(new MenuSlider("Resolution:", 0, 10, i -> {
         }));
         elements.add(new MenuButton("Toggle Fullscreen", () -> Game.get().toggleFullscreen()));
-        elements.add(new MenuButton("Back", () -> Game.get().popSegment()));
+        elements.add(new MenuButton("Back", () -> {
+            Sounds.DESELECT.play();
+            Game.get().popSegment();
+        }));
     }
     
     @Override
