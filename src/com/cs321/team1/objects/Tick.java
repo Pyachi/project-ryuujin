@@ -6,8 +6,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * An annotation used to mark methods that should run every tick.
- * Priority determines order methods are ran in, lower values run first.
+ * Used to mark methods that should run every tick
+ * Priority determines run order, lower values first
+ * Doesn't do anything if used on a method outside GameObject and its subclasses
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

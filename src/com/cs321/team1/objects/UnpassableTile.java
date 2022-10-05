@@ -6,7 +6,6 @@ import com.cs321.team1.assets.Texture;
 
 /**
  * A static object that provides collision detection
- * Useful for walls, obstacles, etc.
  */
 public class UnpassableTile extends GameObject {
     public UnpassableTile(Location location, Texture texture) {

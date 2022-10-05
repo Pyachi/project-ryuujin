@@ -4,8 +4,8 @@ import com.cs321.team1.map.Location;
 import com.cs321.team1.assets.Texture;
 
 /**
- * A static tile that runs a script when a player collides with it.
- * Useful for dynamic events.
+ * A static tile that runs a script when a player collides with it
+ * Useful for dynamic events
  */
 public class Trigger extends GameObject {
     private final Runnable run;

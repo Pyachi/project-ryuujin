@@ -5,8 +5,7 @@ import com.cs321.team1.objects.GameObject;
 import com.cs321.team1.assets.Texture;
 
 /**
- * A static object that ignores collision.
- * Useful for floors, decoration, etc.
+ * A static object that ignores collision
  */
 public class PassableTile extends GameObject {
     public PassableTile(Location location, Texture texture) {
