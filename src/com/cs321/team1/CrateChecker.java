@@ -1,8 +1,6 @@
 package com.cs321.team1;
 
-import com.cs321.team1.framework.map.Level;
-import com.cs321.team1.framework.map.Location;
-import com.cs321.team1.framework.objects.crates.*;
+import com.cs321.team1.objects.crates.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
