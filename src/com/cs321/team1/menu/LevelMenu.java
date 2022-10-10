@@ -2,6 +2,7 @@ package com.cs321.team1.menu;
 
 import com.cs321.team1.Game;
 import com.cs321.team1.map.Level;
+import com.cs321.team1.map.World;
 import com.cs321.team1.menu.elements.MenuButton;
 import com.cs321.team1.assets.Sounds;
 
@@ -14,19 +15,19 @@ public class LevelMenu extends Menu {
         this.level = level;
         elements.add(new MenuButton("Resume", () -> {
             Sounds.DESELECT.play();
-            Game.get().popSegment();
+            Game.popSegment();
         }));
         elements.add(new MenuButton("Options", () -> {
             Sounds.SELECT.play();
-            Game.get().pushSegment(new OptionsMenu(level));
+            Game.pushSegment(new OptionsMenu(level));
         }));
-        if (Game.get().getSegments().size() > 2) elements.add(new MenuButton("Return to Map", () -> {
+        if (!(level instanceof World)) elements.add(new MenuButton("Return to Map", () -> {
             Sounds.DESELECT.play();
-            while (Game.get().getSegments().size() > 2) Game.get().popSegment();
+            Game.popSegmentsTo(2);
         }));
         elements.add(new MenuButton("Quit to Menu", () -> {
             Sounds.DESELECT.play();
-            while (Game.get().getSegments().size() > 1) Game.get().popSegment();
+            Game.popSegmentsTo(1);
         }));
         elements.add(new MenuButton("Quit to Desktop", () -> {
             Sounds.DESELECT.play();
@@ -38,9 +39,5 @@ public class LevelMenu extends Menu {
     public void render(Graphics2D g) {
         if (level != null) level.render(g);
         super.render(g);
-    }
-    
-    @Override
-    public void onClose() {
     }
 }

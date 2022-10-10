@@ -2,7 +2,7 @@ package com.cs321.team1.menu;
 
 import com.cs321.team1.assets.Controls;
 import com.cs321.team1.Game;
-import com.cs321.team1.GameComponent;
+import com.cs321.team1.GameSegment;
 import com.cs321.team1.map.Level;
 import com.cs321.team1.menu.elements.MenuButton;
 import com.cs321.team1.assets.Sounds;
@@ -19,7 +19,7 @@ public class ControlsMenu extends Menu {
         Arrays.stream(Controls.values())
               .forEach(it -> elements.add(new MenuButton(it.name() + ": " + KeyEvent.getKeyText(it.getKey()), () -> {
                   Sounds.SELECT.play();
-                  Game.get().pushSegment(new GameComponent() {
+                  Game.pushSegment(new GameSegment() {
                       int tick = 0;
                 
                       @Override
@@ -39,11 +39,10 @@ public class ControlsMenu extends Menu {
                           if (!used) {
                               Sounds.SELECT.play();
                               it.setKey(key);
-                          }
-                          else Sounds.ERROR.play();
+                          } else Sounds.ERROR.play();
                           elements.get(it.ordinal()).setText(it.name() + ": " + KeyEvent.getKeyText(it.getKey()));
                           Controls.clearCache();
-                          Game.get().popSegment();
+                          Game.popSegment();
                       }
                 
                       @Override
@@ -52,17 +51,12 @@ public class ControlsMenu extends Menu {
                       }
                 
                       @Override
-                      public void refresh() {
-                      }
-                
-                      @Override
-                      public void onClose() {
-                      }
+                      public void onClose() {}
                   });
               })));
         elements.add(new MenuButton("Back", () -> {
             Sounds.DESELECT.play();
-            Game.get().popSegment();
+            Game.popSegment();
         }));
     }
     
@@ -70,9 +64,5 @@ public class ControlsMenu extends Menu {
     public void render(Graphics2D g) {
         if (level != null) level.render(g);
         super.render(g);
-    }
-    
-    @Override
-    public void onClose() {
     }
 }

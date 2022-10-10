@@ -11,8 +11,7 @@ public class CrateChecker {
     private static boolean bottomed;
     private static int reached;
     
-    public static void main(String[] args)
-            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public static void main(String[] args) {
         var crates = new ArrayList<Crate>();
         var scanner = new Scanner(System.in);
         while (true) {
@@ -63,8 +62,7 @@ public class CrateChecker {
         });
     }
     
-    private static List<Integer> scanCrates(List<Crate> list)
-            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    private static List<Integer> scanCrates(List<Crate> list) {
         if (list.size() == 1) {
             if (!bottomed) {
                 bottomed = true;

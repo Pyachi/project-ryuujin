@@ -24,7 +24,7 @@ public class VolumeMenu extends Menu {
         }));
         elements.add(new MenuButton("Back", () -> {
             Sounds.DESELECT.play();
-            Game.get().popSegment();
+            Game.popSegment();
         }));
     }
     
@@ -32,9 +32,5 @@ public class VolumeMenu extends Menu {
     public void render(Graphics2D g) {
         if (level != null) level.render(g);
         super.render(g);
-    }
-    
-    @Override
-    public void onClose() {
     }
 }

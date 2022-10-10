@@ -19,7 +19,7 @@ public class VideoMenu extends Menu {
         elements.add(new MenuButton("Toggle Fullscreen", () -> Game.get().toggleFullscreen()));
         elements.add(new MenuButton("Back", () -> {
             Sounds.DESELECT.play();
-            Game.get().popSegment();
+            Game.popSegment();
         }));
     }
     
@@ -27,9 +27,5 @@ public class VideoMenu extends Menu {
     public void render(Graphics2D g) {
         if (level != null) level.render(g);
         super.render(g);
-    }
-    
-    @Override
-    public void onClose() {
     }
 }

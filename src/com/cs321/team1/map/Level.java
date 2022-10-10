@@ -2,7 +2,7 @@ package com.cs321.team1.map;
 
 import com.cs321.team1.assets.Controls;
 import com.cs321.team1.Game;
-import com.cs321.team1.GameComponent;
+import com.cs321.team1.GameSegment;
 import com.cs321.team1.menu.LevelMenu;
 import com.cs321.team1.objects.GameObject;
 import com.cs321.team1.objects.Player;
@@ -19,22 +19,27 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
-public class Level extends GameComponent {
+public class Level implements GameSegment {
     private final Set<GameObject> objs = new HashSet<>();
     private final Set<GameObject> objsToUpdate = new HashSet<>();
     private final Map<Method, Set<GameObject>> ticks = new HashMap<>();
     private final int width;
     private final int height;
-    private boolean refresh = true;
-    private BufferedImage image;
-    private BufferedImage level;
-    private Graphics2D graphics;
-    private Graphics2D levelGraphics;
+    private final BufferedImage image;
+    private final BufferedImage level;
+    private final Graphics2D graphics;
+    private final Graphics2D levelGraphics;
     
-    public Level(int width, int height) {
+    protected Level(int width, int height) {
         this.width = width;
         this.height = height;
-        refresh();
+        var screenSize = Game.get().getScreenSize();
+        image = new BufferedImage(screenSize.width, screenSize.height, BufferedImage.TYPE_INT_ARGB);
+        level = new BufferedImage(getWidth() * 16 * getScale(),
+                                  getHeight() * 16 * getScale(),
+                                  BufferedImage.TYPE_INT_ARGB);
+        graphics = image.createGraphics();
+        levelGraphics = level.createGraphics();
     }
     
     public int getWidth() {
@@ -65,18 +70,6 @@ public class Level extends GameComponent {
     }
     
     @Override
-    public void refresh() {
-        refresh = true;
-        var screenSize = Game.get().getScreenSize();
-        image = new BufferedImage(screenSize.width, screenSize.height, BufferedImage.TYPE_INT_ARGB);
-        level = new BufferedImage(getWidth() * 16 * getScale(),
-                                  getHeight() * 16 * getScale(),
-                                  BufferedImage.TYPE_INT_ARGB);
-        graphics = image.createGraphics();
-        levelGraphics = level.createGraphics();
-    }
-    
-    @Override
     public void update() {
         ticks.values().stream().flatMap(Collection::stream).forEach(it -> {
             objsToUpdate.add(it);
@@ -91,13 +84,12 @@ public class Level extends GameComponent {
                 e.printStackTrace();
             }
         }));
-        if (Controls.BACK.isPressed()) Game.get().pushSegment(new LevelMenu(this));
+        if (Controls.BACK.isPressed()) Game.pushSegment(new LevelMenu(this));
         
     }
     
     @Override
-    public void onClose() {
-    }
+    public void onClose() {}
     
     public int getScale() {
         int scale = 20;
@@ -108,9 +100,7 @@ public class Level extends GameComponent {
     
     @Override
     public void render(Graphics2D g) {
-        var list = new ArrayList<GameObject>();
-        if (refresh) list.addAll(objs);
-        else list.addAll(objsToUpdate);
+        var list = new ArrayList<>(objsToUpdate);
         objsToUpdate.clear();
         list.sort(Comparator.comparingInt(it -> it.getTexture().getTexture().priority));
         list.forEach(it -> it.paint(levelGraphics));
@@ -121,7 +111,7 @@ public class Level extends GameComponent {
         g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
     }
     
-    public static Level EmptyLevel(int width, int height) {
+    protected static Level EmptyLevel(int width, int height) {
         var level = new Level(width, height);
         level.addObject(new UnpassableTile(Location.Tile(1, 0), Textures.NULL.get(width, 1)));
         level.addObject(new UnpassableTile(Location.Tile(1, height + 1), Textures.NULL.get(width, 1)));

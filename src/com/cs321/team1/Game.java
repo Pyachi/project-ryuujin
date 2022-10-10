@@ -4,41 +4,70 @@ import com.cs321.team1.assets.Controls;
 import com.cs321.team1.menu.MainMenu;
 
 import javax.swing.*;
+import javax.swing.text.Segment;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Singleton style class handling the base game logic
+ * Represents the top of the class hierarchy
+ */
 public class Game extends JPanel implements Runnable {
     //******************************************************************************************************************
-    //Game Content
+    //Game Logic
     
-    private final List<GameComponent> segments = new ArrayList<>();
+    /**
+     * List of GameSegments represented as a stack
+     * Only the top of the stack is actively updated
+     */
+    private final List<GameSegment> segments = new ArrayList<>();
     
+    /**
+     * Handles game start logic
+     * Ran once on game initialization
+     * TODO implement save file functionality
+     */
     private void start() {
         pushSegment(new MainMenu());
     }
     
+    /**
+     * Handles game logic
+     * Ran once per tick
+     */
     private void update() {
         Controls.cache();
         if (Controls.FULLSCREEN.isPressed()) toggleFullscreen();
         segments.get(0).update();
     }
     
-    public List<GameComponent> getSegments() {
-        return new ArrayList<>(segments);
+    /**
+     * Adds a GameSegment to the top of the stack
+     * @param seg Chosen GameSegment
+     */
+    public static void pushSegment(GameSegment seg) {
+        i.segments.add(0, seg);
     }
     
-    public void pushSegment(GameComponent seg) {
-        segments.add(0, seg);
+    /**
+     * Removes a GameSegment from the top of the stack
+     */
+    public static void popSegment() {
+        i.segments.remove(0).onClose();
     }
     
-    public void popSegment() {
-        segments.remove(0).onClose();
+    /**
+     * Removes GameSegments until desired size of stack
+     * @param size Chosen size of stack
+     */
+    public static void popSegmentsTo(int size) {
+        while (i.segments.size() > size) popSegment();
     }
     //******************************************************************************************************************
-    //Framework
+    //Framework and Utilities
     
     private static Game i;
     private final JFrame window;
@@ -116,7 +145,7 @@ public class Game extends JPanel implements Runnable {
     public void updateScreen() {
         setPreferredSize(getScreenSize());
         window.pack();
-        segments.forEach(GameComponent::refresh);
+        //        segments.forEach(GameComponent::refresh);
     }
     
     @Override

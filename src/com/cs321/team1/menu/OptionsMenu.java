@@ -14,19 +14,19 @@ public class OptionsMenu extends Menu {
         this.level = level;
         elements.add(new MenuButton("Sound Settings", () -> {
             Sounds.SELECT.play();
-            Game.get().pushSegment(new VolumeMenu(level));
+            Game.pushSegment(new VolumeMenu(level));
         }));
         elements.add(new MenuButton("Video Settings", () -> {
             Sounds.SELECT.play();
-            Game.get().pushSegment(new VideoMenu(level));
+            Game.pushSegment(new VideoMenu(level));
         }));
         elements.add(new MenuButton("Controls", () -> {
             Sounds.SELECT.play();
-            Game.get().pushSegment(new ControlsMenu(level));
+            Game.pushSegment(new ControlsMenu(level));
         }));
         elements.add(new MenuButton("Back", () -> {
             Sounds.DESELECT.play();
-            Game.get().popSegment();
+            Game.popSegment();
         }));
     }
     
@@ -34,9 +34,5 @@ public class OptionsMenu extends Menu {
     public void render(Graphics2D g) {
         if (level != null) level.render(g);
         super.render(g);
-    }
-    
-    @Override
-    public void onClose() {
     }
 }

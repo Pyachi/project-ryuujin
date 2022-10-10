@@ -2,7 +2,7 @@ package com.cs321.team1.menu;
 
 import com.cs321.team1.assets.Controls;
 import com.cs321.team1.Game;
-import com.cs321.team1.GameComponent;
+import com.cs321.team1.GameSegment;
 import com.cs321.team1.menu.elements.MenuElement;
 import com.cs321.team1.assets.Sounds;
 
@@ -11,7 +11,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Menu extends GameComponent {
+public abstract class Menu implements GameSegment {
     protected final List<MenuElement> elements = new ArrayList<>();
     private int selected = 0;
     
@@ -22,8 +22,8 @@ public abstract class Menu extends GameComponent {
         if (selected < 0) selected = elements.size() - 1;
         else if (selected >= elements.size()) selected = 0;
         elements.get(selected).update();
-        if (Controls.BACK.isPressed() && getIndex() != Game.get().getSegments().size() - 1) {
-            Game.get().popSegment();
+        if (!(this instanceof MainMenu) && Controls.BACK.isPressed()) {
+            Game.popSegment();
             Sounds.DESELECT.play();
         }
     }
@@ -51,6 +51,5 @@ public abstract class Menu extends GameComponent {
     }
     
     @Override
-    public void refresh() {
-    }
+    public void onClose() {}
 }
