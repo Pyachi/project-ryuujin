@@ -1,12 +1,12 @@
 package com.cs321.team1.objects.crates;
 
+import com.cs321.team1.assets.Texture;
 import com.cs321.team1.map.Location;
-import com.cs321.team1.assets.Textures;
 
 public class PoweredCrate extends Crate {
     public PoweredCrate(Location loc) {
         super(loc, 0);
-        setTexture(Textures.CRATE_INTERACTABLE.get());
+        setTexture(Texture.Basic("crate/interactable",1));
     }
     
     @Override

@@ -5,64 +5,45 @@ import com.cs321.team1.objects.GameObject;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 public class Texture {
-    private final Textures texture;
-    private final int width;
-    private final int height;
-    private BufferedImage image;
-    private final int imageWidth;
-    private final int imageHeight;
-    private final int imageFrames;
+    private static final String TEXTURES_PATH = "src/resources/textures/";
+    private final BufferedImage image;
     
-    Texture(Textures texture, int frames, int width, int height) {
-        this.texture = texture;
-        imageFrames = frames;
-        loadImage();
-        imageWidth = image.getWidth();
-        imageHeight = image.getHeight() / frames;
-        this.width = width * 16;
-        this.height = height * 16;
+    public final int priority;
+    public final int frames;
+    public final int width;
+    public final int height;
+    
+    public static Texture Basic(String path, int priority) {
+        return new Texture(path, priority, false);
     }
     
-    Texture(Textures texture, int frames) {
-        this.texture = texture;
-        imageFrames = frames;
-        loadImage();
-        imageWidth = image.getWidth();
-        imageHeight = image.getHeight() / frames;
-        width = imageWidth;
-        height = imageHeight;
+    public static Texture Animated(String path, int priority) {
+        return new Texture(path, priority, true);
     }
     
-    public Textures getTexture() {
-        return texture;
-    }
-    
-    public int getWidth() {
-        return width;
-    }
-    
-    public int getHeight() {
-        return height;
-    }
-    
-    private void loadImage() {
+    private Texture(String path, int priority, boolean animated) {
+        this.priority = priority;
         try {
-            image = ImageIO.read(texture.path);
+            image = ImageIO.read(new File(TEXTURES_PATH + path + ".png"));
+            width = image.getWidth();
+            height = animated ? image.getHeight() / width : image.getHeight();
+            frames = animated ? image.getHeight() / image.getWidth() : 1;
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
     
     public void paint(GameObject obj, Graphics2D g, int tick) {
-        if (texture != Textures.NULL)
-            g.drawImage(image.getSubimage(0, imageHeight * ((tick / 5) % imageFrames), imageWidth, imageHeight),
-                        (obj.getLocation().x() - 16) * obj.getLevel().getScale(),
-                        (obj.getLocation().y() - 16) * obj.getLevel().getScale(),
-                        width * obj.getLevel().getScale(),
-                        height * obj.getLevel().getScale(),
-                        null);
+        if (image != null) g.drawImage(image.getSubimage(0, height * ((tick / 5) % frames), width, height),
+                                       (obj.getLocation().x() - 16) * obj.getLevel().getScale(),
+                                       (obj.getLocation().y() - 16) * obj.getLevel().getScale(),
+                                       obj.getWidth() * obj.getLevel().getScale(),
+                                       obj.getHeight() * obj.getLevel().getScale(),
+                                       null);
     }
 }

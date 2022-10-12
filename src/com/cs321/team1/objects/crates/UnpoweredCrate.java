@@ -1,12 +1,12 @@
 package com.cs321.team1.objects.crates;
 
+import com.cs321.team1.assets.Texture;
 import com.cs321.team1.map.Location;
-import com.cs321.team1.assets.Textures;
 
 public class UnpoweredCrate extends Crate {
     public UnpoweredCrate(Location loc, int value) {
         super(loc, value);
-        setTexture(Textures.TILE.get());
+        setTexture(Texture.Basic("map/floor",1));
     }
     
     @Override

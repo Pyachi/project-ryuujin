@@ -10,7 +10,8 @@ import com.cs321.team1.assets.Texture;
 public class Trigger extends GameObject {
     private final Runnable run;
     
-    public Trigger(Location location, Texture texture, Runnable run) {
+    public Trigger(Location location, int width, int height, Texture texture, Runnable run) {
+        super(width, height);
         setTexture(texture);
         setLocation(location);
         this.run = run;

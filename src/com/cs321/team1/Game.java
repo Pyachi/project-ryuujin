@@ -145,7 +145,6 @@ public class Game extends JPanel implements Runnable {
     public void updateScreen() {
         setPreferredSize(getScreenSize());
         window.pack();
-        //        segments.forEach(GameComponent::refresh);
     }
     
     @Override

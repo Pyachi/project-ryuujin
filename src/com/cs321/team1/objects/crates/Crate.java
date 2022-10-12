@@ -1,6 +1,7 @@
 package com.cs321.team1.objects.crates;
 
 import com.cs321.team1.Game;
+import com.cs321.team1.assets.Texture;
 import com.cs321.team1.map.Location;
 import com.cs321.team1.objects.GameObject;
 import com.cs321.team1.objects.Particle;
@@ -8,7 +9,6 @@ import com.cs321.team1.objects.Player;
 import com.cs321.team1.objects.Tick;
 import com.cs321.team1.objects.UnpassableTile;
 import com.cs321.team1.assets.Sounds;
-import com.cs321.team1.assets.Textures;
 
 import java.awt.*;
 
@@ -16,9 +16,10 @@ public abstract class Crate extends GameObject {
     private final int value;
     
     public Crate(Location loc, int value) {
+        super(1, 1);
         this.value = value;
         if (loc != null) setLocation(loc);
-        setTexture(Textures.CRATE.get());
+        setTexture(Texture.Basic("crates/crate",1));
     }
     
     public int getValue() {
@@ -55,7 +56,7 @@ public abstract class Crate extends GameObject {
         Crate newCrate = getMergedCrate(location, crate);
         if (newCrate != null) {
             getLevel().addObject(newCrate);
-            getLevel().addObject(new Particle(getLocation(), Textures.EXPLOSION.get()));
+            getLevel().addObject(new Particle(getLocation(), Texture.Animated("crates/explosion",4)));
         }
         Sounds.MERGE.play();
         crate.kill();

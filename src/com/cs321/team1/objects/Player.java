@@ -1,10 +1,10 @@
 package com.cs321.team1.objects;
 
 import com.cs321.team1.assets.Controls;
+import com.cs321.team1.assets.Texture;
 import com.cs321.team1.map.Location;
 import com.cs321.team1.objects.crates.Crate;
 import com.cs321.team1.assets.Sounds;
-import com.cs321.team1.assets.Textures;
 
 import java.util.Objects;
 
@@ -16,7 +16,8 @@ public class Player extends GameObject {
     private int tryY = 0;
     
     public Player(Location location) {
-        setTexture(Textures.PLAYER_DOWN.get());
+        super(1, 1);
+        setTexture(Texture.Basic("player/down",2));
         setLocation(location);
     }
     
@@ -97,12 +98,12 @@ public class Player extends GameObject {
                                       .map(Player::getGrabbedCrate)
                                       .filter(Objects::nonNull)
                                       .toList();
-        crates.forEach(it -> it.setTexture(Textures.CRATE.get()));
+        crates.forEach(it -> it.setTexture(Texture.Basic("crates/crate",1)));
         crates.stream()
               .filter(crate -> grabbedCrates.stream()
                                             .anyMatch(it -> it.canInteractWith(crate) || crate.canInteractWith(it)))
-              .forEach(it -> it.setTexture(Textures.CRATE_INTERACTABLE.get()));
-        grabbedCrates.forEach(it -> it.setTexture(Textures.CRATE_GRABBED.get()));
+              .forEach(it -> it.setTexture(Texture.Basic("crates/interactable",1)));
+        grabbedCrates.forEach(it -> it.setTexture(Texture.Basic("crates/grabbed",1)));
     }
     
     private void calculateMovement() {
@@ -114,16 +115,16 @@ public class Player extends GameObject {
         if (grabbedCrate == null) {
             if (y < 0) {
                 dir = Direction.NORTH;
-                setTexture(Textures.PLAYER_UP.get());
+                setTexture(Texture.Basic("player/up",2));
             } else if (y > 0) {
                 dir = Direction.SOUTH;
-                setTexture(Textures.PLAYER_DOWN.get());
+                setTexture(Texture.Basic("player/down",2));
             } else if (x < 0) {
                 dir = Direction.WEST;
-                setTexture(Textures.PLAYER_LEFT.get());
+                setTexture(Texture.Basic("player/left",2));
             } else if (x > 0) {
                 dir = Direction.EAST;
-                setTexture(Textures.PLAYER_RIGHT.get());
+                setTexture(Texture.Basic("player/right",2));
             }
         }
         for (int i = 0; i < 2; i++) move(x, y);

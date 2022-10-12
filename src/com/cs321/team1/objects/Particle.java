@@ -10,9 +10,10 @@ public class Particle extends GameObject {
     public final int lifetime;
     
     public Particle(Location loc, Texture texture) {
-        setLocation(loc.add(-((texture.getWidth() - 16) / 2), -((texture.getHeight() - 16) / 2)));
+        super(1, 1);
+        setLocation(loc.add(-((texture.width - 16) / 2), -((texture.height - 16) / 2)));
         setTexture(texture);
-        lifetime = 5 * texture.getTexture().frames;
+        lifetime = 5 * texture.frames;
     }
     
     @Tick(priority = 4)

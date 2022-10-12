@@ -5,6 +5,9 @@ import com.cs321.team1.assets.Controls;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/**
+ *
+ */
 public class MenuButton extends MenuElement {
     private final Runnable run;
     

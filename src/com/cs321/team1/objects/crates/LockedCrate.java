@@ -1,12 +1,12 @@
 package com.cs321.team1.objects.crates;
 
+import com.cs321.team1.assets.Texture;
 import com.cs321.team1.map.Location;
-import com.cs321.team1.assets.Textures;
 
 public class LockedCrate extends Crate {
     public LockedCrate(Location loc, int value) {
         super(loc, value);
-        setTexture(Textures.BOULDER.get());
+        setTexture(Texture.Basic("map/tile",1));
     }
     
     @Override

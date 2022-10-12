@@ -1,10 +1,9 @@
 package com.cs321.team1.menu;
 
 import com.cs321.team1.Game;
-import com.cs321.team1.map.Level;
-import com.cs321.team1.map.World;
-import com.cs321.team1.menu.elements.MenuButton;
 import com.cs321.team1.assets.Sounds;
+import com.cs321.team1.map.Level;
+import com.cs321.team1.menu.elements.MenuButton;
 
 import java.awt.*;
 
@@ -21,7 +20,7 @@ public class LevelMenu extends Menu {
             Sounds.SELECT.play();
             Game.pushSegment(new OptionsMenu(level));
         }));
-        if (!(level instanceof World)) elements.add(new MenuButton("Return to Map", () -> {
+        if (!level.isWorld()) elements.add(new MenuButton("Return to Map", () -> {
             Sounds.DESELECT.play();
             Game.popSegmentsTo(2);
         }));
