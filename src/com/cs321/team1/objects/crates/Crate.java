@@ -19,7 +19,7 @@ public abstract class Crate extends GameObject {
         super(1, 1);
         this.value = value;
         if (loc != null) setLocation(loc);
-        setTexture(Texture.Basic("crates/crate",1));
+        setTexture(new Texture("crates/crate",1));
     }
     
     public int getValue() {
@@ -56,7 +56,7 @@ public abstract class Crate extends GameObject {
         Crate newCrate = getMergedCrate(location, crate);
         if (newCrate != null) {
             getLevel().addObject(newCrate);
-            getLevel().addObject(new Particle(getLocation(), Texture.Animated("crates/explosion",4)));
+            getLevel().addObject(new Particle(getLocation(), new Texture("crates/explosion_animated",4)));
         }
         Sounds.MERGE.play();
         crate.kill();

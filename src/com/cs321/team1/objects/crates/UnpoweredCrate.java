@@ -6,7 +6,7 @@ import com.cs321.team1.map.Location;
 public class UnpoweredCrate extends Crate {
     public UnpoweredCrate(Location loc, int value) {
         super(loc, value);
-        setTexture(Texture.Basic("map/floor",1));
+        setTexture(new Texture("map/floor",1));
     }
     
     @Override

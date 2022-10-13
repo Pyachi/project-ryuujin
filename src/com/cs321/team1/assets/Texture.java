@@ -18,24 +18,23 @@ public class Texture {
     public final int width;
     public final int height;
     
-    public static Texture Basic(String path, int priority) {
-        return new Texture(path, priority, false);
-    }
-    
-    public static Texture Animated(String path, int priority) {
-        return new Texture(path, priority, true);
-    }
-    
-    private Texture(String path, int priority, boolean animated) {
-        this.priority = priority;
+    public Texture(String path, int priority) {
+        BufferedImage tempImage;
         try {
-            image = ImageIO.read(new File(TEXTURES_PATH + path + ".png"));
-            width = image.getWidth();
-            height = animated ? image.getHeight() / width : image.getHeight();
-            frames = animated ? image.getHeight() / image.getWidth() : 1;
+            tempImage = ImageIO.read(new File(TEXTURES_PATH + path + ".png"));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            try {
+                tempImage = ImageIO.read(new File(TEXTURES_PATH + "null.png"));
+                priority = 100;
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         }
+        this.priority = priority;
+        image = tempImage;
+        width = image.getWidth();
+        frames = path.contains("animated") ? image.getHeight() / width : 1;
+        height = path.contains("animated") ? image.getHeight() / frames : image.getHeight();
     }
     
     public void paint(GameObject obj, Graphics2D g, int tick) {

@@ -6,7 +6,7 @@ import com.cs321.team1.map.Location;
 public class PoweredCrate extends Crate {
     public PoweredCrate(Location loc) {
         super(loc, 0);
-        setTexture(Texture.Basic("crate/interactable",1));
+        setTexture(new Texture("crates/interactable",1));
     }
     
     @Override

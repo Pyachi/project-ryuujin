@@ -5,12 +5,8 @@ import com.cs321.team1.Game;
 import com.cs321.team1.GameSegment;
 import com.cs321.team1.assets.Texture;
 import com.cs321.team1.menu.LevelMenu;
-import com.cs321.team1.objects.GameObject;
-import com.cs321.team1.objects.Player;
-import com.cs321.team1.objects.Tick;
+import com.cs321.team1.objects.*;
 import com.cs321.team1.objects.crates.*;
-import com.cs321.team1.objects.PassableTile;
-import com.cs321.team1.objects.UnpassableTile;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -42,6 +38,11 @@ public class Level implements GameSegment {
                                   BufferedImage.TYPE_INT_ARGB);
         graphics = image.createGraphics();
         levelGraphics = level.createGraphics();
+        addObject(new PassableTile(Location.Tile(1, 1), new Texture("map/base", -1), width, height));
+        addObject(new UnpassableTile(Location.Tile(1, 0), width, 1));
+        addObject(new UnpassableTile(Location.Tile(1, height + 1), width, 1));
+        addObject(new UnpassableTile(Location.Tile(0, 1), 1, height));
+        addObject(new UnpassableTile(Location.Tile(width + 1, 1), 1, height));
     }
     
     public int getWidth() {
@@ -113,52 +114,127 @@ public class Level implements GameSegment {
         g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
     }
     
-    public static Level loadLevel(String name, boolean world) {
+    public static void loadLevel(String name, boolean world) {
         try {
-            String path = "src/resources/levels/" + name + ".ryu";
-            File file = new File(path);
-            Scanner scanner = new Scanner(file);
-            String[] format = scanner.nextLine().split(":");
-            int width = Integer.parseInt(format[0]);
-            int height = Integer.parseInt(format[1]);
-            Level level = new Level(width, height, world);
-            while (scanner.hasNext()) {
-                try {
-                    String[] obj = scanner.nextLine().split(":");
-                    int x = Integer.parseInt(obj[0]);
-                    int y = Integer.parseInt(obj[1]);
-                    if (x > width || x < 1 || y > height || y < 1) continue;
-                    Location loc = Location.Tile(x, y);
-                    switch (obj[2]) {
-                        case "PLR" -> level.addObject(new Player(loc));
-                        case "FLR" -> {
-                            if (obj.length == 5) {
-                                var tileWidth = Integer.parseInt(obj[3]);
-                                var tileHeight = Integer.parseInt(obj[4]);
-                                level.addObject(new PassableTile(loc, tileWidth, tileHeight));
-                            } else level.addObject(new PassableTile(loc, Texture.Basic(obj[3], 0)));
+            var file = new Scanner(new File("src/resources/levels/" + name + ".ryu"));
+            var setup = file.nextLine().split("\t");
+            var mapSize = setup[1].split(":");
+            var mapWidth = Integer.parseInt(mapSize[0]);
+            var mapHeight = Integer.parseInt(mapSize[1]);
+            var level = new Level(mapWidth, mapHeight, world);
+            for (int i = 2; i < setup.length; i++) {
+                var playerLoc = setup[i].split(":");
+                var playerX = Integer.parseInt(playerLoc[0]);
+                var playerY = Integer.parseInt(playerLoc[1]);
+                level.addObject(new Player(Location.Tile(playerX, playerY)));
+            }
+            while (file.hasNext()) {
+                var line = file.nextLine().split("\t");
+                var locString = line[1].split(":");
+                var locX = Integer.parseInt(locString[0]);
+                var locY = Integer.parseInt(locString[1]);
+                var loc = Location.Tile(locX, locY);
+                switch (line[0]) {
+                    case "FLR" -> {
+                        if (line[2].contains("/")) {
+                            var textureData = line[2].split(":");
+                            var priority = Integer.parseInt(textureData[0]);
+                            var path = textureData[1];
+                            var texture = new Texture(path, priority);
+                            level.addObject(new PassableTile(loc, texture));
+                        } else {
+                            var size = line[2].split(":");
+                            var width = Integer.parseInt(size[0]);
+                            var height = Integer.parseInt(size[1]);
+                            if (line.length == 4) {
+                                var textureData = line[3].split(":");
+                                var priority = Integer.parseInt(textureData[0]);
+                                var path = textureData[1];
+                                var texture = new Texture(path, priority);
+                                level.addObject(new PassableTile(loc, texture, width, height));
+                            } else level.addObject(new PassableTile(loc, width, height));
                         }
-                        case "WAL" -> {
-                            if (obj.length == 5) {
-                                var tileWidth = Integer.parseInt(obj[3]);
-                                var tileHeight = Integer.parseInt(obj[4]);
-                                level.addObject(new UnpassableTile(loc, tileWidth, tileHeight));
-                            } else level.addObject(new UnpassableTile(loc, Texture.Basic(obj[3], 0)));
-                        }
-                        case "INT" -> level.addObject(new IntegerCrate(loc, Integer.parseInt(obj[3])));
-                        case "NEG" -> level.addObject(new NegateCrate(loc));
-                        case "MOD" -> level.addObject(new ModuloCrate(loc, Integer.parseInt(obj[3])));
-                        case "MUL" -> level.addObject(new MultiplyCrate(loc, Integer.parseInt(obj[3])));
-                        case "DIV" -> level.addObject(new DivideCrate(loc, Integer.parseInt(obj[3])));
-                        case "LCK" -> level.addObject(new LockedCrate(loc, Integer.parseInt(obj[3])));
-                        case "PWR" -> level.addObject(new UnpoweredCrate(loc, Integer.parseInt(obj[3])));
                     }
-                } catch (Exception ignored) {
+                    case "WAL" -> {
+                        if (line[2].contains("/")) {
+                            var textureData = line[2].split(":");
+                            var priority = Integer.parseInt(textureData[0]);
+                            var path = textureData[1];
+                            var texture = new Texture(path, priority);
+                            level.addObject(new UnpassableTile(loc, texture));
+                        } else {
+                            var size = line[2].split(":");
+                            var width = Integer.parseInt(size[0]);
+                            var height = Integer.parseInt(size[1]);
+                            if (line.length == 4) {
+                                var textureData = line[3].split(":");
+                                var priority = Integer.parseInt(textureData[0]);
+                                var path = textureData[1];
+                                var texture = new Texture(path, priority);
+                                level.addObject(new UnpassableTile(loc, texture, width, height));
+                            } else level.addObject(new UnpassableTile(loc, width, height));
+                        }
+                    }
+                    case "INT" -> {
+                        var val = Integer.parseInt(line[2]);
+                        level.addObject(new IntegerCrate(loc, val));
+                    }
+                    case "NEG" -> {
+                        level.addObject(new NegateCrate(loc));
+                    }
+                    case "MOD" -> {
+                        var val = Integer.parseInt(line[2]);
+                        level.addObject(new ModuloCrate(loc, val));
+                    }
+                    case "MUL" -> {
+                        var val = Integer.parseInt(line[2]);
+                        level.addObject(new MultiplyCrate(loc, val));
+                    }
+                    case "DIV" -> {
+                        var val = Integer.parseInt(line[2]);
+                        level.addObject(new DivideCrate(loc, val));
+                    }
+                    case "LCK" -> {
+                        var val = Integer.parseInt(line[2]);
+                        level.addObject(new LockedCrate(loc, val));
+                    }
+                    case "PWR" -> {
+                        var val = Integer.parseInt(line[2]);
+                        level.addObject(new UnpoweredCrate(loc, val));
+                    }
+                    case "TGR" -> {
+                        var command = file.nextLine().split("\t");
+                        Runnable run = () -> {};
+                        switch (command[0]) {
+                            case "LVL" -> run = () -> {
+                                if (Controls.SELECT.isPressed()) Level.loadLevel(command[1], false);
+                            };
+                        }
+                        if (line[2].contains("/")) {
+                            var textureData = line[2].split(":");
+                            var priority = Integer.parseInt(textureData[0]);
+                            var path = textureData[1];
+                            var texture = new Texture(path, priority);
+                            level.addObject(new Trigger(loc, texture, run));
+                        } else {
+                            var size = line[2].split(":");
+                            var width = Integer.parseInt(size[0]);
+                            var height = Integer.parseInt(size[1]);
+                            if (line.length == 4) {
+                                var textureData = line[3].split(":");
+                                var priority = Integer.parseInt(textureData[0]);
+                                var path = textureData[1];
+                                var texture = new Texture(path, priority);
+                                level.addObject(new Trigger(loc, texture, width, height, run));
+                            } else level.addObject(new Trigger(loc, width, height, run));
+                        }
+                    }
                 }
             }
-            return level;
-        } catch (Exception e) {
-            return new Level(5, 5, false);
+            Game.pushSegment(level);
+        } catch (Exception ignored) {
+            System.out.println("Error could not load " + name);
+            ignored.printStackTrace();
         }
     }
     

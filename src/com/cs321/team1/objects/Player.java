@@ -17,7 +17,7 @@ public class Player extends GameObject {
     
     public Player(Location location) {
         super(1, 1);
-        setTexture(Texture.Basic("player/down",2));
+        setTexture(new Texture("player/down",2));
         setLocation(location);
     }
     
@@ -98,12 +98,12 @@ public class Player extends GameObject {
                                       .map(Player::getGrabbedCrate)
                                       .filter(Objects::nonNull)
                                       .toList();
-        crates.forEach(it -> it.setTexture(Texture.Basic("crates/crate",1)));
+        crates.forEach(it -> it.setTexture(new Texture("crates/crate",1)));
         crates.stream()
               .filter(crate -> grabbedCrates.stream()
                                             .anyMatch(it -> it.canInteractWith(crate) || crate.canInteractWith(it)))
-              .forEach(it -> it.setTexture(Texture.Basic("crates/interactable",1)));
-        grabbedCrates.forEach(it -> it.setTexture(Texture.Basic("crates/grabbed",1)));
+              .forEach(it -> it.setTexture(new Texture("crates/interactable",1)));
+        grabbedCrates.forEach(it -> it.setTexture(new Texture("crates/grabbed",1)));
     }
     
     private void calculateMovement() {
@@ -115,16 +115,16 @@ public class Player extends GameObject {
         if (grabbedCrate == null) {
             if (y < 0) {
                 dir = Direction.NORTH;
-                setTexture(Texture.Basic("player/up",2));
+                setTexture(new Texture("player/up",2));
             } else if (y > 0) {
                 dir = Direction.SOUTH;
-                setTexture(Texture.Basic("player/down",2));
+                setTexture(new Texture("player/down",2));
             } else if (x < 0) {
                 dir = Direction.WEST;
-                setTexture(Texture.Basic("player/left",2));
+                setTexture(new Texture("player/left",2));
             } else if (x > 0) {
                 dir = Direction.EAST;
-                setTexture(Texture.Basic("player/right",2));
+                setTexture(new Texture("player/right",2));
             }
         }
         for (int i = 0; i < 2; i++) move(x, y);

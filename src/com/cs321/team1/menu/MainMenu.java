@@ -10,7 +10,7 @@ public class MainMenu extends Menu {
     public MainMenu() {
         elements.add(new MenuButton("New Game", () -> {
             Sounds.SELECT.play();
-            Game.pushSegment(Level.loadLevel("worldOne", true));
+            Level.loadLevel("worldOne", true);
         }));
         elements.add(new MenuButton("Continue", () -> {
             Sounds.ERROR.play();
