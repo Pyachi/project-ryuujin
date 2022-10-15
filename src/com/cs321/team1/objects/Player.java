@@ -115,22 +115,22 @@ public class Player extends GameObject {
         if (grabbedCrate == null) {
             if (y < 0) {
                 dir = Direction.NORTH;
-//                setTexture("player/up_animated");
+                setTexture("player/up_walk_animated");
             } else if (y > 0) {
                 dir = Direction.SOUTH;
-//                setTexture("player/down_animated");
+                setTexture("player/down_walk_animated");
             } else if (x < 0) {
                 dir = Direction.WEST;
-                setTexture("player/left_animated");
+                setTexture("player/left_walk_animated");
             } else if (x > 0) {
                 dir = Direction.EAST;
-                setTexture("player/right_animated");
+                setTexture("player/right_walk_animated");
             } else {
                 switch (dir) {
-//                    case NORTH -> setTexture("player/up");
-//                    case SOUTH -> setTexture("player/down");
-                    case EAST -> setTexture("player/right");
-                    case WEST -> setTexture("player/left");
+                    case NORTH -> setTexture("player/up_idle_animated");
+                    case SOUTH -> setTexture("player/down_idle_animated");
+                    case EAST -> setTexture("player/right_idle_animated");
+                    case WEST -> setTexture("player/left_idle_animated");
                 }
             }
         }
