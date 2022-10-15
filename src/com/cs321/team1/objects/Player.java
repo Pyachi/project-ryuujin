@@ -134,7 +134,7 @@ public class Player extends GameObject {
                 }
             }
         }
-        for (int i = 0; i < 1; i++) move(x, y);
+        move(x, y);
     }
     
     public boolean canMove(int x, int y) {
