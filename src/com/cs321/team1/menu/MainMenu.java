@@ -4,13 +4,14 @@ import com.cs321.team1.Game;
 import com.cs321.team1.assets.Music;
 import com.cs321.team1.assets.Sounds;
 import com.cs321.team1.map.Level;
+import com.cs321.team1.map.LevelLoader;
 import com.cs321.team1.menu.elements.MenuButton;
 
 public class MainMenu extends Menu {
     public MainMenu() {
         elements.add(new MenuButton("New Game", () -> {
             Sounds.SELECT.play();
-            Level.loadLevel("worldOne", true);
+            LevelLoader.loadLevel("worldOne", true);
         }));
         elements.add(new MenuButton("Continue", () -> {
             Sounds.ERROR.play();

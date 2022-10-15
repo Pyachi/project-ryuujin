@@ -1,5 +1,7 @@
 SET	32:18	5:5
 FLR	1:1	0:map/world_one
+TGR	5:6	1:1	1:map/incomplete_level_animated
+LVL	one
 WAL	4:3	4:1
 WAL	8:4	2:1
 WAL	10:5	1:2
@@ -8,5 +10,3 @@ WAL	3:4	1:2
 WAL	4:6	1:1
 WAL	5:7	1:1
 WAL	6:8	3:1
-TGR	5:6	1:1	1:map/incomplete_level_animated
-LVL	one
