@@ -3,6 +3,7 @@ package com.cs321.team1.menu;
 import com.cs321.team1.Game;
 import com.cs321.team1.assets.Sounds;
 import com.cs321.team1.map.Level;
+import com.cs321.team1.map.LevelExit;
 import com.cs321.team1.menu.elements.MenuButton;
 
 import java.awt.*;
@@ -23,10 +24,12 @@ public class LevelMenu extends Menu {
         if (!level.isWorld()) elements.add(new MenuButton("Return to Map", () -> {
             Sounds.DESELECT.play();
             Game.popSegmentsTo(2);
+            Game.pushSegment(new LevelExit(level));
         }));
         elements.add(new MenuButton("Quit to Menu", () -> {
             Sounds.DESELECT.play();
             Game.popSegmentsTo(1);
+            Game.pushSegment(new LevelExit(level));
         }));
         elements.add(new MenuButton("Quit to Desktop", () -> {
             Sounds.DESELECT.play();

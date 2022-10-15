@@ -141,6 +141,7 @@ public class LevelLoader {
                 }
             }
             Game.pushSegment(level);
+            Game.pushSegment(new LevelEntrance(level));
         } catch (Exception e) {
             System.out.println("Error could not load " + name);
         }
