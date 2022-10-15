@@ -17,7 +17,7 @@ public class Player extends GameObject {
     
     public Player(Location location) {
         super(1, 1);
-        setTexture(new Texture("player/down",2));
+        setTexture("player/right");
         setLocation(location);
     }
     
@@ -98,12 +98,12 @@ public class Player extends GameObject {
                                       .map(Player::getGrabbedCrate)
                                       .filter(Objects::nonNull)
                                       .toList();
-        crates.forEach(it -> it.setTexture(new Texture("crates/crate",1)));
+        crates.forEach(it -> it.setTexture(new Texture("crates/crate", 1)));
         crates.stream()
               .filter(crate -> grabbedCrates.stream()
                                             .anyMatch(it -> it.canInteractWith(crate) || crate.canInteractWith(it)))
-              .forEach(it -> it.setTexture(new Texture("crates/interactable",1)));
-        grabbedCrates.forEach(it -> it.setTexture(new Texture("crates/grabbed",1)));
+              .forEach(it -> it.setTexture(new Texture("crates/interactable", 1)));
+        grabbedCrates.forEach(it -> it.setTexture(new Texture("crates/grabbed", 1)));
     }
     
     private void calculateMovement() {
@@ -115,19 +115,26 @@ public class Player extends GameObject {
         if (grabbedCrate == null) {
             if (y < 0) {
                 dir = Direction.NORTH;
-                setTexture(new Texture("player/up",2));
+//                setTexture("player/up_animated");
             } else if (y > 0) {
                 dir = Direction.SOUTH;
-                setTexture(new Texture("player/down",2));
+//                setTexture("player/down_animated");
             } else if (x < 0) {
                 dir = Direction.WEST;
-                setTexture(new Texture("player/left",2));
+                setTexture("player/left_animated");
             } else if (x > 0) {
                 dir = Direction.EAST;
-                setTexture(new Texture("player/test",2));
+                setTexture("player/right_animated");
+            } else {
+                switch (dir) {
+//                    case NORTH -> setTexture("player/up");
+//                    case SOUTH -> setTexture("player/down");
+                    case EAST -> setTexture("player/right");
+                    case WEST -> setTexture("player/left");
+                }
             }
         }
-        for (int i = 0; i < 2; i++) move(x, y);
+        for (int i = 0; i < 1; i++) move(x, y);
     }
     
     public boolean canMove(int x, int y) {
@@ -171,5 +178,9 @@ public class Player extends GameObject {
     
     private enum Direction {
         NORTH, SOUTH, EAST, WEST
+    }
+    
+    private void setTexture(String path) {
+        setTexture(new Texture(path, 2));
     }
 }

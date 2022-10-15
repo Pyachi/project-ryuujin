@@ -101,9 +101,13 @@ public class LevelLoader {
                         }
                         case "CVR" -> {
                             var move = line[2].split(":");
-                            var x = Integer.parseInt(move[0]);
-                            var y = Integer.parseInt(move[1]);
-                            level.addObject(new Conveyor(loc, x, y));
+                            var conv = switch (line[2]) {
+                                default -> Conveyor.UP(loc);
+                                case "D" -> Conveyor.DOWN(loc);
+                                case "L" -> Conveyor.LEFT(loc);
+                                case "R" -> Conveyor.RIGHT(loc);
+                            };
+                            level.addObject(conv);
                         }
                         case "TGR" -> {
                             var command = file.nextLine().split("\t");

@@ -1,9 +1,4 @@
 SET	9:5	1:3
-INT	5:1	6
-MUL	5:3	2
-PWR	5:5	12
-CVR	2:2	2:0
-CVR	3:2	2:0
-CVR	4:2	2:0
-CVR	5:2	2:0
-CVR	6:2	2:0
+WAL	5:1	1:2	1:map/floor
+WAL	5:4	1:2	1:map/floor
+CVR	5:3	R

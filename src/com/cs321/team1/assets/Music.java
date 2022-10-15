@@ -19,15 +19,15 @@ public enum Music {
     }
     
     public void play() {
-        try {
-            var clip = AudioSystem.getClip();
-            clip.open(AudioSystem.getAudioInputStream(path));
-            ((FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN)).setValue((float) (20 * Math.log10(volume
-                                                                                                                      / 100.0)));
-            clip.start();
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            var clip = AudioSystem.getClip();
+//            clip.open(AudioSystem.getAudioInputStream(path));
+//            ((FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN)).setValue((float) (20 * Math.log10(volume
+//                                                                                                                      / 100.0)));
+//            clip.start();
+//        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+//            e.printStackTrace();
+//        }
     }
     
     public static int getVolume() {

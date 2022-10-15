@@ -7,12 +7,28 @@ public class Conveyor extends GameObject {
     private final int x;
     private final int y;
     
-    public Conveyor(Location loc, int x, int y) {
+    public static Conveyor UP(Location loc) {
+        return new Conveyor(loc, 0, -2);
+    }
+    
+    public static Conveyor DOWN(Location loc) {
+        return new Conveyor(loc, 0, 2);
+    }
+    
+    public static Conveyor LEFT(Location loc) {
+        return new Conveyor(loc, -2, 0);
+    }
+    
+    public static Conveyor RIGHT(Location loc) {
+        return new Conveyor(loc, 2, 0);
+    }
+    
+    private Conveyor(Location loc, int x, int y) {
         super(1, 1);
         this.x = x;
         this.y = y;
         setLocation(loc);
-        setTexture(new Texture("map/floor", 1));
+        setTexture(new Texture("map/floor", 0));
     }
     
     @Tick(priority = 3)
