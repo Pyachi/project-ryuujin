@@ -138,7 +138,6 @@ public class LevelLoader {
                         }
                     }
                 } catch (Exception ignored) {
-                    ignored.printStackTrace();
                 }
             }
             Game.pushSegment(level);
