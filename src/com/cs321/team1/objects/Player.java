@@ -124,7 +124,7 @@ public class Player extends GameObject {
                 setTexture(new Texture("player/left",2));
             } else if (x > 0) {
                 dir = Direction.EAST;
-                setTexture(new Texture("player/right",2));
+                setTexture(new Texture("player/test",2));
             }
         }
         for (int i = 0; i < 2; i++) move(x, y);

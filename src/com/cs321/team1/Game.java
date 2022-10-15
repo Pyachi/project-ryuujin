@@ -9,6 +9,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 /**
@@ -37,11 +38,14 @@ public class Game extends JPanel implements Runnable {
     /**
      * Handles game logic
      * Ran once per tick
+     * TODO fix controls caching
      */
     private void update() {
-        Controls.cache();
-        if (Controls.FULLSCREEN.isPressed()) toggleFullscreen();
-        segments.get(0).update();
+        try {
+            Controls.cache();
+            if (Controls.FULLSCREEN.isPressed()) toggleFullscreen();
+            segments.get(0).update();
+        } catch (ConcurrentModificationException ignored) {}
     }
     
     /**

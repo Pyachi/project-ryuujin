@@ -3,10 +3,7 @@ package com.cs321.team1.map;
 import com.cs321.team1.Game;
 import com.cs321.team1.assets.Controls;
 import com.cs321.team1.assets.Texture;
-import com.cs321.team1.objects.PassableTile;
-import com.cs321.team1.objects.Player;
-import com.cs321.team1.objects.Trigger;
-import com.cs321.team1.objects.UnpassableTile;
+import com.cs321.team1.objects.*;
 import com.cs321.team1.objects.crates.*;
 
 import java.io.File;
@@ -102,6 +99,12 @@ public class LevelLoader {
                             var val = Integer.parseInt(line[2]);
                             level.addObject(new UnpoweredCrate(loc, val));
                         }
+                        case "CVR" -> {
+                            var move = line[2].split(":");
+                            var x = Integer.parseInt(move[0]);
+                            var y = Integer.parseInt(move[1]);
+                            level.addObject(new Conveyor(loc, x, y));
+                        }
                         case "TGR" -> {
                             var command = file.nextLine().split("\t");
                             Runnable run = () -> {};
@@ -131,6 +134,7 @@ public class LevelLoader {
                         }
                     }
                 } catch (Exception ignored) {
+                    ignored.printStackTrace();
                 }
             }
             Game.pushSegment(level);

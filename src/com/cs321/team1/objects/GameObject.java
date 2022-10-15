@@ -188,4 +188,20 @@ public abstract class GameObject {
     public <T extends GameObject> List<T> getTouching(Class<T> clazz) {
         return getTouching().stream().filter(clazz::isInstance).map(clazz::cast).toList();
     }
+    
+    public boolean isInside(GameObject other) {
+        return other.collidesWith(getLocation().add(width / 2, height / 2));
+    }
+    
+    public boolean isInside(Class<? extends GameObject> clazz) {
+        return !getInside(clazz).isEmpty();
+    }
+    
+    public List<GameObject> getInside() {
+        return getLevel().getObjects().stream().filter(it -> it.isInside(this)).toList();
+    }
+    
+    public <T extends GameObject> List<T> getInside(Class<T> clazz) {
+        return getInside().stream().filter(clazz::isInstance).map(clazz::cast).toList();
+    }
 }
