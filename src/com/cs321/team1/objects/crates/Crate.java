@@ -1,14 +1,10 @@
 package com.cs321.team1.objects.crates;
 
 import com.cs321.team1.Game;
+import com.cs321.team1.assets.Sounds;
 import com.cs321.team1.assets.Texture;
 import com.cs321.team1.map.Location;
-import com.cs321.team1.objects.GameObject;
-import com.cs321.team1.objects.Particle;
-import com.cs321.team1.objects.Player;
-import com.cs321.team1.objects.Tick;
-import com.cs321.team1.objects.UnpassableTile;
-import com.cs321.team1.assets.Sounds;
+import com.cs321.team1.objects.*;
 
 import java.awt.*;
 
@@ -19,7 +15,7 @@ public abstract class Crate extends GameObject {
         super(1, 1);
         this.value = value;
         if (loc != null) setLocation(loc);
-        setTexture(new Texture("crates/crate",1));
+        setTexture(new Texture("crates/crate", 1));
     }
     
     public int getValue() {
@@ -46,6 +42,14 @@ public abstract class Crate extends GameObject {
         return !collision;
     }
     
+    public boolean isGrabbed() {
+        return getLevel().getObjects()
+                         .stream()
+                         .filter(Player.class::isInstance)
+                         .map(Player.class::cast)
+                         .anyMatch(it -> it.getGrabbedCrate() == this);
+    }
+    
     private void generateNew(Crate crate) {
         if (isDead()) return;
         var location = getLocation();
@@ -56,7 +60,7 @@ public abstract class Crate extends GameObject {
         Crate newCrate = getMergedCrate(location, crate);
         if (newCrate != null) {
             getLevel().addObject(newCrate);
-            getLevel().addObject(new Particle(getLocation(), new Texture("crates/explosion_animated",4)));
+            getLevel().addObject(new Particle(getLocation(), new Texture("crates/explosion_animated", 4)));
         }
         Sounds.MERGE.play();
         crate.kill();

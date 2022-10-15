@@ -2,6 +2,7 @@ package com.cs321.team1.objects;
 
 import com.cs321.team1.assets.Texture;
 import com.cs321.team1.map.Location;
+import com.cs321.team1.objects.crates.Crate;
 
 public class Conveyor extends GameObject {
     private final int x;
@@ -36,8 +37,12 @@ public class Conveyor extends GameObject {
     
     @Tick(priority = 3)
     public void move() {
-        getInside(Player.class).forEach(it -> {
-            if (it.canMove(x, y)) it.move(x, y);
+        getCollisions(Player.class).forEach(it -> {
+            if (it.getCollisions(Conveyor.class).get(0) == this && it.canMove(x, y)) it.move(x, y);
+        });
+    
+        getCollisions(Crate.class).forEach(it -> {
+            if (it.getCollisions(Conveyor.class).get(0) == this && it.canMove(x, y) && !it.isGrabbed()) it.move(x, y);
         });
     }
     
