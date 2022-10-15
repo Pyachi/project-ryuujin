@@ -28,7 +28,10 @@ public class Conveyor extends GameObject {
         this.x = x;
         this.y = y;
         setLocation(loc);
-        setTexture(new Texture("map/floor", 0));
+        if (y == -1) setTexture("map/conveyor_up_animated");
+        else if (y == 1) setTexture("map/conveyor_down_animated");
+        else if (x == -1) setTexture("map/conveyor_left_animated");
+        else if (x == 1) setTexture("map/conveyor_right_animated");
     }
     
     @Tick(priority = 3)
@@ -36,5 +39,9 @@ public class Conveyor extends GameObject {
         getInside(Player.class).forEach(it -> {
             if (it.canMove(x, y)) it.move(x, y);
         });
+    }
+    
+    private void setTexture(String path) {
+        setTexture(new Texture(path,0));
     }
 }
