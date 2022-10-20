@@ -21,7 +21,7 @@ public enum Music {
     
     private final File path;
     private final byte[] data;
-    private final byte[] muffled;
+    private final byte[] muffledData;
     
     private static int volume = 50;
     private static int selected = -1;
@@ -29,12 +29,13 @@ public enum Music {
     private static InputStream stream;
     private static SourceDataLine line = null;
     private static int distance;
+    private static boolean muffled = false;
     
     Music(String path) {
         this.path = new File(path).getAbsoluteFile();
         try {
             data = AudioSystem.getAudioInputStream(this.path).readAllBytes();
-            muffled = new MuffleFilter(new ByteArrayInputStream(data)).stream().readAllBytes();
+            muffledData = new MuffleFilter(new ByteArrayInputStream(data)).stream().readAllBytes();
         } catch (IOException | UnsupportedAudioFileException e) {
             throw new RuntimeException(e);
         }
@@ -44,16 +45,17 @@ public enum Music {
         try {
             selected = ordinal();
             format = AudioSystem.getAudioFileFormat(path.toURI().toURL()).getFormat();
-            stream = AudioSystem.getAudioInputStream(path);
+            stream = new ByteArrayInputStream(muffled ? muffledData : data);
             distance = 0;
             if (line == null) initialize();
         } catch (UnsupportedAudioFileException | IOException ignored) {}
     }
     
-    public static void setMuffled(boolean muffled) {
+    public static void setMuffled(boolean flag) {
         try {
+            muffled = flag;
             var song = values()[selected];
-            stream = new ByteArrayInputStream(muffled ? song.muffled : song.data);
+            stream = new ByteArrayInputStream(muffled ? song.muffledData : song.data);
             stream.readNBytes(distance);
             if (line == null) initialize();
         } catch (IOException ignored) {}
