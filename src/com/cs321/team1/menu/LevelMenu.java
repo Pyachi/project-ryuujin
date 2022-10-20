@@ -6,11 +6,11 @@ import com.cs321.team1.map.Level;
 import com.cs321.team1.map.LevelExit;
 import com.cs321.team1.menu.elements.MenuButton;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 
 public class LevelMenu extends Menu {
     private final Level level;
-    
+
     public LevelMenu(Level level) {
         this.level = level;
         elements.add(new MenuButton("Resume", () -> {
@@ -28,15 +28,17 @@ public class LevelMenu extends Menu {
         }));
         elements.add(new MenuButton("Quit to Menu", () -> {
             Sounds.DESELECT.play();
+            Game.save();
             Game.popSegmentsTo(1);
             Game.pushSegment(new LevelExit(level));
         }));
         elements.add(new MenuButton("Quit to Desktop", () -> {
             Sounds.DESELECT.play();
+            Game.save();
             System.exit(0);
         }));
     }
-    
+
     @Override
     public void render(Graphics2D g) {
         if (level != null) level.render(g);

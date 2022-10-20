@@ -1,10 +1,11 @@
 package com.cs321.team1.objects;
 
 import com.cs321.team1.assets.Controls;
+import com.cs321.team1.assets.Sounds;
 import com.cs321.team1.assets.Texture;
+import com.cs321.team1.map.Dimension;
 import com.cs321.team1.map.Location;
 import com.cs321.team1.objects.crates.Crate;
-import com.cs321.team1.assets.Sounds;
 
 import java.util.Objects;
 
@@ -14,17 +15,17 @@ public class Player extends GameObject {
     private boolean blocked = false;
     private int tryX = 0;
     private int tryY = 0;
-    
+
     public Player(Location location) {
-        super(1, 1);
         setTexture("player/right");
+        setSize(Dimension.Tile(1, 1));
         setLocation(location);
     }
-    
+
     public Crate getGrabbedCrate() {
         return grabbedCrate;
     }
-    
+
     @Tick(priority = 0)
     public void movement() {
         blocked = false;
@@ -33,7 +34,7 @@ public class Player extends GameObject {
         handleCrates();
         calculateMovement();
     }
-    
+
     @Tick(priority = 1)
     public void confirmMovement() {
         if (!blocked) return;
@@ -45,7 +46,7 @@ public class Player extends GameObject {
         move(x, 0);
         move(0, y);
     }
-    
+
     @Tick(priority = 2)
     public void confirmMovementAgain() {
         if (!blocked) return;
@@ -57,55 +58,55 @@ public class Player extends GameObject {
         move(x, 0);
         move(0, y);
     }
-    
+
     private void handleCrates() {
         if (grabbedCrate == null && Controls.GRAB.isHeld()) {
             getTouching(Crate.class).stream()
-                                    .filter(it -> it.collidesWith(switch (dir) {
-                                        case NORTH -> getLocation().add(8, 0);
-                                        case SOUTH -> getLocation().add(8, 16);
-                                        case WEST -> getLocation().add(0, 8);
-                                        case EAST -> getLocation().add(16, 8);
-                                    }) && it.canGrab() && getLevel().getObjects()
-                                                                    .stream()
-                                                                    .filter(Player.class::isInstance)
-                                                                    .noneMatch(player -> ((Player) player).getGrabbedCrate()
-                                                                            == it))
-                                    .findFirst()
-                                    .ifPresent(crate -> {
-                                        Sounds.PICKUP.play();
-                                        grabbedCrate = crate;
-                                        updateCrateGraphics();
-                                    });
+                    .filter(it -> it.collidesWith(switch (dir) {
+                        case NORTH -> getLocation().add(8, 0);
+                        case SOUTH -> getLocation().add(8, 16);
+                        case WEST -> getLocation().add(0, 8);
+                        case EAST -> getLocation().add(16, 8);
+                    }) && it.canGrab() && getLevel().getObjects()
+                            .stream()
+                            .filter(Player.class::isInstance)
+                            .noneMatch(player -> ((Player) player).getGrabbedCrate()
+                                    == it))
+                    .findFirst()
+                    .ifPresent(crate -> {
+                        Sounds.PICKUP.play();
+                        grabbedCrate = crate;
+                        updateCrateGraphics();
+                    });
         }
         if (grabbedCrate != null && (!Controls.GRAB.isHeld() || grabbedCrate.isDead())) {
             grabbedCrate = null;
             updateCrateGraphics();
         }
     }
-    
+
     private void updateCrateGraphics() {
         var crates = getLevel().getObjects()
-                               .stream()
-                               .filter(Crate.class::isInstance)
-                               .map(Crate.class::cast)
-                               .filter(Crate::canGrab)
-                               .toList();
+                .stream()
+                .filter(Crate.class::isInstance)
+                .map(Crate.class::cast)
+                .filter(Crate::canGrab)
+                .toList();
         var grabbedCrates = getLevel().getObjects()
-                                      .stream()
-                                      .filter(Player.class::isInstance)
-                                      .map(Player.class::cast)
-                                      .map(Player::getGrabbedCrate)
-                                      .filter(Objects::nonNull)
-                                      .toList();
+                .stream()
+                .filter(Player.class::isInstance)
+                .map(Player.class::cast)
+                .map(Player::getGrabbedCrate)
+                .filter(Objects::nonNull)
+                .toList();
         crates.forEach(it -> it.setTexture(new Texture("crates/crate", 1)));
         crates.stream()
-              .filter(crate -> grabbedCrates.stream()
-                                            .anyMatch(it -> it.canInteractWith(crate) || crate.canInteractWith(it)))
-              .forEach(it -> it.setTexture(new Texture("crates/interactable", 1)));
+                .filter(crate -> grabbedCrates.stream()
+                        .anyMatch(it -> it.canInteractWith(crate) || crate.canInteractWith(it)))
+                .forEach(it -> it.setTexture(new Texture("crates/interactable", 1)));
         grabbedCrates.forEach(it -> it.setTexture(new Texture("crates/grabbed", 1)));
     }
-    
+
     private void calculateMovement() {
         int x = 0, y = 0;
         if (Controls.UP.isHeld()) y -= 1;
@@ -136,7 +137,7 @@ public class Player extends GameObject {
         }
         move(x, y);
     }
-    
+
     public boolean canMove(int x, int y) {
         super.move(x, y);
         boolean collision = collidesWith(Player.class)
@@ -145,7 +146,7 @@ public class Player extends GameObject {
         super.move(-x, -y);
         return !collision;
     }
-    
+
     public void move(int x, int y) {
         if (grabbedCrate == null) {
             if (canMove(x, 0)) super.move(x, 0);
@@ -175,12 +176,17 @@ public class Player extends GameObject {
             }
         }
     }
-    
+
     private enum Direction {
         NORTH, SOUTH, EAST, WEST
     }
-    
+
     private void setTexture(String path) {
         setTexture(new Texture(path, 2));
+    }
+
+    @Override
+    public String toString() {
+        return "PLR|" + getLocation().toString();
     }
 }

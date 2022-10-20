@@ -1,10 +1,18 @@
 package com.cs321.team1.objects;
 
+import com.cs321.team1.assets.Texture;
+import com.cs321.team1.map.Dimension;
 import com.cs321.team1.map.Level;
 import com.cs321.team1.map.Location;
-import com.cs321.team1.assets.Texture;
+import com.cs321.team1.objects.crates.DivideCrate;
+import com.cs321.team1.objects.crates.IntegerCrate;
+import com.cs321.team1.objects.crates.LockedCrate;
+import com.cs321.team1.objects.crates.ModuloCrate;
+import com.cs321.team1.objects.crates.MultiplyCrate;
+import com.cs321.team1.objects.crates.NegateCrate;
+import com.cs321.team1.objects.crates.UnpoweredCrate;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.util.List;
 
 /**
@@ -12,76 +20,131 @@ import java.util.List;
  */
 public abstract class GameObject {
     private Level level = null;
-    private Texture texture = null;
-    private Location location = new Location(1, 1);
+    private Location location = Location.Tile(1, 1);
+    private Dimension size = Dimension.Tile(16, 16);
+    private Texture texture = new Texture("null", -1);
     private boolean dead = false;
     protected int tick = 0;
-    private final int width;
-    private final int height;
-    
-    protected GameObject(int tileWidth, int tileHeight) {
-        width = tileWidth * 16;
-        height = tileHeight * 16;
-    }
-    
+
     public Level getLevel() {
         return level;
     }
-    
-    public void setLevel(Level level) {
-        if (!dead) this.level = level;
+
+    public void setLevel(Level lvl) {
+        if (!dead) level = lvl;
     }
-    
-    public Texture getTexture() {
-        return texture;
-    }
-    
-    public void setTexture(Texture texture) {
-        if (!dead) this.texture = texture;
-    }
-    
+
     public Location getLocation() {
         return location;
     }
-    
-    public void setLocation(Location location) {
-        if (!dead) this.location = location;
+
+    public void setLocation(Location loc) {
+        if (!dead) location = loc;
     }
-    
+
+    public Dimension getSize() {
+        return size;
+    }
+
+    public void setSize(Dimension dim) {
+        if (!dead) size = dim;
+    }
+
+    public Texture getTexture() {
+        return texture;
+    }
+
+    public void setTexture(Texture tex) {
+        if (!dead) texture = tex;
+    }
+
     public void move(int x, int y) {
         if (!dead) setLocation(getLocation().add(x, y));
     }
-    
+
     public void kill() {
         if (level != null) getLevel().removeObject(this);
         texture = null;
         location = null;
+        size = null;
         dead = true;
     }
-    
+
     @Tick
     public void tick() {
         tick++;
     }
-    
-    public int getWidth() {
-        return width;
-    }
-    
-    public int getHeight() {
-        return height;
-    }
-    
+
     public boolean isDead() {
         return dead;
     }
-    
+
     public void paint(Graphics2D g) {
         if (!dead && texture != null) getTexture().paint(this, g, tick);
     }
+
+    @Override
+    abstract public String toString();
+
+    public static GameObject fromString(String obj) {
+        try {
+            var line = obj.split("\\|");
+            var loc = Location.fromString(line[1]);
+            return switch (line[0]) {
+                case "PLR" -> new Player(loc);
+                case "INT" -> new IntegerCrate(loc, Integer.parseInt(line[2]));
+                case "NEG" -> new NegateCrate(loc);
+                case "MOD" -> new ModuloCrate(loc, Integer.parseInt(line[2]));
+                case "MUL" -> new MultiplyCrate(loc, Integer.parseInt(line[2]));
+                case "DIV" -> new DivideCrate(loc, Integer.parseInt(line[2]));
+                case "LCK" -> new LockedCrate(loc, Integer.parseInt(line[2]));
+                case "PWR" -> new UnpoweredCrate(loc, Integer.parseInt(line[2]));
+                case "CVR" -> switch (line[2]) {
+                    default -> Conveyor.UP(loc);
+                    case "D" -> Conveyor.DOWN(loc);
+                    case "L" -> Conveyor.LEFT(loc);
+                    case "R" -> Conveyor.RIGHT(loc);
+                };
+                case "FLR" -> {
+                    if (line[3].contains("/")) yield new PassableTile(loc, Texture.fromString(line[2]));
+                    else if (line.length == 4)
+                        yield new PassableTile(loc, Dimension.fromString(line[2]), Texture.fromString(line[3]));
+                    else yield new PassableTile(loc, Dimension.fromString(line[2]));
+                }
+                case "WAL" -> {
+                    if (line[3].contains("/")) yield new UnpassableTile(loc, Texture.fromString(line[2]));
+                    else if (line.length == 4)
+                        yield new UnpassableTile(loc, Dimension.fromString(line[2]), Texture.fromString(line[3]));
+                    else yield new UnpassableTile(loc, Dimension.fromString(line[2]));
+                }
+                default -> null;
+//            case "TGR" -> {
+//                var command = file.nextLine().split("\\|");
+//                Runnable run = () -> {
+//                };
+//                switch (command[1]) {
+//                    case "LVL" -> run = () -> {
+//                        if (Controls.SELECT.isPressed()) loadLevel(command[2]);
+//                    };
+//                }
+//                if (line[3].contains("/"))
+//                    level.addObject(new Trigger(loc, Texture.fromString(line[3]), run));
+//                else {
+//                    var size = Dimension.fromString(line[3]);
+//                    if (line.length == 5)
+//                        level.addObject(new Trigger(loc, size, Texture.fromString(line[4 ]), run));
+//                    else level.addObject(new Trigger(loc, size, run));
+//                }
+//            }
+            };
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     //******************************************************************************************************************
     //Collision handling
-    
+
     /**
      * Checks if object collides with point location
      *
@@ -91,11 +154,11 @@ public abstract class GameObject {
     public boolean collidesWith(Location location) {
         return !isDead()
                 && getLocation().x() < location.x() + 1
-                && getLocation().x() + getWidth() > location.x() - 1
+                && getLocation().x() + getSize().w() > location.x() - 1
                 && getLocation().y() < location.y() + 1
-                && getLocation().y() + getHeight() > location.y() - 1;
+                && getLocation().y() + getSize().h() > location.y() - 1;
     }
-    
+
     /**
      * Checks if object collides with other object
      *
@@ -104,12 +167,12 @@ public abstract class GameObject {
      */
     public boolean collidesWith(GameObject other) {
         if (this == other || isDead() || other.isDead() || getLevel() != other.getLevel()) return false;
-        return getLocation().x() < other.getLocation().x() + other.getWidth()
-                && getLocation().x() + getWidth() > other.getLocation().x()
-                && getLocation().y() < other.getLocation().y() + other.getHeight()
-                && getLocation().y() + getHeight() > other.getLocation().y();
+        return getLocation().x() < other.getLocation().x() + other.getSize().w()
+                && getLocation().x() + getSize().w() > other.getLocation().x()
+                && getLocation().y() < other.getLocation().y() + other.getSize().h()
+                && getLocation().y() + getSize().h() > other.getLocation().y();
     }
-    
+
     /**
      * Checks if object collides with any object of specified type
      *
@@ -119,7 +182,7 @@ public abstract class GameObject {
     public boolean collidesWith(Class<? extends GameObject> clazz) {
         return !getCollisions(clazz).isEmpty();
     }
-    
+
     /**
      * Creates a list of all objects that collide with this object
      *
@@ -128,7 +191,7 @@ public abstract class GameObject {
     public List<GameObject> getCollisions() {
         return getLevel().getObjects().stream().filter(this::collidesWith).toList();
     }
-    
+
     /**
      * Creates a list of all objects of specified type that collide with this object
      *
@@ -139,7 +202,7 @@ public abstract class GameObject {
     public <T extends GameObject> List<T> getCollisions(Class<T> clazz) {
         return getCollisions().stream().filter(clazz::isInstance).map(clazz::cast).toList();
     }
-    
+
     /**
      * Checks if object is physically touching other object
      * Objects that collide are always touching, but not vice-versa
@@ -151,14 +214,14 @@ public abstract class GameObject {
         if (this == other || isDead() || other.isDead() || getLevel() != other.getLevel()) return false;
         int locX = getLocation().x() - 1;
         int locY = getLocation().y() - 1;
-        int width = getWidth() + 2;
-        int height = getHeight() + 2;
-        return locX < other.getLocation().x() + other.getWidth()
+        int width = getSize().w() + 2;
+        int height = getSize().h() + 2;
+        return locX < other.getLocation().x() + other.getSize().w()
                 && locX + width > other.getLocation().x()
-                && locY < other.getLocation().y() + other.getHeight()
+                && locY < other.getLocation().y() + other.getSize().h()
                 && locY + height > other.getLocation().y();
     }
-    
+
     /**
      * Checks if object is physically touching any object of specified type
      *
@@ -168,7 +231,7 @@ public abstract class GameObject {
     public boolean isTouching(Class<? extends GameObject> clazz) {
         return !getTouching(clazz).isEmpty();
     }
-    
+
     /**
      * Creates a list of all objects that touch this object
      *
@@ -177,7 +240,7 @@ public abstract class GameObject {
     public List<GameObject> getTouching() {
         return getLevel().getObjects().stream().filter(this::isTouching).toList();
     }
-    
+
     /**
      * Creates a list of all objects touching this object of specified type
      *
@@ -188,19 +251,19 @@ public abstract class GameObject {
     public <T extends GameObject> List<T> getTouching(Class<T> clazz) {
         return getTouching().stream().filter(clazz::isInstance).map(clazz::cast).toList();
     }
-    
+
     public boolean isInside(GameObject other) {
-        return other.collidesWith(getLocation().add(width / 2, height / 2));
+        return other.collidesWith(getLocation().add(getSize().w() / 2, getSize().h() / 2));
     }
-    
+
     public boolean isInside(Class<? extends GameObject> clazz) {
         return !getInside(clazz).isEmpty();
     }
-    
+
     public List<GameObject> getInside() {
         return getLevel().getObjects().stream().filter(it -> it.isInside(this)).toList();
     }
-    
+
     public <T extends GameObject> List<T> getInside(Class<T> clazz) {
         return getInside().stream().filter(clazz::isInstance).map(clazz::cast).toList();
     }

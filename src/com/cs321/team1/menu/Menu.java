@@ -1,12 +1,13 @@
 package com.cs321.team1.menu;
 
-import com.cs321.team1.assets.Controls;
 import com.cs321.team1.Game;
 import com.cs321.team1.GameSegment;
-import com.cs321.team1.menu.elements.MenuElement;
+import com.cs321.team1.assets.Controls;
 import com.cs321.team1.assets.Sounds;
+import com.cs321.team1.menu.elements.MenuElement;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.List;
 public abstract class Menu implements GameSegment {
     protected final List<MenuElement> elements = new ArrayList<>();
     private int selected = 0;
-    
+
     @Override
     public void update() {
         if (Controls.DOWN.isPressed()) selected++;
@@ -30,7 +31,7 @@ public abstract class Menu implements GameSegment {
             Sounds.DESELECT.play();
         }
     }
-    
+
     @Override
     public void render(Graphics2D g) {
         var screenSize = Game.get().getScreenSize();
@@ -52,7 +53,8 @@ public abstract class Menu implements GameSegment {
         });
         g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
     }
-    
+
     @Override
-    public void onClose() {}
+    public void onClose() {
+    }
 }
