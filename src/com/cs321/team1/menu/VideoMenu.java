@@ -26,15 +26,15 @@ public class VideoMenu extends Menu {
             fullscreen = i == 1;
             updateButtons();
         }));
-        elements.add(new MenuSlider("",
-                Game.getMonitor(),
+        if (fullscreen) elements.add(new MenuSlider("",
+                monitor,
                 GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices().length - 1,
                 false,
                 i -> {
                     monitor = i;
                     updateButtons();
                 }));
-        elements.add(new MenuSlider("", res.ordinal(), Resolutions.values().length - 1, false, i -> {
+        else elements.add(new MenuSlider("", res.ordinal(), Resolutions.values().length - 1, false, i -> {
             res = Resolutions.values()[i];
             updateButtons();
         }));
@@ -51,15 +51,32 @@ public class VideoMenu extends Menu {
     
     private void updateButtons() {
         elements.get(0).setText(21, "Mode:", (fullscreen ? "Fullscreen" : "Windowed"));
-        elements.get(1).setText(21, "Monitor:", "" + (monitor + 1));
-        elements.get(2).setText(21, "Resolution:", res.name().replaceAll("_", ""));
+        elements.remove(1);
+        if (fullscreen) {
+            elements.add(1,
+                    new MenuSlider("",
+                            monitor,
+                            GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices().length - 1,
+                            false,
+                            i -> {
+                                monitor = i;
+                                updateButtons();
+                            }));
+            elements.get(1).setText(21, "Monitor:", "" + (monitor + 1));
+        } else {
+            elements.add(1, new MenuSlider("", res.ordinal(), Resolutions.values().length - 1, false, i -> {
+                res = Resolutions.values()[i];
+                updateButtons();
+            }));
+            elements.get(1).setText(21, "Resolution:", res.name().replaceAll("_", ""));
+        }
     }
     
     private boolean applySettings() {
         if (prevFullscreen != fullscreen || prevMonitor != monitor || prevRes != res) {
             Game.setFullscreen(fullscreen);
-            Game.setMonitor(monitor);
-            Game.setScreenSize(res.size);
+            if (fullscreen) Game.setMonitor(monitor);
+            else Game.setScreenSize(res.size);
             Game.updateScreen();
             resetSettings();
             updateButtons();
