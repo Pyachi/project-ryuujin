@@ -40,9 +40,7 @@ public enum Music {
         try {
             data = AudioSystem.getAudioInputStream(new BufferedInputStream(ResourceLoader.loadStream(path))).readAllBytes();
             muffledData = new MuffleFilter(new ByteArrayInputStream(data)).stream().readAllBytes();
-        } catch (IOException | UnsupportedAudioFileException ignored) {
-            ignored.printStackTrace();
-        }
+        } catch (IOException | UnsupportedAudioFileException ignored) {}
     }
 
     public void play() {
