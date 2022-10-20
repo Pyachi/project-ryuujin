@@ -1,5 +1,6 @@
 package com.cs321.team1.assets;
 
+import com.cs321.team1.Game;
 import com.cs321.team1.GameObject;
 import com.cs321.team1.map.Vec2;
 
@@ -52,10 +53,19 @@ public class Texture {
     
     public void paint(GameObject obj, Graphics2D g, int tick) {
         if (image != null) g.drawImage(image.getSubimage(0, size.y() * ((tick / 5) % frames), size.x(), size.y()),
-                                       (obj.getLocation().x() - 16) * obj.getLevel().getScale(),
-                                       (obj.getLocation().y() - 16) * obj.getLevel().getScale(),
-                                       obj.getSize().x() * obj.getLevel().getScale(),
-                                       obj.getSize().y() * obj.getLevel().getScale(),
-                                       null);
+                (obj.getLocation().x() - 16) * obj.getLevel().getScale(),
+                (obj.getLocation().y() - 16) * obj.getLevel().getScale(),
+                obj.getSize().x() * obj.getLevel().getScale(),
+                obj.getSize().y() * obj.getLevel().getScale(),
+                null);
+    }
+    
+    public void fillCanvas(Graphics2D g, int tick) {
+        if (image != null) g.drawImage(image.getSubimage(0, size.y() * ((tick / 5) % frames), size.x(), size.y()),
+                0,
+                0,
+                Game.getScreenSize().width,
+                Game.getScreenSize().height,
+                null);
     }
 }

@@ -38,7 +38,7 @@ public class Game extends JPanel {
     private final List<GameSegment> segments = new ArrayList<>();
     
     private void start() {
-        pushSegment(new MainMenu());
+        pushSegment(new LoadingScreen());
     }
     
     private void update() {

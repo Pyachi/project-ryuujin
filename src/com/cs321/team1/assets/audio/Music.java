@@ -20,8 +20,8 @@ public enum Music {
     OVERWORLD("src/resources/music/overworld.wav");
     
     private final File path;
-    private final byte[] data;
-    private final byte[] muffledData;
+    private byte[] data;
+    private byte[] muffledData;
     
     private static int volume = 50;
     private static int selected = -1;
@@ -33,6 +33,9 @@ public enum Music {
     
     Music(String path) {
         this.path = new File(path).getAbsoluteFile();
+    }
+    
+    public void init() {
         try {
             data = AudioSystem.getAudioInputStream(this.path).readAllBytes();
             muffledData = new MuffleFilter(new ByteArrayInputStream(data)).stream().readAllBytes();
