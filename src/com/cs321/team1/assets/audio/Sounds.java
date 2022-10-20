@@ -3,6 +3,7 @@ package com.cs321.team1.assets.audio;
 import com.cs321.team1.Game;
 import com.cs321.team1.assets.ResourceLoader;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 
@@ -24,11 +25,11 @@ public enum Sounds {
     Sounds(String path) {
         this.path = path;
     }
-    
+
     public void play() {
         try {
             var clip = AudioSystem.getClip();
-            clip.open(AudioSystem.getAudioInputStream(ResourceLoader.loadStream(path)));
+            clip.open(AudioSystem.getAudioInputStream(new BufferedInputStream(ResourceLoader.loadStream(path))));
             ((FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN)).setValue((float) (20 *
                     Math.log10(volume / 100.0)));
             clip.start();

@@ -4,6 +4,7 @@ import com.cs321.team1.Game;
 import com.cs321.team1.assets.ResourceLoader;
 import com.cs321.team1.assets.audio.filters.MuffleFilter;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,7 +39,7 @@ public enum Music {
 
     public void init() {
         try {
-            data = AudioSystem.getAudioInputStream(ResourceLoader.loadStream(path)).readAllBytes();
+            data = AudioSystem.getAudioInputStream(new BufferedInputStream(ResourceLoader.loadStream(path))).readAllBytes();
             muffledData = new MuffleFilter(new ByteArrayInputStream(data)).stream().readAllBytes();
         } catch (IOException | UnsupportedAudioFileException ignored) {
             ignored.printStackTrace();
