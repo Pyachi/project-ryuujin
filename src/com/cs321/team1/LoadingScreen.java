@@ -30,7 +30,7 @@ public class LoadingScreen implements GameSegment {
             opacity++;
             opacity = Math.min(opacity, 100);
         }
-        if (loaded) reverse = true;
+        if (loaded && opacity == 100) reverse = true;
         if (reverse && opacity == 0) {
             Game.popSegment();
             Game.pushSegment(new MainMenu());
