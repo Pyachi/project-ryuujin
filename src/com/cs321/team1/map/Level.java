@@ -86,9 +86,7 @@ public class Level implements GameSegment {
         methods.forEach(method -> new HashSet<>(ticks.get(method)).forEach(obj -> {
             try {
                 method.invoke(obj);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
+            } catch (IllegalAccessException | InvocationTargetException ignored) {}
         }));
         if (Controls.BACK.isPressed()) Game.pushSegment(new LevelMenu(this));
         

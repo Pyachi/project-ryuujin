@@ -6,13 +6,12 @@ import com.cs321.team1.map.Vec2;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
 public class Texture {
-    private static final String TEXTURES_PATH = "src/resources/textures/";
+    private static final String TEXTURES_PATH = "resources/textures/";
     private final BufferedImage image;
     private final String path;
     
@@ -34,10 +33,10 @@ public class Texture {
         this.path = path;
         BufferedImage tempImage;
         try {
-            tempImage = ImageIO.read(new File(TEXTURES_PATH + path + ".png"));
+            tempImage = ImageIO.read(ResourceLoader.loadStream(TEXTURES_PATH + path + ".png"));
         } catch (IOException e) {
             try {
-                tempImage = ImageIO.read(new File(TEXTURES_PATH + "null.png"));
+                tempImage = ImageIO.read(ResourceLoader.loadStream(TEXTURES_PATH + "null.png"));
                 priority = 100;
             } catch (IOException ex) {
                 throw new RuntimeException(ex);

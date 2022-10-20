@@ -1,6 +1,7 @@
 package com.cs321.team1;
 
 import com.cs321.team1.assets.Controls;
+import com.cs321.team1.assets.ResourceLoader;
 import com.cs321.team1.assets.audio.Music;
 import com.cs321.team1.assets.Resolutions;
 import com.cs321.team1.assets.audio.Sounds;
@@ -17,9 +18,14 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +42,7 @@ public class Game extends JPanel {
     //Game Logic
     
     private final List<GameSegment> segments = new ArrayList<>();
-    
+
     private void start() {
         pushSegment(new LoadingScreen());
     }
@@ -60,12 +66,10 @@ public class Game extends JPanel {
                 if (!(seg instanceof Level)) return;
                 try {
                     file.write(seg.toString());
-                } catch (IOException ignored) {
-                }
+                } catch (IOException ignored) {}
             });
             file.close();
-        } catch (IOException ignored) {
-        }
+        } catch (IOException ignored) {}
     }
     
     public static void load() {
@@ -118,14 +122,14 @@ public class Game extends JPanel {
         setDoubleBuffered(true);
         Controls.init(window);
         
-        Font temp;
+        Font tempFont;
         try {
-            temp = Font.createFont(Font.TRUETYPE_FONT, new File("src/resources/PressStart.ttf"));
+            tempFont = Font.createFont(Font.TRUETYPE_FONT, ResourceLoader.loadStream("resources/PressStart.ttf"));
         } catch (FontFormatException | IOException e) {
-            temp = new JLabel().getFont();
+            tempFont = new JLabel().getFont();
         }
-        font = temp;
-        
+        font = tempFont;
+
         loadOptions();
         updateScreen();
         
@@ -212,9 +216,7 @@ public class Game extends JPanel {
                     if (str.startsWith("monitor: ")) setMonitor(Integer.parseInt(str.split("monitor: ")[1]));
                     if (str.startsWith("sound: ")) Sounds.setVolume(Integer.parseInt(str.split("sound: ")[1]));
                     if (str.startsWith("music: ")) Music.setVolume(Integer.parseInt(str.split("music: ")[1]));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                } catch (Exception ignored) {}
             }
         } catch (IOException ignored) {}
     }
@@ -237,7 +239,7 @@ public class Game extends JPanel {
             try {
                 Thread.sleep(remainingTime / 1000000);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+
             }
         }
     }

@@ -1,9 +1,10 @@
 package com.cs321.team1.assets.audio;
 
+import com.cs321.team1.Game;
+import com.cs321.team1.assets.ResourceLoader;
 import com.cs321.team1.assets.audio.filters.MuffleFilter;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -16,13 +17,13 @@ import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 public enum Music {
-    DAY("src/resources/music/day.wav"),
-    OVERWORLD("src/resources/music/overworld.wav");
-    
-    private final File path;
+    DAY("resources/music/day.wav"),
+    OVERWORLD("resources/music/overworld.wav");
+
+    private final String path;
     private byte[] data;
     private byte[] muffledData;
-    
+
     private static int volume = 50;
     private static int selected = -1;
     private static AudioFormat format;
@@ -30,30 +31,31 @@ public enum Music {
     private static SourceDataLine line = null;
     private static int distance;
     private static boolean muffled = false;
-    
+
     Music(String path) {
-        this.path = new File(path).getAbsoluteFile();
+        this.path = path;
     }
-    
+
     public void init() {
         try {
-            data = AudioSystem.getAudioInputStream(this.path).readAllBytes();
+            data = AudioSystem.getAudioInputStream(ResourceLoader.loadStream(path)).readAllBytes();
             muffledData = new MuffleFilter(new ByteArrayInputStream(data)).stream().readAllBytes();
-        } catch (IOException | UnsupportedAudioFileException e) {
-            throw new RuntimeException(e);
+        } catch (IOException | UnsupportedAudioFileException ignored) {
+            ignored.printStackTrace();
         }
     }
-    
+
     public void play() {
         try {
             selected = ordinal();
-            format = AudioSystem.getAudioFileFormat(path.toURI().toURL()).getFormat();
+            format = AudioSystem.getAudioFileFormat(ResourceLoader.loadStream(path)).getFormat();
             stream = new ByteArrayInputStream(muffled ? muffledData : data);
             distance = 0;
             if (line == null) initialize();
-        } catch (UnsupportedAudioFileException | IOException ignored) {}
+        } catch (UnsupportedAudioFileException | IOException ignored) {
+        }
     }
-    
+
     public static void setMuffled(boolean flag) {
         try {
             muffled = flag;
@@ -63,7 +65,7 @@ public enum Music {
             if (line == null) initialize();
         } catch (IOException ignored) {}
     }
-    
+
     private static void initialize() {
         try {
             DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
@@ -72,7 +74,7 @@ public enum Music {
             thread.start();
         } catch (LineUnavailableException ignored) {}
     }
-    
+
     private static void run() {
         try {
             line.open(format, 11025);
@@ -90,11 +92,11 @@ public enum Music {
             }
         } catch (LineUnavailableException | IOException ignored) {}
     }
-    
+
     public static int getVolume() {
         return volume;
     }
-    
+
     public static void setVolume(int vol) {
         volume = vol;
         if (line != null) ((FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN)).setValue((float) (20 *

@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Main-Class: com.cs321.team1.Game
+
