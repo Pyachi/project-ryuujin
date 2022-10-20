@@ -76,6 +76,7 @@ public class Game extends JPanel {
             for (int x = levels.size() - 1; x >= 0; x--)
                 Game.pushSegment(levels.get(x));
             Game.pushSegment(new LevelEntrance(levels.get(0)));
+            Music.OVERWORLD.play();
         } catch (IOException e) {
             Sounds.ERROR.play();
         }

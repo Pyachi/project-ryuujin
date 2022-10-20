@@ -5,6 +5,7 @@ import com.cs321.team1.GameSegment;
 import com.cs321.team1.assets.Controls;
 import com.cs321.team1.assets.audio.Sounds;
 import com.cs321.team1.menu.elements.MenuElement;
+import com.cs321.team1.menu.elements.MenuText;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -21,13 +22,18 @@ public abstract class Menu implements GameSegment {
     public void update() {
         if (Controls.DOWN.isPressed()) selected++;
         else if (Controls.UP.isPressed()) selected--;
-        if (selected < 0) selected = elements.size() - 1;
-        else if (selected >= elements.size()) selected = 0;
-        elements.get(selected).update();
+        if (selected < 0) selected = getSelectableElements().size() - 1;
+        else if (selected >= getSelectableElements().size()) selected = 0;
+        getSelectableElements().get(selected).update();
         if (!(this instanceof MainMenu) && Controls.BACK.isPressed()) {
             Game.popSegment();
             Sounds.DESELECT.play();
         }
+    }
+    
+    private List<MenuElement> getSelectableElements() {
+        System.out.println(elements.stream().filter(it -> !(it instanceof MenuText)).toList().size());
+        return elements.stream().filter(it -> !(it instanceof MenuText)).toList();
     }
     
     @Override
@@ -39,7 +45,7 @@ public abstract class Menu implements GameSegment {
         graphics.fillRect(0, 0, screenSize.width, screenSize.height);
         graphics.setColor(Color.WHITE);
         var font = Game.font().deriveFont(((float) getTextSize()));
-        var renders = elements.stream().map(it -> it.render(font, it == elements.get(selected))).toList();
+        var renders = elements.stream().map(it -> it.render(font, it == getSelectableElements().get(selected))).toList();
         int renderHeight = renders.stream().mapToInt(BufferedImage::getHeight).sum();
         int y = (screenSize.height - renderHeight) / 2;
         for (var render : renders) {
