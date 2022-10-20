@@ -1,8 +1,8 @@
 package com.cs321.team1.menu;
 
 import com.cs321.team1.Game;
-import com.cs321.team1.assets.Music;
-import com.cs321.team1.assets.Sounds;
+import com.cs321.team1.assets.audio.Music;
+import com.cs321.team1.assets.audio.Sounds;
 import com.cs321.team1.map.Level;
 import com.cs321.team1.map.LevelExit;
 import com.cs321.team1.menu.elements.MenuButton;
@@ -14,6 +14,7 @@ public class LevelMenu extends Menu {
     
     public LevelMenu(Level level) {
         this.level = level;
+        Music.setMuffled(true);
         elements.add(new MenuButton("Resume", () -> {
             Sounds.DESELECT.play();
             Game.popSegment();
@@ -45,5 +46,10 @@ public class LevelMenu extends Menu {
     public void render(Graphics2D g) {
         if (level != null) level.render(g);
         super.render(g);
+    }
+    
+    @Override
+    public void onClose() {
+        Music.setMuffled(false);
     }
 }

@@ -3,7 +3,7 @@ package com.cs321.team1.objects;
 import com.cs321.team1.GameObject;
 import com.cs321.team1.Tick;
 import com.cs321.team1.assets.Controls;
-import com.cs321.team1.assets.Sounds;
+import com.cs321.team1.assets.audio.Sounds;
 import com.cs321.team1.assets.Texture;
 import com.cs321.team1.map.Vec2;
 import com.cs321.team1.objects.crates.Crate;

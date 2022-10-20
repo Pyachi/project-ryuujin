@@ -1,9 +1,9 @@
 package com.cs321.team1;
 
 import com.cs321.team1.assets.Controls;
-import com.cs321.team1.assets.Music;
+import com.cs321.team1.assets.audio.Music;
 import com.cs321.team1.assets.Resolutions;
-import com.cs321.team1.assets.Sounds;
+import com.cs321.team1.assets.audio.Sounds;
 import com.cs321.team1.map.Level;
 import com.cs321.team1.map.LevelEntrance;
 import com.cs321.team1.menu.MainMenu;

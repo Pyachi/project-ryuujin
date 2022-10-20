@@ -2,7 +2,7 @@ package com.cs321.team1.menu;
 
 import com.cs321.team1.Game;
 import com.cs321.team1.assets.Resolutions;
-import com.cs321.team1.assets.Sounds;
+import com.cs321.team1.assets.audio.Sounds;
 import com.cs321.team1.map.Level;
 import com.cs321.team1.menu.elements.MenuButton;
 import com.cs321.team1.menu.elements.MenuSlider;

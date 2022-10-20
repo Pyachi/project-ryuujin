@@ -1,4 +1,4 @@
-package com.cs321.team1.assets;
+package com.cs321.team1.assets.audio;
 
 import java.io.File;
 import java.io.IOException;

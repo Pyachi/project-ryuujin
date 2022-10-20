@@ -3,7 +3,7 @@ package com.cs321.team1.menu;
 import com.cs321.team1.Game;
 import com.cs321.team1.GameSegment;
 import com.cs321.team1.assets.Controls;
-import com.cs321.team1.assets.Sounds;
+import com.cs321.team1.assets.audio.Sounds;
 import com.cs321.team1.menu.elements.MenuElement;
 
 import java.awt.Color;
