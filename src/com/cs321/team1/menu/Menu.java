@@ -32,7 +32,6 @@ public abstract class Menu implements GameSegment {
     }
     
     private List<MenuElement> getSelectableElements() {
-        System.out.println(elements.stream().filter(it -> !(it instanceof MenuText)).toList().size());
         return elements.stream().filter(it -> !(it instanceof MenuText)).toList();
     }
     
