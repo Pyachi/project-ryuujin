@@ -1,4 +1,4 @@
-SET|T:32:18|true
+SET|T:16:9|true
 PLR|T:5:5
 FLR|T:1:1|0:map/world_one
 TGR|T:5:6|T:1:1|1:map/incomplete_level_animated->LVL|one
