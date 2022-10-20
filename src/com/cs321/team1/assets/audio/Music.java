@@ -1,6 +1,5 @@
 package com.cs321.team1.assets.audio;
 
-import com.cs321.team1.Game;
 import com.cs321.team1.assets.ResourceLoader;
 import com.cs321.team1.assets.audio.filters.MuffleFilter;
 

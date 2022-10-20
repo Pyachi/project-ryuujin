@@ -1,10 +1,8 @@
 package com.cs321.team1.assets.audio;
 
-import com.cs321.team1.Game;
 import com.cs321.team1.assets.ResourceLoader;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 
 import javax.sound.sampled.AudioSystem;
