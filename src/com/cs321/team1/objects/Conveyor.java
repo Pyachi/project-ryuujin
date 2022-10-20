@@ -1,30 +1,32 @@
 package com.cs321.team1.objects;
 
+import com.cs321.team1.GameObject;
+import com.cs321.team1.Tick;
 import com.cs321.team1.assets.Texture;
-import com.cs321.team1.map.Location;
+import com.cs321.team1.map.Vec2;
 import com.cs321.team1.objects.crates.Crate;
 
 public class Conveyor extends GameObject {
     private final int x;
     private final int y;
-
-    public static Conveyor UP(Location loc) {
+    
+    public static Conveyor UP(Vec2 loc) {
         return new Conveyor(loc, 0, -1);
     }
-
-    public static Conveyor DOWN(Location loc) {
+    
+    public static Conveyor DOWN(Vec2 loc) {
         return new Conveyor(loc, 0, 1);
     }
-
-    public static Conveyor LEFT(Location loc) {
+    
+    public static Conveyor LEFT(Vec2 loc) {
         return new Conveyor(loc, -1, 0);
     }
-
-    public static Conveyor RIGHT(Location loc) {
+    
+    public static Conveyor RIGHT(Vec2 loc) {
         return new Conveyor(loc, 1, 0);
     }
-
-    private Conveyor(Location loc, int x, int y) {
+    
+    private Conveyor(Vec2 loc, int x, int y) {
         this.x = x;
         this.y = y;
         setLocation(loc);
@@ -33,18 +35,18 @@ public class Conveyor extends GameObject {
         else if (x == -1) setTexture("map/conveyor_left_animated");
         else if (x == 1) setTexture("map/conveyor_right_animated");
     }
-
+    
     @Tick(priority = 3)
     public void move() {
         getCollisions(Player.class).forEach(it -> {
             if (it.getCollisions(Conveyor.class).get(0) == this && it.canMove(x, y)) it.move(x, y);
         });
-
+        
         getCollisions(Crate.class).forEach(it -> {
             if (it.getCollisions(Conveyor.class).get(0) == this && it.canMove(x, y) && !it.isGrabbed()) it.move(x, y);
         });
     }
-
+    
     @Override
     public String toString() {
         var type = switch (x) {
@@ -58,7 +60,7 @@ public class Conveyor extends GameObject {
         };
         return "CVR|" + getLocation().toString() + "|" + type;
     }
-
+    
     private void setTexture(String path) {
         setTexture(new Texture(path, 0));
     }

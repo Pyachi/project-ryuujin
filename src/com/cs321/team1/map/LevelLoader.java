@@ -11,8 +11,8 @@ public class LevelLoader {
         try {
             var file = Files.readString(new File("src/resources/levels/" + name + ".ryu").toPath());
             var lvl = Level.fromString(file);
-            lvl.addBarriers();
             Game.pushSegment(lvl);
+            Game.pushSegment(new LevelEntrance(lvl));
         } catch (IOException ignored) {
         }
     }

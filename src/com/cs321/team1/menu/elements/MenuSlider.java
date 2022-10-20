@@ -1,5 +1,6 @@
 package com.cs321.team1.menu.elements;
 
+import com.cs321.team1.Game;
 import com.cs321.team1.assets.Controls;
 
 import java.awt.Color;
@@ -10,34 +11,34 @@ import java.util.function.Consumer;
 public class MenuSlider extends MenuElement {
     private int selected;
     private final int max;
+    private final boolean showSlider;
     private final Consumer<Integer> run;
-
-    public MenuSlider(String text, int selected, int max, Consumer<Integer> run) {
+    
+    public MenuSlider(String text, int selected, int max, boolean showSlider, Consumer<Integer> run) {
         super(text);
         this.selected = selected;
         this.max = max;
+        this.showSlider = showSlider;
         this.run = run;
     }
-
+    
     @Override
     public void update() {
         if (Controls.LEFT.isPressed()) {
             selected = Math.floorMod(selected - 1, max + 1);
             run.accept(selected);
-        } else if (Controls.RIGHT.isPressed()) {
+        } else if (Controls.RIGHT.isPressed() || Controls.SELECT.isPressed()) {
             selected = (selected + 1) % (max + 1);
             run.accept(selected);
         }
     }
-
+    
     @Override
     public BufferedImage render(Font font, boolean selected) {
         var fontMetrics = new BufferedImage(1, 1, 1).createGraphics().getFontMetrics(font);
         int textWidth = fontMetrics.stringWidth(getText());
         int textHeight = fontMetrics.getHeight();
-        var image = new BufferedImage(textWidth + fontMetrics.stringWidth("AA"),
-                textHeight + fontMetrics.getHeight() * 2,
-                BufferedImage.TYPE_INT_ARGB);
+        var image = new BufferedImage(Game.getScreenSize().width, textHeight * 2, BufferedImage.TYPE_INT_ARGB);
         var graphics = image.createGraphics();
         if (selected) {
             graphics.setColor(new Color(0.5f, 0.5f, 0.5f, 0.8f));
@@ -45,12 +46,24 @@ public class MenuSlider extends MenuElement {
             graphics.setColor(Color.WHITE);
         }
         graphics.setFont(font);
-        int x = (image.getWidth() - textWidth) / 2;
-        int y = (image.getHeight() - textHeight) / 2 + fontMetrics.getAscent() - image.getHeight() / 4;
-        int y2 = (image.getHeight() - textHeight) / 2 + fontMetrics.getAscent();
+        int x = fontMetrics.stringWidth("AA");
+        int y = (image.getHeight() - textHeight) / 2 + fontMetrics.getAscent();
         graphics.drawString(getText(), x, y);
-        graphics.fillRect(x, y2 - textHeight / 10, textWidth, textHeight / 5);
-        graphics.fillRect(x + (textWidth / max) * this.selected, y2 - textHeight / 2, textHeight / 5, textHeight);
+        if (showSlider) {
+            int offset = getWidth(font) / 2;
+            graphics.fillRect(offset + x, y - textHeight / 2 - textHeight / 10, textWidth, textHeight / 5);
+            graphics.fillRect(offset + x + (textWidth / max) * this.selected,
+                    y - textHeight,
+                    textHeight / 5,
+                    textHeight);
+        }
         return image;
+    }
+    
+    @Override
+    public int getWidth(Font font) {
+        var stringWidth = new BufferedImage(1, 1, 1).createGraphics().getFontMetrics(font).stringWidth(
+                getText() + "AAAA");
+        return showSlider ? stringWidth * 2 : stringWidth;
     }
 }

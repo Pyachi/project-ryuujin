@@ -7,18 +7,16 @@ import com.cs321.team1.assets.Sounds;
 import com.cs321.team1.menu.elements.MenuElement;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Abstract base for all menus
- */
 public abstract class Menu implements GameSegment {
     protected final List<MenuElement> elements = new ArrayList<>();
     private int selected = 0;
-
+    
     @Override
     public void update() {
         if (Controls.DOWN.isPressed()) selected++;
@@ -31,30 +29,41 @@ public abstract class Menu implements GameSegment {
             Sounds.DESELECT.play();
         }
     }
-
+    
     @Override
     public void render(Graphics2D g) {
-        var screenSize = Game.get().getScreenSize();
+        var screenSize = Game.getScreenSize();
         var image = new BufferedImage(screenSize.width, screenSize.height, BufferedImage.TYPE_INT_ARGB);
         var graphics = image.createGraphics();
         graphics.setColor(new Color(0f, 0f, 0f, 0.8f));
         graphics.fillRect(0, 0, screenSize.width, screenSize.height);
         graphics.setColor(Color.WHITE);
-        float textHeight = screenSize.height / 20f;
-        var font = Game.get().getFont().deriveFont(textHeight);
+        var font = Game.font().deriveFont(((float) getTextSize()));
         var renders = elements.stream().map(it -> it.render(font, it == elements.get(selected))).toList();
         int renderHeight = renders.stream().mapToInt(BufferedImage::getHeight).sum();
-        var ref = new Object() {
-            int y = (screenSize.height - renderHeight) / 2;
-        };
-        renders.forEach(it -> {
-            graphics.drawImage(it, (screenSize.width - it.getWidth()) / 2, ref.y, null);
-            ref.y += it.getHeight();
-        });
+        int y = (screenSize.height - renderHeight) / 2;
+        for (var render : renders) {
+            graphics.drawImage(render, 0, y, null);
+            y += render.getHeight();
+        }
         g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
     }
-
-    @Override
-    public void onClose() {
+    
+    private int getTextSize() {
+        int maxWidth;
+        int totalHeight;
+        int textSize = Game.getScreenSize().height / 20 + 1;
+        do {
+            maxWidth = 0;
+            totalHeight = 0;
+            textSize--;
+            for (MenuElement element : elements) {
+                Font font = Game.font().deriveFont(((float) textSize));
+                int width = element.getWidth(font);
+                if (maxWidth < width) maxWidth = width;
+                totalHeight += element.getHeight(font);
+            }
+        } while (maxWidth > Game.getScreenSize().width || totalHeight > Game.getScreenSize().height);
+        return textSize;
     }
 }

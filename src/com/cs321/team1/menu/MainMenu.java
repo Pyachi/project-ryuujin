@@ -10,10 +10,12 @@ public class MainMenu extends Menu {
     public MainMenu() {
         elements.add(new MenuButton("New Game", () -> {
             Sounds.SELECT.play();
+            Music.OVERWORLD.play();
             LevelLoader.loadLevel("worldOne");
         }));
         elements.add(new MenuButton("Continue", () -> {
             Sounds.SELECT.play();
+            Music.OVERWORLD.play();
             Game.load();
         }));
         elements.add(new MenuButton("Options", () -> {

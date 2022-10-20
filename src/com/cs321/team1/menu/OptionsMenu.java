@@ -9,14 +9,14 @@ import java.awt.Graphics2D;
 
 public class OptionsMenu extends Menu {
     private final Level level;
-
+    
     public OptionsMenu(Level level) {
         this.level = level;
-        elements.add(new MenuButton("Sound Settings", () -> {
+        elements.add(new MenuButton("Sound", () -> {
             Sounds.SELECT.play();
             Game.pushSegment(new VolumeMenu(level));
         }));
-        elements.add(new MenuButton("Video Settings", () -> {
+        elements.add(new MenuButton("Video", () -> {
             Sounds.SELECT.play();
             Game.pushSegment(new VideoMenu(level));
         }));
@@ -29,7 +29,7 @@ public class OptionsMenu extends Menu {
             Game.popSegment();
         }));
     }
-
+    
     @Override
     public void render(Graphics2D g) {
         if (level != null) level.render(g);

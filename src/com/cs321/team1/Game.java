@@ -1,6 +1,8 @@
 package com.cs321.team1;
 
 import com.cs321.team1.assets.Controls;
+import com.cs321.team1.assets.Music;
+import com.cs321.team1.assets.Resolutions;
 import com.cs321.team1.assets.Sounds;
 import com.cs321.team1.map.Level;
 import com.cs321.team1.map.LevelEntrance;
@@ -10,14 +12,17 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
-import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
@@ -26,29 +31,28 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
-/**
- * Singleton style class handling the base game logic
- * Represents the top of the class hierarchy
- */
-public class Game extends JPanel implements Runnable {
+public class Game extends JPanel {
     //******************************************************************************************************************
     //Game Logic
-
-    /**
-     * List of GameSegments represented as a stack
-     * Only the top of the stack is actively updated
-     */
+    
     private final List<GameSegment> segments = new ArrayList<>();
-
-    /**
-     * Handles game start logic
-     * Ran once on game initialization
-     * TODO implement save file functionality
-     */
+    
     private void start() {
         pushSegment(new MainMenu());
     }
-
+    
+    private void update() {
+        try {
+            Controls.cache();
+            if (Controls.FULLSCREEN.isPressed()) {
+                toggleFullscreen();
+                updateScreen();
+            }
+            segments.get(0).update();
+        } catch (ConcurrentModificationException ignored) {
+        }
+    }
+    
     public static void save() {
         try {
             var file = new FileWriter("ryuujin.sav");
@@ -63,80 +67,56 @@ public class Game extends JPanel implements Runnable {
         } catch (IOException ignored) {
         }
     }
-
+    
     public static void load() {
         try {
-            var levels = Files.readString(new File("ryuujin.sav").toPath()).split("SET");
-            for (int x = levels.length - 1; x > 0; x--) Game.pushSegment(Level.fromString("SET" + levels[x]));
+            var lvlStrings = Files.readString(new File("ryuujin.sav").toPath()).split("SET");
+            var levels = Arrays.stream(Arrays.copyOfRange(lvlStrings, 1, lvlStrings.length)).map(it -> Level.fromString(
+                    "SET" + it)).toList();
+            for (int x = levels.size() - 1; x >= 0; x--)
+                Game.pushSegment(levels.get(x));
+            Game.pushSegment(new LevelEntrance(levels.get(0)));
         } catch (IOException e) {
             Sounds.ERROR.play();
         }
     }
-
-    /**
-     * Handles game logic
-     * Ran once per tick
-     * TODO fix controls caching
-     */
-    private void update() {
-        try {
-            Controls.cache();
-            if (Controls.FULLSCREEN.isPressed()) toggleFullscreen();
-            segments.get(0).update();
-        } catch (ConcurrentModificationException ignored) {
-        }
-    }
-
-    /**
-     * Adds a GameSegment to the top of the stack
-     *
-     * @param seg Chosen GameSegment
-     */
+    
     public static void pushSegment(GameSegment seg) {
         i.segments.add(0, seg);
     }
-
-    /**
-     * Removes a GameSegment from the top of the stack
-     */
+    
     public static void popSegment() {
         i.segments.remove(0).onClose();
     }
-
-    /**
-     * Removes GameSegments until desired size of stack
-     *
-     * @param size Chosen size of stack
-     */
+    
     public static void popSegmentsTo(int size) {
         while (i.segments.size() > size) popSegment();
     }
     //******************************************************************************************************************
     //Framework and Utilities
-
+    
     private static Game i;
     private final JFrame window;
     private final Font font;
-    private Dimension windowedSize = new Dimension(640, 480);
-    private Dimension fullscreenSize;
-    private boolean fullscreen = false;
-
-    public static Game get() {
-        if (i == null) i = new Game();
-        return i;
-    }
-
+    
+    private Dimension windowedScreenSize = Resolutions._640x480.size;
+    private int fullscreenMonitor = Arrays.stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices())
+            .toList()
+            .indexOf(GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice());
+    private boolean fullscreen = true;
+    
     private Game() {
+        i = this;
         window = new JFrame();
         window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         window.setResizable(false);
         window.setTitle("Project 龍神");
         window.add(this);
         window.setLocationRelativeTo(null);
-        window.setVisible(true);
-        Controls.init(window);
         setBackground(Color.BLACK);
         setDoubleBuffered(true);
+        Controls.init(window);
+        
         Font temp;
         try {
             temp = Font.createFont(Font.TRUETYPE_FONT, new File("src/resources/PressStart.ttf"));
@@ -144,69 +124,114 @@ public class Game extends JPanel implements Runnable {
             temp = new JLabel().getFont();
         }
         font = temp;
-        toggleFullscreen();
+        
+        loadOptions();
         updateScreen();
-        new Thread(this).start();
+        
+        Runtime.getRuntime().addShutdownHook(new Thread(Game::saveOptions));
+        
+        new Thread(Game::run).start();
     }
-
-    public Font getFont() {
-        return font;
+    
+    public static Font font() {
+        return i.font;
     }
-
-    public Dimension getScreenSize() {
-        if (fullscreen) return fullscreenSize;
-        else return windowedSize;
+    
+    public static int getMonitor() {
+        return i.fullscreenMonitor;
     }
-
-    public void setScreenSize(Dimension size) {
-        if (!fullscreen) windowedSize = size;
-        else fullscreenSize = size;
-        updateScreen();
+    
+    public static void setMonitor(int monitor) {
+        var monitors = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+        if (monitor > monitors.length - 1) return;
+        i.fullscreenMonitor = monitor;
     }
-
-    public void toggleFullscreen() {
-        if (!fullscreen) {
-            fullscreen = true;
-            window.dispose();
-            window.setExtendedState(JFrame.MAXIMIZED_BOTH);
-            window.setUndecorated(true);
-            window.setVisible(true);
-            setScreenSize(new Dimension(window.getGraphicsConfiguration().getDevice().getDisplayMode().getWidth(),
-                    window.getGraphicsConfiguration().getDevice().getDisplayMode().getHeight()));
+    
+    public static Dimension getScreenSize() {
+        var bounds = GraphicsEnvironment.getLocalGraphicsEnvironment()
+                .getScreenDevices()[i.fullscreenMonitor].getDefaultConfiguration().getBounds();
+        return i.fullscreen ? new Dimension(bounds.width, bounds.height) : i.windowedScreenSize;
+    }
+    
+    public static void setScreenSize(Dimension res) {
+        i.windowedScreenSize = res;
+    }
+    
+    public static boolean isFullscreen() {
+        return i.fullscreen;
+    }
+    
+    public static void setFullscreen(boolean fullscreen) {
+        i.fullscreen = fullscreen;
+    }
+    
+    public static void toggleFullscreen() {
+        setFullscreen(!i.fullscreen);
+    }
+    
+    public static void updateScreen() {
+        i.window.dispose();
+        i.window.setUndecorated(i.fullscreen);
+        i.window.setVisible(true);
+        var monitors = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+        var bounds = monitors[i.fullscreenMonitor].getDefaultConfiguration().getBounds();
+        if (i.fullscreen) {
+            i.window.setLocation(bounds.x, bounds.y);
+            i.setPreferredSize(new Dimension(bounds.width, bounds.height));
         } else {
-            fullscreen = false;
-            window.dispose();
-            window.setExtendedState(Frame.NORMAL);
-            window.setUndecorated(false);
-            window.setVisible(true);
-            setScreenSize(windowedSize);
+            i.window.setLocation(bounds.x + (bounds.width - i.windowedScreenSize.width) / 2,
+                    bounds.y + (bounds.height - i.windowedScreenSize.height) / 2);
+            i.setPreferredSize(i.windowedScreenSize);
         }
+        i.window.pack();
+        i.segments.forEach(GameSegment::onScreenSizeChange);
     }
-
-    public boolean isFullscreen() {
-        return fullscreen;
+    
+    private static void saveOptions() {
+        try (var file = new FileWriter("options.txt")) {
+            file.write("fullscreen: " + i.fullscreen + "\n");
+            file.write("screenWidth: " + i.windowedScreenSize.width + "\n");
+            file.write("screenHeight: " + i.windowedScreenSize.height + "\n");
+            file.write("monitor: " + i.fullscreenMonitor + "\n");
+            file.write("sound: " + Sounds.getVolume() + "\n");
+            file.write("music: " + Music.getVolume() + "\n");
+        } catch (IOException ignored) {}
     }
-
-    public void updateScreen() {
-        setPreferredSize(getScreenSize());
-        window.pack();
+    
+    private static void loadOptions() {
+        try (var file = new BufferedReader(new FileReader("options.txt"))) {
+            for (String str : file.lines().toList()) {
+                try {
+                    if (str.startsWith("fullscreen: "))
+                        setFullscreen(Boolean.parseBoolean(str.split("fullscreen: ")[1]));
+                    if (str.startsWith("screenWidth: ")) setScreenSize(new Dimension(Integer.parseInt(str.split(
+                            "screenWidth: ")[1]), getScreenSize().height));
+                    if (str.startsWith("screenHeight: ")) setScreenSize(new Dimension(getScreenSize().width,
+                            Integer.parseInt(str.split("screenHeight: ")[1])));
+                    if (str.startsWith("monitor: ")) setMonitor(Integer.parseInt(str.split("monitor: ")[1]));
+                    if (str.startsWith("sound: ")) Sounds.setVolume(Integer.parseInt(str.split("sound: ")[1]));
+                    if (str.startsWith("music: ")) Music.setVolume(Integer.parseInt(str.split("music: ")[1]));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (IOException ignored) {}
     }
-
+    
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (!segments.isEmpty()) segments.get(0).render(((Graphics2D) g));
     }
-
-    @SuppressWarnings({"InfiniteLoopStatement", "BusyWait"})
-    @Override
-    public void run() {
-        start();
+    
+    @SuppressWarnings({"BusyWait"})
+    private static void run() {
+        i.start();
         while (true) {
             long interval = 1000000000 / 60;
             long nextTime = System.nanoTime() + interval;
-            update();
-            repaint();
+            i.update();
+            i.repaint();
             long remainingTime = Math.max(nextTime - System.nanoTime(), 0);
             try {
                 Thread.sleep(remainingTime / 1000000);
@@ -214,5 +239,9 @@ public class Game extends JPanel implements Runnable {
                 e.printStackTrace();
             }
         }
+    }
+    
+    public static void main(String[] args) {
+        new Game();
     }
 }

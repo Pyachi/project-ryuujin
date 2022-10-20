@@ -14,30 +14,28 @@ public enum Sounds {
     ERROR("src/resources/sounds/error.wav"),
     PICKUP("src/resources/sounds/pickup.wav"),
     MERGE("src/resources/sounds/merge.wav");
-
+    
     private final File path;
     private static int volume = 50;
-
+    
     Sounds(String path) {
         this.path = new File(path).getAbsoluteFile();
     }
-
+    
     public void play() {
         try {
             var clip = AudioSystem.getClip();
             clip.open(AudioSystem.getAudioInputStream(path));
-            ((FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN)).setValue((float) (20 * Math.log10(volume
-                    / 100.0)));
+            ((FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN)).setValue((float) (20 *
+                    Math.log10(volume / 100.0)));
             clip.start();
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            e.printStackTrace();
-        }
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ignored) {}
     }
-
+    
     public static int getVolume() {
         return volume;
     }
-
+    
     public static void setVolume(int vol) {
         volume = vol;
     }

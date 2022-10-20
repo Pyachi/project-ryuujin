@@ -1,6 +1,7 @@
 package com.cs321.team1.menu;
 
 import com.cs321.team1.Game;
+import com.cs321.team1.assets.Music;
 import com.cs321.team1.assets.Sounds;
 import com.cs321.team1.map.Level;
 import com.cs321.team1.map.LevelExit;
@@ -10,7 +11,7 @@ import java.awt.Graphics2D;
 
 public class LevelMenu extends Menu {
     private final Level level;
-
+    
     public LevelMenu(Level level) {
         this.level = level;
         elements.add(new MenuButton("Resume", () -> {
@@ -28,6 +29,7 @@ public class LevelMenu extends Menu {
         }));
         elements.add(new MenuButton("Quit to Menu", () -> {
             Sounds.DESELECT.play();
+            Music.DAY.play();
             Game.save();
             Game.popSegmentsTo(1);
             Game.pushSegment(new LevelExit(level));
@@ -38,7 +40,7 @@ public class LevelMenu extends Menu {
             System.exit(0);
         }));
     }
-
+    
     @Override
     public void render(Graphics2D g) {
         if (level != null) level.render(g);

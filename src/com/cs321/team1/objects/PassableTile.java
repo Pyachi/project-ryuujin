@@ -1,30 +1,27 @@
 package com.cs321.team1.objects;
 
+import com.cs321.team1.GameObject;
 import com.cs321.team1.assets.Texture;
-import com.cs321.team1.map.Dimension;
-import com.cs321.team1.map.Location;
+import com.cs321.team1.map.Vec2;
 
-/**
- * A static object that ignores collision
- */
 public class PassableTile extends GameObject {
-    public PassableTile(Location loc, Dimension size, Texture tex) {
+    public PassableTile(Vec2 loc, Vec2 size, Texture tex) {
         setTexture(tex);
         setLocation(loc);
         setSize(size);
     }
-
-    public PassableTile(Location loc, Texture tex) {
+    
+    public PassableTile(Vec2 loc, Texture tex) {
         setTexture(tex);
         setLocation(loc);
         setSize(tex.size);
     }
-
-    public PassableTile(Location loc, Dimension size) {
+    
+    public PassableTile(Vec2 loc, Vec2 size) {
         setLocation(loc);
         setSize(size);
     }
-
+    
     @Override
     public String toString() {
         return "FLR|" + getLocation().toString() + "|" + getSize().toString() + "|" + getTexture().toString();

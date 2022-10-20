@@ -11,13 +11,13 @@ import java.awt.Graphics2D;
 
 public class VolumeMenu extends Menu {
     private final Level level;
-
+    
     public VolumeMenu(Level level) {
         this.level = level;
-        elements.add(new MenuSlider("Music Volume:", Music.getVolume() / 10, 10, i -> {
+        elements.add(new MenuSlider("Music Volume", Music.getVolume() / 10, 10, true, i -> {
             Music.setVolume(i * 10);
         }));
-        elements.add(new MenuSlider("Sound Volume:", Sounds.getVolume() / 10, 10, i -> {
+        elements.add(new MenuSlider("Sound Volume", Sounds.getVolume() / 10, 10, true, i -> {
             Sounds.setVolume(i * 10);
             Sounds.SELECT.play();
         }));
@@ -26,7 +26,7 @@ public class VolumeMenu extends Menu {
             Game.popSegment();
         }));
     }
-
+    
     @Override
     public void render(Graphics2D g) {
         if (level != null) level.render(g);
