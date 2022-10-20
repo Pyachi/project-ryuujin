@@ -17,7 +17,9 @@ public enum Music {
     OVERWORLD("src/resources/music/overworld.wav");
     
     private final File path;
+    
     private static int volume = 50;
+    private static int selected = -1;
     private static AudioFormat format;
     private static AudioInputStream stream;
     private static SourceDataLine line = null;
@@ -28,6 +30,7 @@ public enum Music {
     
     public void play() {
         try {
+            selected = ordinal();
             format = AudioSystem.getAudioFileFormat(path.toURI().toURL()).getFormat();
             stream = AudioSystem.getAudioInputStream(path);
             if (line == null) initialize();
@@ -51,7 +54,12 @@ public enum Music {
                     Math.log10(volume / 100.0)));
             byte[] data = new byte[4096];
             int count;
-            while ((count = stream.read(data, 0, 4096)) != -1) line.write(data, 0, count);
+            while (true) {
+                while ((count = stream.read(data, 0, 4096)) != -1) {
+                    line.write(data, 0, count);
+                }
+                values()[selected].play();
+            }
         } catch (LineUnavailableException | IOException ignored) {}
     }
     
