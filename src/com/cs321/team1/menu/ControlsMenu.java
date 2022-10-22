@@ -15,7 +15,8 @@ public class ControlsMenu extends LevelMenu {
     @Override
     public void start() {
         Arrays.stream(Controls.values()).forEach(it -> elements.add(new MenuButton(it.name() + ":" +
-                String.format("%" + (19 - it.name().length()) + "s", KeyEvent.getKeyText(it.getKey())), () -> {
+                String.format("%" + (19 - it.name().length()) + "s",
+                        it.getKey() == -1 ? "UNBOUND" : KeyEvent.getKeyText(it.getKey())), () -> {
             Sounds.SELECT.play();
             Game.pushSegment(new GameSegment() {
                 int tick = 0;
@@ -27,17 +28,12 @@ public class ControlsMenu extends LevelMenu {
                     else elements.get(it.ordinal()).setText(20, it.name() + ":", " ");
                     if (Controls.getPressedKeys().isEmpty()) return;
                     int key = Controls.getPressedKeys().stream().findAny().orElse(it.getKey());
-                    boolean used = false;
-                    for (Controls control : Controls.values()) {
+                    for (Controls control : Controls.values())
                         if (control.getKey() == key && control != it) {
-                            used = true;
-                            break;
+                            control.setKey(-1);
+                            elements.get(control.ordinal()).setText(20, control.name() + ":", "UNBOUND");
                         }
-                    }
-                    if (!used) {
-                        Sounds.SELECT.play();
-                        it.setKey(key);
-                    } else Sounds.ERROR.play();
+                    it.setKey(key);
                     elements.get(it.ordinal()).setText(20, it.name() + ":", KeyEvent.getKeyText(it.getKey()));
                     Controls.clearCache();
                     Game.popSegment();
