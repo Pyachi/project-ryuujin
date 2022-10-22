@@ -1,103 +1,105 @@
 package com.cs321.team1.assets.audio;
 
 import com.cs321.team1.assets.ResourceLoader;
-import com.cs321.team1.assets.audio.filters.MuffleFilter;
+import com.cs321.team1.assets.audio.filters.Filters;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.FloatControl;
-import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
-import javax.sound.sampled.UnsupportedAudioFileException;
 
 public enum Music {
+    SOMBIENCE("resources/music/sombience.wav"),
     DAY("resources/music/day.wav"),
     OVERWORLD("resources/music/overworld.wav");
-
+    
     private final String path;
     private byte[] data;
-    private byte[] muffledData;
-
+    private final Map<Filters, byte[]> filteredData = new HashMap<>();
+    
+    private static final AudioFormat FORMAT = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
+            44100F,
+            16,
+            2,
+            4,
+            44100F,
+            false);
+    
     private static int volume = 50;
     private static int selected = -1;
-    private static AudioFormat format;
-    private static InputStream stream;
-    private static SourceDataLine line = null;
+    
+    private static volatile InputStream stream;
     private static int distance;
-    private static boolean muffled = false;
-
+    
+    private static SourceDataLine line = null;
+    
     Music(String path) {
         this.path = path;
     }
-
-    public void init() {
-        try {
-            data = AudioSystem.getAudioInputStream(new BufferedInputStream(ResourceLoader.loadStream(path))).readAllBytes();
-            muffledData = new MuffleFilter(new ByteArrayInputStream(data)).stream().readAllBytes();
-        } catch (IOException | UnsupportedAudioFileException ignored) {}
-    }
-
+    
     public void play() {
         try {
+            if (selected != -1 && Music.values()[selected] == this) return;
             selected = ordinal();
-            format = AudioSystem.getAudioFileFormat(ResourceLoader.loadStream(path)).getFormat();
-            stream = new ByteArrayInputStream(muffled ? muffledData : data);
+            stream = new ByteArrayInputStream(data);
             distance = 0;
-            if (line == null) initialize();
-        } catch (UnsupportedAudioFileException | IOException ignored) {
-        }
+        } catch (Exception e) {e.printStackTrace();}
     }
-
-    public static void setMuffled(boolean flag) {
+    
+    public static void applyFilter(Filters filter) {
         try {
-            muffled = flag;
             var song = values()[selected];
-            stream = new ByteArrayInputStream(muffled ? song.muffledData : song.data);
+            stream = new ByteArrayInputStream(filter == null ? song.data : song.filteredData.get(filter));
             stream.readNBytes(distance);
-            if (line == null) initialize();
-        } catch (IOException ignored) {}
+        } catch (Exception e) {e.printStackTrace();}
     }
-
-    private static void initialize() {
-        try {
-            DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
-            line = (SourceDataLine) AudioSystem.getLine(info);
-            Thread thread = new Thread(Music::run);
-            thread.start();
-        } catch (LineUnavailableException ignored) {}
-    }
-
-    private static void run() {
-        try {
-            line.open(format, 11025);
-            line.start();
-            ((FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN)).setValue((float) (20 *
-                    Math.log10(volume / 100.0)));
-            byte[] buffer = new byte[4096];
-            int count;
-            while (true) {
-                while ((count = stream.read(buffer, 0, 4096)) != -1) {
-                    distance += count;
-                    line.write(buffer, 0, count);
-                }
-                values()[selected].play();
-            }
-        } catch (LineUnavailableException | IOException ignored) {}
-    }
-
+    
     public static int getVolume() {
         return volume;
     }
-
+    
     public static void setVolume(int vol) {
         volume = vol;
         if (line != null) ((FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN)).setValue((float) (20 *
                 Math.log10(volume / 100.0)));
+    }
+    
+    public static void initialize() {
+        try {
+            for (Music song : values()) {
+                try {
+                    var stream = ResourceLoader.loadStream(song.path);
+                    song.data = AudioSystem.getAudioInputStream(stream).readAllBytes();
+                    for (Filters filter : Filters.values())
+                        song.filteredData.put(filter, filter.filter.filter(song.data));
+                } catch (Exception e) {e.printStackTrace();}
+            }
+            new Thread(() -> {
+                try {
+                    var info = new DataLine.Info(SourceDataLine.class, FORMAT);
+                    line = (SourceDataLine) AudioSystem.getLine(info);
+                    line.open(FORMAT, 11025);
+                    line.start();
+                    ((FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN)).setValue((float) (20 *
+                            Math.log10(volume / 100.0)));
+                    byte[] buffer = new byte[4096];
+                    int count;
+                    while (true) {
+                        while (stream == null) Thread.onSpinWait();
+                        while ((count = stream.read(buffer, 0, 4096)) != -1) {
+                            distance += count;
+                            line.write(buffer, 0, count);
+                        }
+                        values()[selected].play();
+                    }
+                } catch (Exception e) {e.printStackTrace();}
+            }).start();
+        } catch (Exception e) {e.printStackTrace();}
     }
 }

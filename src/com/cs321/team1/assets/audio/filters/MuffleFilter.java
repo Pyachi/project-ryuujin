@@ -1,14 +1,8 @@
 package com.cs321.team1.assets.audio.filters;
 
-import java.io.InputStream;
-
-public class MuffleFilter extends Filter {
-    public MuffleFilter(InputStream stream) {
-        super(stream);
-    }
-    
+class MuffleFilter extends Filter {
     @Override
-    protected void filter() {
+    protected void applyFilter() {
         for (int channel = 0; channel < 2; channel++) {
             short[] buff = getSamples(channel);
             for (int t = 0; t < buff.length; t++) {

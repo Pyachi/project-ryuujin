@@ -3,12 +3,10 @@ package com.cs321.team1.objects;
 import com.cs321.team1.GameObject;
 import com.cs321.team1.Tick;
 import com.cs321.team1.assets.Controls;
-import com.cs321.team1.assets.audio.Sounds;
 import com.cs321.team1.assets.Texture;
+import com.cs321.team1.assets.audio.Sounds;
 import com.cs321.team1.map.Vec2;
 import com.cs321.team1.objects.crates.Crate;
-
-import java.util.Objects;
 
 public class Player extends GameObject {
     private Direction dir = Direction.SOUTH;
@@ -25,6 +23,10 @@ public class Player extends GameObject {
     
     public Crate getGrabbedCrate() {
         return grabbedCrate;
+    }
+    
+    public void setGrabbedCrate(Crate crate) {
+        grabbedCrate = crate;
     }
     
     @Tick(priority = 0)
@@ -62,48 +64,18 @@ public class Player extends GameObject {
     
     private void handleCrates() {
         if (grabbedCrate == null && Controls.GRAB.isHeld()) {
-            getLevel().getObjects()
-                      .stream()
-                      .filter(Crate.class::isInstance)
-                      .map(Crate.class::cast)
-                      .filter(it -> it.collidesWith(switch (dir) {
-                          case NORTH -> getLocation().add(new Vec2(8, 0));
-                          case SOUTH -> getLocation().add(new Vec2(8, 16));
-                          case WEST -> getLocation().add(new Vec2(0, 8));
-                          case EAST -> getLocation().add(new Vec2(16, 8));
-                      }) && it.canGrab() && getLevel().getObjects()
-                                                      .stream()
-                                                      .filter(Player.class::isInstance)
-                                                      .noneMatch(player -> ((Player) player).getGrabbedCrate() == it))
-                      .findFirst()
-                      .ifPresent(crate -> {
-                          Sounds.PICKUP.play();
-                          grabbedCrate = crate;
-                          updateCrateGraphics();
-                      });
+            getLevel().getObjects().stream().filter(Crate.class::isInstance).map(Crate.class::cast).filter(it ->
+                    it.collidesWith(switch (dir) {
+                        case NORTH -> getLocation().add(new Vec2(8, 0));
+                        case SOUTH -> getLocation().add(new Vec2(8, 16));
+                        case WEST -> getLocation().add(new Vec2(0, 8));
+                        case EAST -> getLocation().add(new Vec2(16, 8));
+                    }) && it.canGrab() && !it.isGrabbed()).findFirst().ifPresent(crate -> {
+                Sounds.PICKUP.play();
+                grabbedCrate = crate;
+            });
         }
-        if (grabbedCrate != null && (!Controls.GRAB.isHeld() || grabbedCrate.isDead())) {
-            grabbedCrate = null;
-            updateCrateGraphics();
-        }
-    }
-    
-    private void updateCrateGraphics() {
-        var crates = getLevel().getObjects().stream().filter(Crate.class::isInstance).map(Crate.class::cast).filter(
-                Crate::canGrab).toList();
-        var grabbedCrates = getLevel().getObjects()
-                                      .stream()
-                                      .filter(Player.class::isInstance)
-                                      .map(Player.class::cast)
-                                      .map(Player::getGrabbedCrate)
-                                      .filter(Objects::nonNull)
-                                      .toList();
-        crates.forEach(it -> it.setTexture(new Texture("crates/crate", 1)));
-        crates.stream()
-              .filter(crate -> grabbedCrates.stream()
-                                            .anyMatch(it -> it.canInteractWith(crate) || crate.canInteractWith(it)))
-              .forEach(it -> it.setTexture(new Texture("crates/interactable", 1)));
-        grabbedCrates.forEach(it -> it.setTexture(new Texture("crates/grabbed", 1)));
+        if (grabbedCrate != null && (!Controls.GRAB.isHeld() || grabbedCrate.isDead())) grabbedCrate = null;
     }
     
     private void calculateMovement() {

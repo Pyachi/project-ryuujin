@@ -6,7 +6,6 @@ import com.cs321.team1.map.Vec2;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
@@ -34,11 +33,13 @@ public class Texture {
         BufferedImage tempImage;
         try {
             tempImage = ImageIO.read(ResourceLoader.loadStream(TEXTURES_PATH + path + ".png"));
-        } catch (IOException e) {
+        } catch (Exception e) {
             try {
                 tempImage = ImageIO.read(ResourceLoader.loadStream(TEXTURES_PATH + "null.png"));
                 priority = 100;
-            } catch (IOException ex) {
+            } catch (Exception ex) {
+                //This should never happen, but hard-crash just in case
+                System.exit(-1);
                 throw new RuntimeException(ex);
             }
         }

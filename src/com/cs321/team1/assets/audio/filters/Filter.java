@@ -1,25 +1,12 @@
 package com.cs321.team1.assets.audio.filters;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 public abstract class Filter {
-    protected final byte[] buffer;
+    protected byte[] buffer;
     
-    protected Filter(InputStream stream) {
-        byte[] temp;
-        try {
-            temp = stream.readAllBytes();
-        } catch (IOException e) {
-            temp = new byte[0];
-        }
-        this.buffer = temp;
-        filter();
-    }
-    
-    public InputStream stream() {
-        return new ByteArrayInputStream(buffer);
+    public byte[] filter(byte[] data) {
+        buffer = data.clone();
+        applyFilter();
+        return buffer;
     }
     
     protected short[] getSamples(int channel) {
@@ -32,17 +19,6 @@ public abstract class Filter {
     protected void setSamples(int channel, short[] dbBuffer) {
         for (int i = 0; i < buffer.length / 4; i++)
             setSample(i, channel, dbBuffer[i]);
-    }
-    
-    protected short[] conv(short[] a, short[] b) {
-        int n = a.length;
-        int m = b.length;
-    
-        short[] c = new short[n + m - 1];
-        for (int i = 0 ;i < n; ++i)
-            for (int j = 0; j < m; ++j)
-                c[i+j] += a[i]*b[j];
-        return c;
     }
     
     private short getSample(int index, int channel) {
@@ -58,5 +34,11 @@ public abstract class Filter {
         this.buffer[index * 4 + channel * 2 + 1] = (byte) ((data >> 8) & 0xFF);
     }
     
-    protected abstract void filter();
+    protected void extendBuffer(double multiple) {
+        byte[] data = new byte[(int) (buffer.length * multiple)];
+        System.arraycopy(buffer, 0, data, 0, buffer.length);
+        buffer = data;
+    }
+    
+    protected abstract void applyFilter();
 }

@@ -4,7 +4,7 @@ import com.cs321.team1.map.Vec2;
 
 public class IntegerCrate extends Crate {
     public IntegerCrate(Vec2 loc, int value) {
-        super(loc, value);
+        super(loc,"crates/integer", value);
     }
     
     @Override
@@ -13,15 +13,15 @@ public class IntegerCrate extends Crate {
     }
     
     @Override
-    public boolean canInteractWith(Crate crate) {
-        return crate instanceof IntegerCrate ||
-                (crate instanceof LockedCrate || crate instanceof UnpoweredCrate) && crate.getValue() == getValue();
+    public boolean canBeAppliedTo(Crate other) {
+        return other instanceof IntegerCrate ||
+                (other instanceof LockedCrate || other instanceof UnpoweredCrate) && other.getValue() == getValue();
     }
     
     @Override
-    public Crate getMergedCrate(Vec2 loc, Crate crate) {
-        if (crate instanceof IntegerCrate) return new IntegerCrate(loc, crate.getValue() + getValue());
-        if (crate instanceof UnpoweredCrate) return new PoweredCrate(loc);
+    public Crate getMergedCrate(Vec2 loc, Crate other) {
+        if (other instanceof IntegerCrate) return new IntegerCrate(loc, other.getValue() + getValue());
+        if (other instanceof UnpoweredCrate) return new PoweredCrate(loc);
         return null;
     }
     

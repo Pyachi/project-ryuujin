@@ -2,11 +2,11 @@ package com.cs321.team1;
 
 import com.cs321.team1.assets.Texture;
 import com.cs321.team1.assets.audio.Music;
+import com.cs321.team1.assets.audio.Sounds;
 import com.cs321.team1.menu.MainMenu;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.util.Arrays;
 
 public class LoadingScreen implements GameSegment {
     private boolean loaded;
@@ -17,7 +17,8 @@ public class LoadingScreen implements GameSegment {
     public LoadingScreen() {
         tex = new Texture("splash/splash", 0);
         new Thread(() -> {
-            Arrays.stream(Music.values()).forEach(Music::init);
+            Music.initialize();
+            Sounds.initialize();
             loaded = true;
         }).start();
     }
@@ -25,7 +26,7 @@ public class LoadingScreen implements GameSegment {
     @Override
     public void update() {
         if (reverse) {
-            opacity-=2;
+            opacity -= 2;
         } else {
             opacity++;
             opacity = Math.min(opacity, 100);

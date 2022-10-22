@@ -4,18 +4,16 @@ import com.cs321.team1.Game;
 import com.cs321.team1.GameSegment;
 import com.cs321.team1.assets.Controls;
 import com.cs321.team1.assets.audio.Sounds;
-import com.cs321.team1.map.Level;
 import com.cs321.team1.menu.elements.MenuButton;
 
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 
-public class ControlsMenu extends Menu {
-    private final Level level;
+public class ControlsMenu extends LevelMenu {
     
-    public ControlsMenu(Level level) {
-        this.level = level;
+    @Override
+    public void start() {
         Arrays.stream(Controls.values()).forEach(it -> elements.add(new MenuButton(it.name() + ":" +
                 String.format("%" + (19 - it.name().length()) + "s", KeyEvent.getKeyText(it.getKey())), () -> {
             Sounds.SELECT.play();
@@ -51,7 +49,7 @@ public class ControlsMenu extends Menu {
                 }
                 
                 @Override
-                public void onClose() {
+                public void finish() {
                 }
             });
         })));
@@ -62,8 +60,5 @@ public class ControlsMenu extends Menu {
     }
     
     @Override
-    public void render(Graphics2D g) {
-        if (level != null) level.render(g);
-        super.render(g);
-    }
+    public void finish() {}
 }

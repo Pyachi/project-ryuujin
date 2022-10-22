@@ -1,22 +1,8 @@
 package com.cs321.team1;
 
-import com.cs321.team1.assets.Controls;
 import com.cs321.team1.assets.Texture;
 import com.cs321.team1.map.Level;
-import com.cs321.team1.map.LevelLoader;
 import com.cs321.team1.map.Vec2;
-import com.cs321.team1.objects.Conveyor;
-import com.cs321.team1.objects.PassableTile;
-import com.cs321.team1.objects.Player;
-import com.cs321.team1.objects.Trigger;
-import com.cs321.team1.objects.UnpassableTile;
-import com.cs321.team1.objects.crates.DivideCrate;
-import com.cs321.team1.objects.crates.IntegerCrate;
-import com.cs321.team1.objects.crates.LockedCrate;
-import com.cs321.team1.objects.crates.ModuloCrate;
-import com.cs321.team1.objects.crates.MultiplyCrate;
-import com.cs321.team1.objects.crates.NegateCrate;
-import com.cs321.team1.objects.crates.UnpoweredCrate;
 
 import java.awt.Graphics2D;
 import java.util.List;
@@ -133,54 +119,4 @@ public abstract class GameObject {
     
     @Override
     abstract public String toString();
-    
-    public static GameObject fromString(String obj) {
-        try {
-            var line = obj.split("\\|");
-            var loc = Vec2.fromString(line[1]);
-            return switch (line[0]) {
-                case "PLR" -> new Player(loc);
-                case "INT" -> new IntegerCrate(loc, Integer.parseInt(line[2]));
-                case "NEG" -> new NegateCrate(loc);
-                case "MOD" -> new ModuloCrate(loc, Integer.parseInt(line[2]));
-                case "MUL" -> new MultiplyCrate(loc, Integer.parseInt(line[2]));
-                case "DIV" -> new DivideCrate(loc, Integer.parseInt(line[2]));
-                case "LCK" -> new LockedCrate(loc, Integer.parseInt(line[2]));
-                case "PWR" -> new UnpoweredCrate(loc, Integer.parseInt(line[2]));
-                case "CVR" -> switch (line[2]) {
-                    default -> Conveyor.UP(loc);
-                    case "D" -> Conveyor.DOWN(loc);
-                    case "L" -> Conveyor.LEFT(loc);
-                    case "R" -> Conveyor.RIGHT(loc);
-                };
-                case "FLR" -> {
-                    if (line[2].contains("/")) yield new PassableTile(loc, Texture.fromString(line[2]));
-                    else if (line.length == 4) yield new PassableTile(loc,
-                            Vec2.fromString(line[2]),
-                            Texture.fromString(line[3]));
-                    else yield new PassableTile(loc, Vec2.fromString(line[2]));
-                }
-                case "WAL" -> {
-                    if (line[2].contains("/")) yield new UnpassableTile(loc, Texture.fromString(line[2]));
-                    else if (line.length == 4) yield new UnpassableTile(loc,
-                            Vec2.fromString(line[2]),
-                            Texture.fromString(line[3]));
-                    else yield new UnpassableTile(loc, Vec2.fromString(line[2]));
-                }
-                case "TGR" -> {
-                    var cmd = obj.split("->")[1];
-                    line = obj.split("->")[0].split("\\|");
-                    if (line[2].contains("/")) yield new Trigger(loc, Texture.fromString(line[2]), cmd);
-                    else if (line.length == 4) yield new Trigger(loc,
-                            Vec2.fromString(line[2]),
-                            Texture.fromString(line[3]),
-                            cmd);
-                    else yield new Trigger(loc, Vec2.fromString(line[2]), cmd);
-                }
-                default -> null;
-            };
-        } catch (Exception e) {
-            return null;
-        }
-    }
 }

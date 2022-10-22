@@ -1,35 +1,25 @@
 package com.cs321.team1;
 
 import com.cs321.team1.assets.Controls;
+import com.cs321.team1.assets.Resolutions;
 import com.cs321.team1.assets.ResourceLoader;
 import com.cs321.team1.assets.audio.Music;
-import com.cs321.team1.assets.Resolutions;
 import com.cs321.team1.assets.audio.Sounds;
 import com.cs321.team1.map.Level;
-import com.cs321.team1.map.LevelEntrance;
-import com.cs321.team1.menu.MainMenu;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -42,7 +32,7 @@ public class Game extends JPanel {
     //Game Logic
     
     private final List<GameSegment> segments = new ArrayList<>();
-
+    
     private void start() {
         pushSegment(new LoadingScreen());
     }
@@ -55,48 +45,90 @@ public class Game extends JPanel {
                 updateScreen();
             }
             segments.get(0).update();
-        } catch (ConcurrentModificationException ignored) {
+        } catch (Exception e) {e.printStackTrace();
         }
     }
     
-    public static void save() {
+    public static <T extends GameSegment> T getHighestSegmentOfType(Class<T> clazz) {
+        return i.segments.stream().filter(clazz::isInstance).map(clazz::cast).findFirst().orElse(null);
+    }
+    
+    public static int getIndexOf(GameSegment seg) {
+        return i.segments.indexOf(seg);
+    }
+    
+    public static void pushSegment(GameSegment seg) {
+        seg.start();
+        i.segments.add(0, seg);
+    }
+    
+    public static void popSegment() {
+        i.segments.remove(0).finish();
+        if (!i.segments.isEmpty()) i.segments.get(0).refresh();
+    }
+    
+    public static void popSegmentsTo(GameSegment seg) {
+        while (i.segments.get(0) != seg) i.segments.remove(0).finish();
+        i.segments.get(0).refresh();
+    }
+    
+    //******************************************************************************************************************
+    //Save File
+    
+    public static void saveGame() {
         try {
             var file = new FileWriter("ryuujin.sav");
             i.segments.forEach(seg -> {
                 if (!(seg instanceof Level)) return;
                 try {
                     file.write(seg.toString());
-                } catch (IOException ignored) {}
+                } catch (Exception e) {e.printStackTrace();}
             });
             file.close();
-        } catch (IOException ignored) {}
+        } catch (Exception e) {e.printStackTrace();}
     }
     
-    public static void load() {
+    public static void loadGame() {
         try {
             var lvlStrings = Files.readString(new File("ryuujin.sav").toPath()).split("SET");
             var levels = Arrays.stream(Arrays.copyOfRange(lvlStrings, 1, lvlStrings.length)).map(it -> Level.fromString(
                     "SET" + it)).toList();
             for (int x = levels.size() - 1; x >= 0; x--)
                 Game.pushSegment(levels.get(x));
-            Game.pushSegment(new LevelEntrance(levels.get(0)));
-            Music.OVERWORLD.play();
-        } catch (IOException e) {
+        } catch (Exception e) {
             Sounds.ERROR.play();
         }
     }
     
-    public static void pushSegment(GameSegment seg) {
-        i.segments.add(0, seg);
+    private static void saveOptions() {
+        try (var file = new FileWriter("options.txt")) {
+            file.write("fullscreen: " + i.fullscreen + "\n");
+            file.write("screenWidth: " + i.windowedScreenSize.width + "\n");
+            file.write("screenHeight: " + i.windowedScreenSize.height + "\n");
+            file.write("monitor: " + i.fullscreenMonitor + "\n");
+            file.write("sound: " + Sounds.getVolume() + "\n");
+            file.write("music: " + Music.getVolume() + "\n");
+        } catch (Exception e) {e.printStackTrace();}
     }
     
-    public static void popSegment() {
-        i.segments.remove(0).onClose();
+    private static void loadOptions() {
+        try (var file = new BufferedReader(new FileReader("options.txt"))) {
+            for (String str : file.lines().toList()) {
+                try {
+                    if (str.startsWith("fullscreen: "))
+                        setFullscreen(Boolean.parseBoolean(str.split("fullscreen: ")[1]));
+                    if (str.startsWith("screenWidth: ")) setScreenSize(new Dimension(Integer.parseInt(str.split(
+                            "screenWidth: ")[1]), getScreenSize().height));
+                    if (str.startsWith("screenHeight: ")) setScreenSize(new Dimension(getScreenSize().width,
+                            Integer.parseInt(str.split("screenHeight: ")[1])));
+                    if (str.startsWith("monitor: ")) setMonitor(Integer.parseInt(str.split("monitor: ")[1]));
+                    if (str.startsWith("sound: ")) Sounds.setVolume(Integer.parseInt(str.split("sound: ")[1]));
+                    if (str.startsWith("music: ")) Music.setVolume(Integer.parseInt(str.split("music: ")[1]));
+                } catch (Exception e) {e.printStackTrace();}
+            }
+        } catch (Exception e) {e.printStackTrace();}
     }
     
-    public static void popSegmentsTo(int size) {
-        while (i.segments.size() > size) popSegment();
-    }
     //******************************************************************************************************************
     //Framework and Utilities
     
@@ -125,11 +157,11 @@ public class Game extends JPanel {
         Font tempFont;
         try {
             tempFont = Font.createFont(Font.TRUETYPE_FONT, ResourceLoader.loadStream("resources/PressStart.ttf"));
-        } catch (FontFormatException | IOException e) {
+        } catch (Exception e) {
             tempFont = new JLabel().getFont();
         }
         font = tempFont;
-
+        
         loadOptions();
         updateScreen();
         
@@ -192,35 +224,6 @@ public class Game extends JPanel {
         i.segments.forEach(GameSegment::onScreenSizeChange);
     }
     
-    private static void saveOptions() {
-        try (var file = new FileWriter("options.txt")) {
-            file.write("fullscreen: " + i.fullscreen + "\n");
-            file.write("screenWidth: " + i.windowedScreenSize.width + "\n");
-            file.write("screenHeight: " + i.windowedScreenSize.height + "\n");
-            file.write("monitor: " + i.fullscreenMonitor + "\n");
-            file.write("sound: " + Sounds.getVolume() + "\n");
-            file.write("music: " + Music.getVolume() + "\n");
-        } catch (IOException ignored) {}
-    }
-    
-    private static void loadOptions() {
-        try (var file = new BufferedReader(new FileReader("options.txt"))) {
-            for (String str : file.lines().toList()) {
-                try {
-                    if (str.startsWith("fullscreen: "))
-                        setFullscreen(Boolean.parseBoolean(str.split("fullscreen: ")[1]));
-                    if (str.startsWith("screenWidth: ")) setScreenSize(new Dimension(Integer.parseInt(str.split(
-                            "screenWidth: ")[1]), getScreenSize().height));
-                    if (str.startsWith("screenHeight: ")) setScreenSize(new Dimension(getScreenSize().width,
-                            Integer.parseInt(str.split("screenHeight: ")[1])));
-                    if (str.startsWith("monitor: ")) setMonitor(Integer.parseInt(str.split("monitor: ")[1]));
-                    if (str.startsWith("sound: ")) Sounds.setVolume(Integer.parseInt(str.split("sound: ")[1]));
-                    if (str.startsWith("music: ")) Music.setVolume(Integer.parseInt(str.split("music: ")[1]));
-                } catch (Exception ignored) {}
-            }
-        } catch (IOException ignored) {}
-    }
-    
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -238,9 +241,7 @@ public class Game extends JPanel {
             long remainingTime = Math.max(nextTime - System.nanoTime(), 0);
             try {
                 Thread.sleep(remainingTime / 1000000);
-            } catch (InterruptedException e) {
-
-            }
+            } catch (Exception e) {e.printStackTrace();}
         }
     }
     

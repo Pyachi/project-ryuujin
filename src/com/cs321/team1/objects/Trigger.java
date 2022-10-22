@@ -4,7 +4,7 @@ import com.cs321.team1.GameObject;
 import com.cs321.team1.Tick;
 import com.cs321.team1.assets.Controls;
 import com.cs321.team1.assets.Texture;
-import com.cs321.team1.map.LevelLoader;
+import com.cs321.team1.map.Level;
 import com.cs321.team1.map.Vec2;
 
 public class Trigger extends GameObject {
@@ -38,7 +38,7 @@ public class Trigger extends GameObject {
         var cmd = command.split("\\|");
         return switch (cmd[0]) {
             case "LVL" -> () -> {
-                if (Controls.SELECT.isPressed()) LevelLoader.loadLevel(cmd[1]);
+                if (Controls.SELECT.isPressed()) Level.load(cmd[1]);
             };
             default -> () -> {};
         };

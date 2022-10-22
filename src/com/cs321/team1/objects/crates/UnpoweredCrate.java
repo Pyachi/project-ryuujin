@@ -1,12 +1,10 @@
 package com.cs321.team1.objects.crates;
 
-import com.cs321.team1.assets.Texture;
 import com.cs321.team1.map.Vec2;
 
 public class UnpoweredCrate extends Crate {
     public UnpoweredCrate(Vec2 loc, int value) {
-        super(loc, value);
-        setTexture(new Texture("map/floor", 1));
+        super(loc,"map/floor", value);
     }
     
     @Override
@@ -20,12 +18,12 @@ public class UnpoweredCrate extends Crate {
     }
     
     @Override
-    public boolean canInteractWith(Crate crate) {
+    public boolean canBeAppliedTo(Crate other) {
         return false;
     }
     
     @Override
-    public Crate getMergedCrate(Vec2 location, Crate crate) {
+    public Crate getMergedCrate(Vec2 location, Crate other) {
         return null;
     }
     

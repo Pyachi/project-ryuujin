@@ -3,15 +3,12 @@ package com.cs321.team1.menu;
 import com.cs321.team1.Game;
 import com.cs321.team1.assets.Resolutions;
 import com.cs321.team1.assets.audio.Sounds;
-import com.cs321.team1.map.Level;
 import com.cs321.team1.menu.elements.MenuButton;
 import com.cs321.team1.menu.elements.MenuSlider;
 
-import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 
-public class VideoMenu extends Menu {
-    private final Level level;
+public class VideoMenu extends LevelMenu {
     private int monitor;
     private int prevMonitor;
     private Resolutions res;
@@ -19,8 +16,8 @@ public class VideoMenu extends Menu {
     private boolean fullscreen;
     private boolean prevFullscreen;
     
-    public VideoMenu(Level level) {
-        this.level = level;
+    @Override
+            public void start() {
         resetSettings();
         elements.add(new MenuSlider("", fullscreen ? 1 : 0, 1, false, i -> {
             fullscreen = i == 1;
@@ -48,6 +45,9 @@ public class VideoMenu extends Menu {
         }));
         updateButtons();
     }
+    
+    @Override
+    public void finish() {}
     
     private void updateButtons() {
         elements.get(0).setText(21, "Mode:", (fullscreen ? "Fullscreen" : "Windowed"));
@@ -89,11 +89,5 @@ public class VideoMenu extends Menu {
         fullscreen = prevFullscreen = Game.isFullscreen();
         monitor = prevMonitor = Game.getMonitor();
         res = prevRes = Resolutions.fromDimension(Game.getScreenSize());
-    }
-    
-    @Override
-    public void render(Graphics2D g) {
-        if (level != null) level.render(g);
-        super.render(g);
     }
 }
