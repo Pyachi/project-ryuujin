@@ -70,12 +70,12 @@ public class Level implements GameSegment {
     
     @Override
     public void refresh() {
-        music.play();
+        if (music != null) music.play();
     }
     
     @Override
     public void start() {
-        music.play();
+        if (music != null) music.play();
     }
     
     public void addObject(GameObject obj) {
