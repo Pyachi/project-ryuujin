@@ -15,16 +15,11 @@ public class MenuText extends MenuElement {
     public void update() {}
     
     @Override
-    public BufferedImage render(Font font, boolean selected) {
+    public BufferedImage render(Font font, int timeSelected) {
         var fontMetrics = new BufferedImage(1, 1, 1).createGraphics().getFontMetrics(font);
         int textHeight = getHeight(font);
         var image = new BufferedImage(Game.getScreenSize().width, textHeight, BufferedImage.TYPE_INT_ARGB);
         var graphics = image.createGraphics();
-        if (selected) {
-            graphics.setColor(new Color(0.5f, 0.5f, 0.5f, 0.8f));
-            graphics.fillRect(0, 0, image.getWidth(), image.getHeight());
-            graphics.setColor(Color.WHITE);
-        }
         graphics.setFont(font);
         int x = fontMetrics.stringWidth("AA");
         int y = (image.getHeight() - textHeight / 2) / 2 + fontMetrics.getAscent();

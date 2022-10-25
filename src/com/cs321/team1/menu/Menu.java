@@ -17,11 +17,17 @@ import java.util.List;
 public abstract class Menu implements GameSegment {
     protected final List<MenuElement> elements = new ArrayList<>();
     private int selected = 0;
+    private int tick = 0;
     
     @Override
     public void update() {
-        if (Controls.DOWN.isPressed()) selected++;
-        else if (Controls.UP.isPressed()) selected--;
+        if (Controls.DOWN.isPressed()) {
+            tick = 0;
+            selected++;
+        } else if (Controls.UP.isPressed()) {
+            tick = 0;
+            selected--;
+        }
         if (selected < 0) selected = getSelectableElements().size() - 1;
         else if (selected >= getSelectableElements().size()) selected = 0;
         getSelectableElements().get(selected).update();
@@ -29,6 +35,11 @@ public abstract class Menu implements GameSegment {
             Game.popSegment();
             Sounds.DESELECT.play();
         }
+    }
+    
+    @Override
+    public void refresh() {
+        tick = 0;
     }
     
     private List<MenuElement> getSelectableElements() {
@@ -44,7 +55,8 @@ public abstract class Menu implements GameSegment {
         graphics.fillRect(0, 0, screenSize.width, screenSize.height);
         graphics.setColor(Color.WHITE);
         var font = Game.font().deriveFont(((float) getTextSize()));
-        var renders = elements.stream().map(it -> it.render(font, it == getSelectableElements().get(selected))).toList();
+        var renders = elements.stream().map(it -> it.render(font,
+                it == getSelectableElements().get(selected) ? tick++ : -1)).toList();
         int renderHeight = renders.stream().mapToInt(BufferedImage::getHeight).sum();
         int y = (screenSize.height - renderHeight) / 2;
         for (var render : renders) {

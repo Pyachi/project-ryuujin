@@ -34,15 +34,15 @@ public class MenuSlider extends MenuElement {
     }
     
     @Override
-    public BufferedImage render(Font font, boolean selected) {
+    public BufferedImage render(Font font, int timeSelected) {
         var fontMetrics = new BufferedImage(1, 1, 1).createGraphics().getFontMetrics(font);
         int textWidth = fontMetrics.stringWidth(getText());
         int textHeight = fontMetrics.getHeight();
         var image = new BufferedImage(Game.getScreenSize().width, textHeight * 2, BufferedImage.TYPE_INT_ARGB);
         var graphics = image.createGraphics();
-        if (selected) {
+        if (selected != -1) {
             graphics.setColor(new Color(0.5f, 0.5f, 0.5f, 0.8f));
-            graphics.fillRect(0, 0, image.getWidth(), image.getHeight());
+            graphics.fillRect(0, 0, Math.min((image.getWidth()/10*timeSelected), image.getWidth()), image.getHeight());
             graphics.setColor(Color.WHITE);
         }
         graphics.setFont(font);

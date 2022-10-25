@@ -12,7 +12,7 @@ public abstract class MenuElement {
     
     public abstract void update();
     
-    public abstract BufferedImage render(Font font, boolean selected);
+    public abstract BufferedImage render(Font font, int ticksSelected);
     
     public String getText() {
         return text;

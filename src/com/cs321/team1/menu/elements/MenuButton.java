@@ -26,14 +26,14 @@ public class MenuButton extends MenuElement {
     }
     
     @Override
-    public BufferedImage render(Font font, boolean selected) {
+    public BufferedImage render(Font font, int timeSelected) {
         var fontMetrics = new BufferedImage(1, 1, 1).createGraphics().getFontMetrics(font);
         int textHeight = getHeight(font);
         var image = new BufferedImage(Game.getScreenSize().width, textHeight, BufferedImage.TYPE_INT_ARGB);
         var graphics = image.createGraphics();
-        if (selected) {
+        if (timeSelected != -1) {
             graphics.setColor(new Color(0.5f, 0.5f, 0.5f, 0.8f));
-            graphics.fillRect(0, 0, image.getWidth(), image.getHeight());
+            graphics.fillRect(0, 0, Math.min((image.getWidth()/10*timeSelected),image.getWidth()), image.getHeight());
         }
         graphics.setColor(disabled ? Color.DARK_GRAY : Color.WHITE);
         graphics.setFont(font);

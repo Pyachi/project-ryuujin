@@ -47,6 +47,7 @@ public class MainMenu extends Menu {
     
     @Override
     public void refresh() {
+        super.refresh();
         Music.DAY.play();
     }
     
