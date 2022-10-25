@@ -166,7 +166,7 @@ public class Level implements GameSegment {
         removeBase();
         var start = "SET|" + size.toString() + "|" + world + "\n";
         StringBuilder builder = new StringBuilder();
-        builder.append("MSC|").append(music.name()).append("\n");
+        if (music != null) builder.append("MSC|").append(music.name()).append("\n");
         for (GameObject obj : objs.values()) builder.append(obj.toString()).append("\n");
         return start + builder;
     }
