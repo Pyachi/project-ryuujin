@@ -10,6 +10,7 @@ import com.cs321.team1.assets.Texture;
 import com.cs321.team1.assets.audio.Music;
 import com.cs321.team1.menu.LevelMenu;
 import com.cs321.team1.objects.Conveyor;
+import com.cs321.team1.objects.LevelObject;
 import com.cs321.team1.objects.Navigator;
 import com.cs321.team1.objects.PassableTile;
 import com.cs321.team1.objects.Player;
@@ -199,6 +200,7 @@ public class Level implements GameSegment {
                     switch (line[0]) {
                         case "NAV" -> addObject(new Navigator(loc));
                         case "PLR" -> addObject(new Player(loc));
+                        case "LVL" -> addObject(new LevelObject(loc,Integer.parseInt(line[2])));
                         case "INT" -> addObject(new IntegerCrate(loc, Integer.parseInt(line[2])));
                         case "NEG" -> addObject(new NegateCrate(loc));
                         case "MOD" -> addObject(new ModuloCrate(loc, Integer.parseInt(line[2])));

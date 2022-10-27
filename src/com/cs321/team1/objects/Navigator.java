@@ -35,9 +35,9 @@ public class Navigator extends GameObject {
     
     private boolean canMove(int x, int y) {
         super.move(x * 16, y * 16);
-        boolean collision = collidesWith(UnpassableTile.class);
+        boolean collision = collidesWith(LevelObject.class);
         super.move(-x * 16, -y * 16);
-        return !collision;
+        return collision;
     }
     
     private void startMoving(int x, int y) {

@@ -14,14 +14,14 @@ public class MainMenu extends Menu {
     public void start() {
         elements.add(new MenuButton("New Game", () -> {
             Sounds.SELECT.play();
-            if (((MenuButton) elements.get(1)).isDisabled()) Level.load("worldOne");
+            if (((MenuButton) elements.get(1)).isDisabled()) Level.load("world");
             else Game.pushSegment(new Menu() {
                 {
                     elements.add(new MenuText("Create New Game? (This will erase your save file)"));
                     elements.add(new MenuButton("Yes, I am ready!", () -> {
                         Sounds.SELECT.play();
                         Game.popSegment();
-                        Level.load("worldOne");
+                        Level.load("world");
                     }));
                     elements.add(new MenuButton("No wait...", () -> {
                         Sounds.DESELECT.play();
