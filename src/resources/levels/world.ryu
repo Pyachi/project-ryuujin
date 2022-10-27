@@ -1,5 +1,5 @@
 SET|T:15:9|true
-PLR|T:1:1
+NAV|T:1:1
 MSC|OVERWORLD
 TGR|T:2:2|T:1:1|1:map/incomplete_level_animated->LVL|one
 TGR|T:4:2|T:1:1|1:map/incomplete_level_animated->LVL|two
