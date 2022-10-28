@@ -47,8 +47,6 @@ public enum Controls {
     
     public boolean isHeld() { return heldKeys.contains(key); }
     
-    public String keyName() { return key != -1 ? KeyEvent.getKeyText(key) : "UNBOUND"; }
-    
     public static String keyNameFromInt(int key) { return key != -1 ? KeyEvent.getKeyText(key) : "UNBOUND"; }
     
     public static void init(JFrame window) {
