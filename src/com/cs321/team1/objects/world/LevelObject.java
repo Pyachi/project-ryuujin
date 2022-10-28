@@ -1,4 +1,4 @@
-package com.cs321.team1.objects;
+package com.cs321.team1.objects.world;
 
 import com.cs321.team1.Game;
 import com.cs321.team1.GameObject;

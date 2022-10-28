@@ -1,7 +1,13 @@
 package com.cs321.team1.assets;
 
+import com.cs321.team1.Game;
+import com.cs321.team1.GameSegment;
+import com.cs321.team1.menu.ControlsMenu;
+import com.cs321.team1.menu.Menu;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,7 +25,7 @@ public enum Controls {
     
     private static final Set<Integer> pressedKeys = new HashSet<>();
     private static final Set<Integer> heldKeys = new HashSet<>();
-    private static final Set<Integer> keys = new HashSet<>();
+    private static boolean initialized = false;
     
     private int key;
     
@@ -33,53 +39,67 @@ public enum Controls {
     
     public void setKey(int key) {
         this.key = key;
-    }
-    
-    public boolean isPressed() {
-        return pressedKeys.remove(key);
-    }
-    
-    public boolean isHeld() {
-        return heldKeys.contains(key);
-    }
-    
-    public static void cache() {
-        pressedKeys.clear();
-        pressedKeys.addAll(keys);
-        pressedKeys.removeAll(heldKeys);
-        heldKeys.clear();
-        heldKeys.addAll(keys);
-    }
-    
-    public static void clearCache() {
         pressedKeys.clear();
         heldKeys.clear();
-        keys.clear();
     }
+    
+    public boolean isPressed() { return pressedKeys.remove(key); }
+    
+    public boolean isHeld() { return heldKeys.contains(key); }
+    
+    public String keyName() { return key != -1 ? KeyEvent.getKeyText(key) : "UNBOUND"; }
+    
+    public static String keyNameFromInt(int key) { return key != -1 ? KeyEvent.getKeyText(key) : "UNBOUND"; }
     
     public static void init(JFrame window) {
+        if (initialized) return;
+        initialized = true;
         window.addKeyListener(new KeyListener() {
             @Override
-            public void keyTyped(KeyEvent e) {
-            }
+            public void keyTyped(KeyEvent e) { }
             
             @Override
             public void keyPressed(KeyEvent e) {
-                keys.add(e.getKeyCode());
+                pressedKeys.add(e.getKeyCode());
+                heldKeys.add(e.getKeyCode());
             }
             
             @Override
             public void keyReleased(KeyEvent e) {
-                keys.remove(e.getKeyCode());
+                pressedKeys.remove(e.getKeyCode());
+                heldKeys.remove(e.getKeyCode());
             }
         });
     }
     
-    public static Set<Integer> getPressedKeys() {
-        return pressedKeys;
-    }
-    
-    public static Set<Integer> getHeldKeys() {
-        return heldKeys;
+    public static class ControlChanger implements GameSegment {
+        private final Controls control;
+        private final ControlsMenu menu;
+        private int tick = 0;
+        
+        public ControlChanger(Controls control, ControlsMenu menu) {
+            this.control = control;
+            this.menu = menu;
+        }
+        
+        @Override
+        public void update() {
+            tick++;
+            if (tick % 60 < 30) menu.getButton(control).setText(20, control.name() + ":", "_");
+            else menu.getButton(control).setText(20, control.name() + ":", " ");
+            if (pressedKeys.isEmpty()) return;
+            int key = pressedKeys.stream().findAny().orElse(control.getKey());
+            for (Controls other : Controls.values())
+                if (menu.getNewKey(other) == key && other != control) menu.setNewKey(other, -1);
+            menu.setNewKey(control, key);
+            pressedKeys.clear();
+            heldKeys.clear();
+            Game.popSegment();
+        }
+        
+        @Override
+        public BufferedImage render() {
+            return Game.getHighestSegmentOfType(Menu.class).render();
+        }
     }
 }

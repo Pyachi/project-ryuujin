@@ -22,6 +22,14 @@ public class MenuSlider extends MenuElement {
         this.run = run;
     }
     
+    public MenuSlider(int size, String left, String right, int selected, int max, boolean showSlider, Consumer<Integer> run) {
+        super(size, left, right);
+        this.selected = selected;
+        this.max = max;
+        this.showSlider = showSlider;
+        this.run = run;
+    }
+    
     @Override
     public void update() {
         if (Controls.LEFT.isPressed()) {
@@ -42,7 +50,10 @@ public class MenuSlider extends MenuElement {
         var graphics = image.createGraphics();
         if (selected != -1) {
             graphics.setColor(new Color(0.5f, 0.5f, 0.5f, 0.8f));
-            graphics.fillRect(0, 0, Math.min((image.getWidth()/10*timeSelected), image.getWidth()), image.getHeight());
+            graphics.fillRect(0,
+                    0,
+                    Math.min((image.getWidth() / 10 * timeSelected), image.getWidth()),
+                    image.getHeight());
             graphics.setColor(Color.WHITE);
         }
         graphics.setFont(font);

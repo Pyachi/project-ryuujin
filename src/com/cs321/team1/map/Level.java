@@ -10,8 +10,9 @@ import com.cs321.team1.assets.Texture;
 import com.cs321.team1.assets.audio.Music;
 import com.cs321.team1.menu.LevelMenu;
 import com.cs321.team1.objects.Conveyor;
-import com.cs321.team1.objects.LevelObject;
-import com.cs321.team1.objects.Navigator;
+import com.cs321.team1.objects.world.LevelObject;
+import com.cs321.team1.objects.world.NavPath;
+import com.cs321.team1.objects.world.Navigator;
 import com.cs321.team1.objects.PassableTile;
 import com.cs321.team1.objects.Player;
 import com.cs321.team1.objects.Trigger;
@@ -117,6 +118,10 @@ public class Level implements GameSegment {
         
     }
     
+    public BufferedImage getLevelImage() {
+        return level;
+    }
+    
     public int getScale() {
         int scale = 20;
         var screenSize = Game.getScreenSize();
@@ -125,19 +130,17 @@ public class Level implements GameSegment {
     }
     
     @Override
-    public void render(Graphics2D g) {
+    public BufferedImage render() {
         var list = new ArrayList<>(objs.values().stream().filter(it -> it.getTexture() != null).toList());
         list.sort(Comparator.comparingInt(it -> it.getTexture().priority));
         var graphics = level.createGraphics();
         list.forEach(it -> it.paint(graphics));
-        var image = new BufferedImage(Game.getScreenSize().width,
-                Game.getScreenSize().height,
-                BufferedImage.TYPE_INT_ARGB);
+        var image = Game.getBlankImage();
         image.createGraphics().drawImage(level,
                 (image.getWidth() - level.getWidth()) / 2,
                 (image.getHeight() - level.getHeight()) / 2,
                 null);
-        g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
+        return image;
     }
     
     @Override
@@ -199,6 +202,7 @@ public class Level implements GameSegment {
                     var loc = Vec2.fromString(line[1]);
                     switch (line[0]) {
                         case "NAV" -> addObject(new Navigator(loc));
+                        case "PTH" -> addObject(new NavPath(loc));
                         case "PLR" -> addObject(new Player(loc));
                         case "LVL" -> addObject(new LevelObject(loc,Integer.parseInt(line[2])));
                         case "INT" -> addObject(new IntegerCrate(loc, Integer.parseInt(line[2])));

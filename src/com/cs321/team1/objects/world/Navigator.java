@@ -1,4 +1,4 @@
-package com.cs321.team1.objects;
+package com.cs321.team1.objects.world;
 
 import com.cs321.team1.GameObject;
 import com.cs321.team1.Tick;
@@ -35,7 +35,7 @@ public class Navigator extends GameObject {
     
     private boolean canMove(int x, int y) {
         super.move(x * 16, y * 16);
-        boolean collision = collidesWith(LevelObject.class);
+        boolean collision = collidesWith(LevelObject.class) || collidesWith(NavPath.class);
         super.move(-x * 16, -y * 16);
         return collision;
     }

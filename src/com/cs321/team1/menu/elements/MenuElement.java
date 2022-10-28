@@ -6,21 +6,17 @@ import java.awt.image.BufferedImage;
 public abstract class MenuElement {
     private String text;
     
-    protected MenuElement(String text) {
-        this.text = text;
-    }
+    protected MenuElement(String text) { this.text = text; }
+    
+    protected MenuElement(int size, String left, String right) { setText(size, left, right); }
     
     public abstract void update();
     
     public abstract BufferedImage render(Font font, int ticksSelected);
     
-    public String getText() {
-        return text;
-    }
+    public String getText() { return text; }
     
-    public void setText(String text) {
-        this.text = text;
-    }
+    public void setText(String text) { this.text = text; }
     
     public void setText(int size, String left, String right) {
         this.text = left + String.format("%" + (size - left.length()) + "s", right);

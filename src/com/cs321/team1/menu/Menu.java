@@ -47,9 +47,14 @@ public abstract class Menu implements GameSegment {
     }
     
     @Override
-    public void render(Graphics2D g) {
+    public BufferedImage render() {
+        
+        
+        
+        
+        
         var screenSize = Game.getScreenSize();
-        var image = new BufferedImage(screenSize.width, screenSize.height, BufferedImage.TYPE_INT_ARGB);
+        var image = Game.getBlankImage();
         var graphics = image.createGraphics();
         graphics.setColor(new Color(0f, 0f, 0f, 0.8f));
         graphics.fillRect(0, 0, screenSize.width, screenSize.height);
@@ -63,7 +68,7 @@ public abstract class Menu implements GameSegment {
             graphics.drawImage(render, 0, y, null);
             y += render.getHeight();
         }
-        g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
+        return image;
     }
     
     private int getTextSize() {

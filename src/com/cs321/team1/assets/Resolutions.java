@@ -14,12 +14,13 @@ public enum Resolutions {
     _1680x1050(1680, 1050),
     _1920x1080(1920, 1080),
     _1920x1200(1920, 1200),
-    _2560x1440(2560, 1440);
+    _2560x1440(2560, 1440),
+    _3840x2160(3840, 2160);
     
     public final Dimension size;
     
-    Resolutions(int x, int y) {
-        size = new Dimension(x, y);
+    Resolutions(int width, int height) {
+        size = new Dimension(width, height);
     }
     
     public static Resolutions fromDimension(Dimension size) {

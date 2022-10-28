@@ -17,6 +17,11 @@ public class MenuButton extends MenuElement {
         this.run = run;
     }
     
+    public MenuButton(int size, String left, String right, Runnable run) {
+        super(size,left,right);
+        this.run = run;
+    }
+    
     @Override
     public void update() {
         if (Controls.SELECT.isPressed()) {

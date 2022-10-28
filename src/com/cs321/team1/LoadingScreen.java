@@ -7,6 +7,7 @@ import com.cs321.team1.menu.MainMenu;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 
 public class LoadingScreen implements GameSegment {
     private boolean loaded;
@@ -39,9 +40,12 @@ public class LoadingScreen implements GameSegment {
     }
     
     @Override
-    public void render(Graphics2D g) {
-        tex.fillCanvas(g, 0);
-        g.setColor(new Color(0F, 0F, 0F, 1F - Math.min(opacity / 100F, 1F)));
-        g.fillRect(0, 0, Game.getScreenSize().width, Game.getScreenSize().height);
+    public BufferedImage render() {
+        var image = Game.getBlankImage();
+        var graphics = image.createGraphics();
+        tex.fillCanvas(graphics, 0);
+        graphics.setColor(new Color(0F, 0F, 0F, 1F - Math.min(opacity / 100F, 1F)));
+        graphics.fillRect(0, 0, Game.getScreenSize().width, Game.getScreenSize().height);
+        return image;
     }
 }

@@ -1,6 +1,6 @@
 package com.cs321.team1;
 
-import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 
 public interface GameSegment {
     /**
@@ -31,5 +31,5 @@ public interface GameSegment {
     /**
      * Ran once per tick, image rendering
      */
-    void render(Graphics2D g);
+    BufferedImage render();
 }

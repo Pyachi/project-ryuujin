@@ -17,7 +17,7 @@ public class VideoMenu extends LevelMenu {
     private boolean prevFullscreen;
     
     @Override
-            public void start() {
+    public void start() {
         resetSettings();
         elements.add(new MenuSlider("", fullscreen ? 1 : 0, 1, false, i -> {
             fullscreen = i == 1;
@@ -47,7 +47,7 @@ public class VideoMenu extends LevelMenu {
     }
     
     @Override
-    public void finish() {}
+    public void finish() { }
     
     private void updateButtons() {
         elements.get(0).setText(21, "Mode:", (fullscreen ? "Fullscreen" : "Windowed"));

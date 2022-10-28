@@ -7,7 +7,7 @@ import com.cs321.team1.assets.audio.filters.Filters;
 import com.cs321.team1.map.Level;
 import com.cs321.team1.menu.elements.MenuButton;
 
-import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 
 public class LevelMenu extends Menu {
     @Override
@@ -45,9 +45,13 @@ public class LevelMenu extends Menu {
     }
     
     @Override
-    public void render(Graphics2D g) {
-        var lvl = Game.getHighestSegmentOfType(Level.class);
-        if (lvl != null) lvl.render(g);
-        super.render(g);
+    public BufferedImage render() {
+       return super.render();
+//        var image = new BufferedImage(Game.getScreenSize().width,Game.getScreenSize().height,BufferedImage.TYPE_INT_ARGB);
+//        var graphics = image.createGraphics();
+//        var lvl = Game.getHighestSegmentOfType(Level.class);
+//        if (lvl != null) graphics.drawImage(GraphicsUtil.drawAtCenter(image,lvl.getLevelImage()));
+//        graphics.drawImage(super.render(),0,0,null);
+//        return image;
     }
 }
