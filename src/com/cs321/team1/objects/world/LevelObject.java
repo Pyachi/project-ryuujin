@@ -35,12 +35,12 @@ public class LevelObject extends GameObject {
         if (isDead()) return;
         super.paint(g);
         g.setFont(Game.font()
-                .deriveFont((float) 16 * getLevel().getScale() * 0.4F /
+                .deriveFont((float) 16 * getLevel().getScale() * 0.5F /
                         g.getFontMetrics(Game.font()).stringWidth(level + "")));
         g.drawString(level + "",
                 getLocation().x() * getLevel().getScale() - g.getFontMetrics().stringWidth(level + "") / 2 -
                         8 * getLevel().getScale(),
                 getLocation().y() * getLevel().getScale() + g.getFontMetrics().getHeight() / 2 -
-                        7 * getLevel().getScale());
+                        8 * getLevel().getScale());
     }
 }
