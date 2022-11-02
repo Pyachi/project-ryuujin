@@ -81,12 +81,16 @@ public class VideoMenu extends LevelMenu {
             resolutionButton.setText(21, "Resolution:", res.name().replaceAll("_", ""));
         }
         fpsButton.setText(21, "FPS: ", fps == 0 ? "VSYNC" : (fps * 10) + "");
-        applyButton.setDisabled(
-                prevFullscreen == fullscreen && prevMonitor == monitor && prevRes == res && prevFps == fps);
+        applyButton.setDisabled(!haveSettingsChanged());
+    }
+    
+    private boolean haveSettingsChanged() {
+        return prevFullscreen != fullscreen || fullscreen && prevMonitor != monitor || !fullscreen && prevRes != res ||
+                prevFps != fps;
     }
     
     private boolean applySettings() {
-        if (prevFullscreen != fullscreen || prevMonitor != monitor || prevRes != res || prevFps != fps) {
+        if (haveSettingsChanged()) {
             Game.setFullscreen(fullscreen);
             if (fullscreen) Game.setMonitor(monitor);
             else Game.setScreenSize(res.size);
