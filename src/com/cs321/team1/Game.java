@@ -235,23 +235,25 @@ public class Game extends JPanel {
     
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        if (!segments.isEmpty()) g.drawImage(segments.get(0).render(), 0, 0, null);
-        if (debug) {
-            tick++;
-            var f = font.deriveFont(Game.getScreenSize().height / 20F);
-            var metrics = g.getFontMetrics(f);
-            g.setColor(new Color(0F, 0F, 0F, 0.5F));
-            g.fillRect(Game.getScreenSize().width - metrics.stringWidth(measuredFPS + "") * 3,
-                    0,
-                    metrics.stringWidth(measuredFPS + "") * 3,
-                    metrics.getHeight() * 3);
-            g.setFont(f);
-            g.setColor(Color.WHITE);
-            g.drawString(measuredFPS + "",
-                    Game.getScreenSize().width - metrics.stringWidth(measuredFPS + "") * 2,
-                    metrics.getHeight() * 2);
-        }
+        try {
+            super.paintComponent(g);
+            if (!segments.isEmpty()) g.drawImage(segments.get(0).render(), 0, 0, null);
+            if (debug) {
+                tick++;
+                var f = font.deriveFont(Game.getScreenSize().height / 20F);
+                var metrics = g.getFontMetrics(f);
+                g.setColor(new Color(0F, 0F, 0F, 0.5F));
+                g.fillRect(Game.getScreenSize().width - metrics.stringWidth(measuredFPS + "") * 3,
+                        0,
+                        metrics.stringWidth(measuredFPS + "") * 3,
+                        metrics.getHeight() * 3);
+                g.setFont(f);
+                g.setColor(Color.WHITE);
+                g.drawString(measuredFPS + "",
+                        Game.getScreenSize().width - metrics.stringWidth(measuredFPS + "") * 2,
+                        metrics.getHeight() * 2);
+            }
+        } catch (Exception ignored) { }
     }
     
     //******************************************************************************************************************
