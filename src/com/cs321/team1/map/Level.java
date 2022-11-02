@@ -146,6 +146,7 @@ public class Level implements GameSegment {
     @Override
     public void onScreenSizeChange() {
         level = new BufferedImage(size.x() * getScale(), size.y() * getScale(), BufferedImage.TYPE_INT_ARGB);
+        render();
     }
     
     public boolean isWorld() {
