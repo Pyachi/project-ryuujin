@@ -46,12 +46,18 @@ public class LevelMenu extends Menu {
     
     @Override
     public BufferedImage render() {
-       return super.render();
-//        var image = new BufferedImage(Game.getScreenSize().width,Game.getScreenSize().height,BufferedImage.TYPE_INT_ARGB);
-//        var graphics = image.createGraphics();
-//        var lvl = Game.getHighestSegmentOfType(Level.class);
-//        if (lvl != null) graphics.drawImage(GraphicsUtil.drawAtCenter(image,lvl.getLevelImage()));
-//        graphics.drawImage(super.render(),0,0,null);
-//        return image;
+        var image = Game.getBlankImage();
+        var g = image.createGraphics();
+        var lvl = Game.getHighestSegmentOfType(Level.class);
+        if (lvl == null) return super.render();
+        var lvlImage = lvl.getLevelImage();
+        g.drawImage(lvlImage,
+                (image.getWidth() - lvlImage.getWidth()) / 2,
+                (image.getHeight() - lvlImage.getHeight()) / 2,
+                lvlImage.getWidth(),
+                lvlImage.getHeight(),
+                null);
+        g.drawImage(super.render(),0,0,image.getWidth(),image.getHeight(),null);
+        return image;
     }
 }
