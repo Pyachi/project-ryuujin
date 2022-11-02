@@ -21,6 +21,7 @@ public abstract class Menu implements GameSegment {
     
     @Override
     public void update() {
+        tick++;
         if (Controls.DOWN.isPressed()) {
             tick = 0;
             selected++;
@@ -48,11 +49,6 @@ public abstract class Menu implements GameSegment {
     
     @Override
     public BufferedImage render() {
-        
-        
-        
-        
-        
         var screenSize = Game.getScreenSize();
         var image = Game.getBlankImage();
         var graphics = image.createGraphics();
@@ -61,7 +57,7 @@ public abstract class Menu implements GameSegment {
         graphics.setColor(Color.WHITE);
         var font = Game.font().deriveFont(((float) getTextSize()));
         var renders = elements.stream().map(it -> it.render(font,
-                it == getSelectableElements().get(selected) ? tick++ : -1)).toList();
+                it == getSelectableElements().get(selected) ? tick : -1)).toList();
         int renderHeight = renders.stream().mapToInt(BufferedImage::getHeight).sum();
         int y = (screenSize.height - renderHeight) / 2;
         for (var render : renders) {

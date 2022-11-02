@@ -42,8 +42,6 @@ public class Game extends JPanel {
             .toList()
             .indexOf(GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice());
     private boolean fullscreen = true;
-    private final Timer logic = new Timer();
-    private final Timer rendering = new Timer();
     
     private Game() {
         i = this;
@@ -71,7 +69,6 @@ public class Game extends JPanel {
         Runtime.getRuntime().addShutdownHook(new Thread(Game::saveOptions));
         
         startGameLogic();
-        startGameRendering();
     }
     
     public static Font font() {
@@ -131,6 +128,7 @@ public class Game extends JPanel {
     //******************************************************************************************************************
     //Game Logic
     
+    private Timer logic;
     private final List<GameSegment> segments = new ArrayList<>();
     
     public static <T extends GameSegment> T getHighestSegmentOfType(Class<T> clazz) {
@@ -158,6 +156,7 @@ public class Game extends JPanel {
     
     private void startGameLogic() {
         pushSegment(new LoadingScreen());
+        logic = new Timer();
         logic.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() { update(); }
@@ -184,19 +183,37 @@ public class Game extends JPanel {
     
     private boolean debug = false;
     
+    private Timer rendering;
     private Timer fpsTimer;
     private int tick = 0;
+    private int measuredFPS = 0;
     private int fps = 0;
     
     public static BufferedImage getBlankImage() {
         return new BufferedImage(getScreenSize().width, getScreenSize().height, BufferedImage.TYPE_INT_ARGB);
     }
     
+    public static int getFPS() {
+        return i.fps;
+    }
+    
+    public static void setFPS(int fps) {
+        i.fps = fps;
+        if (i.rendering != null) {
+            i.rendering.cancel();
+            i.rendering.purge();
+        }
+        i.startGameRendering();
+    }
+    
     private void startGameRendering() {
+        rendering = new Timer();
+        long period = fps == 0 ? 1000 / GraphicsEnvironment.getLocalGraphicsEnvironment()
+                .getScreenDevices()[i.fullscreenMonitor].getDisplayMode().getRefreshRate() : 1000 / fps;
         rendering.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() { repaint(); }
-        }, 0L, 20L);
+        }, 0L, period);
     }
     
     private void setDebugMode(boolean flag) {
@@ -206,7 +223,7 @@ public class Game extends JPanel {
             fpsTimer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
-                    fps = tick;
+                    measuredFPS = tick;
                     tick = 0;
                 }
             }, 0L, 1000L);
@@ -225,14 +242,14 @@ public class Game extends JPanel {
             var f = font.deriveFont(Game.getScreenSize().height / 20F);
             var metrics = g.getFontMetrics(f);
             g.setColor(new Color(0F, 0F, 0F, 0.5F));
-            g.fillRect(Game.getScreenSize().width - metrics.stringWidth(fps + "") * 3,
+            g.fillRect(Game.getScreenSize().width - metrics.stringWidth(measuredFPS + "") * 3,
                     0,
-                    metrics.stringWidth(fps + "") * 3,
+                    metrics.stringWidth(measuredFPS + "") * 3,
                     metrics.getHeight() * 3);
             g.setFont(f);
             g.setColor(Color.WHITE);
-            g.drawString(fps + "",
-                    Game.getScreenSize().width - metrics.stringWidth(fps + "") * 2,
+            g.drawString(measuredFPS + "",
+                    Game.getScreenSize().width - metrics.stringWidth(measuredFPS + "") * 2,
                     metrics.getHeight() * 2);
         }
     }
@@ -273,6 +290,7 @@ public class Game extends JPanel {
             file.write("monitor: " + i.fullscreenMonitor + "\n");
             file.write("sound: " + Sounds.getVolume() + "\n");
             file.write("music: " + Music.getVolume() + "\n");
+            file.write("fps: " + i.fps);
         } catch (Exception e) { e.printStackTrace(); }
     }
     
@@ -289,6 +307,7 @@ public class Game extends JPanel {
                     if (str.startsWith("monitor: ")) setMonitor(Integer.parseInt(str.split("monitor: ")[1]));
                     if (str.startsWith("sound: ")) Sounds.setVolume(Integer.parseInt(str.split("sound: ")[1]));
                     if (str.startsWith("music: ")) Music.setVolume(Integer.parseInt(str.split("music: ")[1]));
+                    if (str.startsWith("fps: ")) setFPS(Integer.parseInt(str.split("fps: ")[1]));
                 } catch (Exception e) { e.printStackTrace(); }
             }
         } catch (Exception e) { e.printStackTrace(); }
