@@ -20,7 +20,9 @@ import java.io.FileWriter;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -130,9 +132,18 @@ public class Game extends JPanel {
     
     private Timer logic;
     private final List<GameSegment> segments = new ArrayList<>();
+    private final Set<String> completedLevels = new HashSet<>();
     
     public static <T extends GameSegment> T getHighestSegmentOfType(Class<T> clazz) {
         return i.segments.stream().filter(clazz::isInstance).map(clazz::cast).findFirst().orElse(null);
+    }
+    
+    public static void completeLevel(String lvl) {
+        i.completedLevels.add(lvl);
+    }
+    
+    public static boolean isLevelCompleted(String lvl) {
+        return i.completedLevels.contains(lvl);
     }
     
     public static int getIndexOf(GameSegment seg) {
@@ -262,6 +273,11 @@ public class Game extends JPanel {
     public static void saveGame() {
         try {
             var file = new FileWriter("ryuujin.sav");
+            i.completedLevels.forEach(lvl -> {
+                try {
+                    file.write("CMP|" + lvl + "\n");
+                } catch (Exception e) { e.printStackTrace(); }
+            });
             i.segments.forEach(seg -> {
                 if (!(seg instanceof Level)) return;
                 try {
@@ -275,6 +291,8 @@ public class Game extends JPanel {
     public static void loadGame() {
         try {
             var lvlStrings = Files.readString(new File("ryuujin.sav").toPath()).split("SET");
+            System.out.println(lvlStrings[0]);
+            Arrays.stream(lvlStrings[0].split("\n")).forEach(it -> completeLevel(it.split("\\|")[1]));
             var levels = Arrays.stream(Arrays.copyOfRange(lvlStrings, 1, lvlStrings.length)).map(it -> Level.fromString(
                     "SET" + it)).toList();
             for (int x = levels.size() - 1; x >= 0; x--)

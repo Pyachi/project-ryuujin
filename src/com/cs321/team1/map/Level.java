@@ -42,12 +42,14 @@ public class Level implements GameSegment {
     private final Map<Integer, GameObject> objs = new HashMap<>();
     private final Map<Method, Set<GameObject>> ticks = new HashMap<>();
     private final Vec2 size;
+    public final String name;
     private final boolean world;
     private BufferedImage level;
     private Music music;
     
-    public Level(Vec2 size, boolean world) {
+    public Level(Vec2 size, String name, boolean world) {
         this.size = size;
+        this.name = name;
         this.world = world;
         onScreenSizeChange();
         addBase();
@@ -111,10 +113,10 @@ public class Level implements GameSegment {
         methods.forEach(method -> new HashSet<>(ticks.get(method)).forEach(obj -> {
             try {
                 method.invoke(obj);
-            } catch (Exception e) {e.printStackTrace();}
+            } catch (Exception e) { e.printStackTrace(); }
         }));
         if (Controls.BACK.isPressed()) Game.pushSegment(new LevelMenu());
-        
+        if (!world && objs.values().stream().noneMatch(UnpoweredCrate.class::isInstance)) Game.completeLevel(name);
     }
     
     public BufferedImage getLevelImage() {
@@ -169,7 +171,7 @@ public class Level implements GameSegment {
     @Override
     public String toString() {
         removeBase();
-        var start = "SET|" + size.toString() + "|" + world + "\n";
+        var start = "SET|" + size.toString() + "|" + name + "|" + world + "\n";
         StringBuilder builder = new StringBuilder();
         if (music != null) builder.append("MSC|").append(music.name()).append("\n");
         for (GameObject obj : objs.values()) builder.append(obj.toString()).append("\n");
@@ -181,14 +183,14 @@ public class Level implements GameSegment {
             Game.pushSegment(Level.fromString(String.join("\n",
                     new BufferedReader(new InputStreamReader(ResourceLoader.loadStream(
                             "resources/levels/" + name + ".ryu"))).lines().toArray(String[]::new))));
-        } catch (Exception e) {e.printStackTrace();}
+        } catch (Exception e) { e.printStackTrace(); }
     }
     
     public static Level fromString(String lvl) {
         var lines = Arrays.stream(lvl.replaceAll("\r", "").split("\n")).filter(it -> !it.startsWith("//")).toArray(
                 String[]::new);
         var set = lines[0].split("\\|");
-        var level = new Level(Vec2.fromString(set[1]), Boolean.parseBoolean(set[2]));
+        var level = new Level(Vec2.fromString(set[1]), set[2], Boolean.parseBoolean(set[3]));
         for (int i = 1; i < lines.length; i++) level.parseCommand(lines[i]);
         return level;
     }
@@ -204,7 +206,7 @@ public class Level implements GameSegment {
                         case "NAV" -> addObject(new Navigator(loc));
                         case "PTH" -> addObject(new NavPath(loc));
                         case "PLR" -> addObject(new Player(loc));
-                        case "LVL" -> addObject(new LevelObject(loc,Integer.parseInt(line[2])));
+                        case "LVL" -> addObject(new LevelObject(loc, line[2]));
                         case "INT" -> addObject(new IntegerCrate(loc, Integer.parseInt(line[2])));
                         case "NEG" -> addObject(new NegateCrate(loc));
                         case "MOD" -> addObject(new ModuloCrate(loc, Integer.parseInt(line[2])));
@@ -245,6 +247,6 @@ public class Level implements GameSegment {
                     }
                 }
             }
-        } catch (Exception e) {e.printStackTrace();}
+        } catch (Exception e) { e.printStackTrace(); }
     }
 }

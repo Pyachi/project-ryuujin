@@ -21,11 +21,19 @@ public class LevelMenu extends Menu {
             Sounds.SELECT.play();
             Game.pushSegment(new OptionsMenu());
         }));
-        if (lvl != null && !lvl.isWorld()) elements.add(new MenuButton("Return to Map", () -> {
-            Sounds.DESELECT.play();
-            Game.popSegmentsTo(Game.getHighestSegmentOfType(Level.class));
-            Game.popSegment();
-        }));
+        if (lvl != null && !lvl.isWorld()) {
+            elements.add(new MenuButton("Restart Level", () -> {
+                Sounds.SELECT.play();
+                Game.popSegmentsTo(Game.getHighestSegmentOfType(Level.class));
+                Game.popSegment();
+                Level.load(lvl.name);
+            }));
+            elements.add(new MenuButton("Return to Map", () -> {
+                Sounds.DESELECT.play();
+                Game.popSegmentsTo(Game.getHighestSegmentOfType(Level.class));
+                Game.popSegment();
+            }));
+        }
         elements.add(new MenuButton("Quit to Menu", () -> {
             Sounds.DESELECT.play();
             Game.saveGame();
