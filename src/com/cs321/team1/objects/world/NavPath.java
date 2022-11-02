@@ -5,8 +5,6 @@ import com.cs321.team1.Tick;
 import com.cs321.team1.assets.Texture;
 import com.cs321.team1.map.Vec2;
 
-import java.awt.Graphics2D;
-
 public class NavPath extends GameObject {
     private boolean measured;
     

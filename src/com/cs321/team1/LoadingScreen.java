@@ -6,7 +6,6 @@ import com.cs321.team1.assets.audio.Sounds;
 import com.cs321.team1.menu.MainMenu;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 public class LoadingScreen implements GameSegment {

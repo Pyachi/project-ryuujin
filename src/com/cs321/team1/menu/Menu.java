@@ -9,7 +9,6 @@ import com.cs321.team1.menu.elements.MenuText;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;

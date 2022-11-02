@@ -2,7 +2,6 @@ package com.cs321.team1.menu.elements;
 
 import com.cs321.team1.Game;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
 
