@@ -20,8 +20,9 @@ public enum Controls {
     RIGHT(KeyEvent.VK_D),
     GRAB(KeyEvent.VK_SHIFT),
     SELECT(KeyEvent.VK_SPACE),
+    BACK(KeyEvent.VK_ESCAPE),
     FULLSCREEN(KeyEvent.VK_F11),
-    BACK(KeyEvent.VK_ESCAPE);
+    DEBUG(KeyEvent.VK_F3);
     
     private static final Set<Integer> pressedKeys = new HashSet<>();
     private static final Set<Integer> heldKeys = new HashSet<>();

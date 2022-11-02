@@ -166,9 +166,12 @@ public class Game extends JPanel {
     
     private void update() {
         try {
-            if (getHighestSegmentOfType(Controls.ControlChanger.class) == null && Controls.FULLSCREEN.isPressed()) {
-                toggleFullscreen();
-                updateScreen();
+            if (getHighestSegmentOfType(Controls.ControlChanger.class) == null) {
+                if (Controls.FULLSCREEN.isPressed()) {
+                    toggleFullscreen();
+                    updateScreen();
+                }
+                if (Controls.DEBUG.isPressed()) setDebugMode(!debug);
             }
             segments.get(0).update();
         } catch (Exception e) {
@@ -179,6 +182,12 @@ public class Game extends JPanel {
     //******************************************************************************************************************
     //Rendering
     
+    private boolean debug = false;
+    
+    private Timer fpsTimer;
+    private int tick = 0;
+    private int fps = 0;
+    
     public static BufferedImage getBlankImage() {
         return new BufferedImage(getScreenSize().width, getScreenSize().height, BufferedImage.TYPE_INT_ARGB);
     }
@@ -187,13 +196,45 @@ public class Game extends JPanel {
         rendering.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() { repaint(); }
-        }, 0L, 10L);
+        }, 0L, 20L);
+    }
+    
+    private void setDebugMode(boolean flag) {
+        debug = flag;
+        if (debug) {
+            fpsTimer = new Timer();
+            fpsTimer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    fps = tick;
+                    tick = 0;
+                }
+            }, 0L, 1000L);
+        } else {
+            fpsTimer.cancel();
+            fpsTimer.purge();
+        }
     }
     
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (!segments.isEmpty()) g.drawImage(segments.get(0).render(), 0, 0, null);
+        if (debug) {
+            tick++;
+            var f = font.deriveFont(Game.getScreenSize().height / 20F);
+            var metrics = g.getFontMetrics(f);
+            g.setColor(new Color(0F, 0F, 0F, 0.5F));
+            g.fillRect(Game.getScreenSize().width - metrics.stringWidth(fps + "") * 3,
+                    0,
+                    metrics.stringWidth(fps + "") * 3,
+                    metrics.getHeight() * 3);
+            g.setFont(f);
+            g.setColor(Color.WHITE);
+            g.drawString(fps + "",
+                    Game.getScreenSize().width - metrics.stringWidth(fps + "") * 2,
+                    metrics.getHeight() * 2);
+        }
     }
     
     //******************************************************************************************************************
