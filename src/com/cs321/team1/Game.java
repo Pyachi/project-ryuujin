@@ -243,14 +243,14 @@ public class Game extends JPanel {
                 var f = font.deriveFont(Game.getScreenSize().height / 20F);
                 var metrics = g.getFontMetrics(f);
                 g.setColor(new Color(0F, 0F, 0F, 0.5F));
-                g.fillRect(Game.getScreenSize().width - metrics.stringWidth(measuredFPS + "") * 3,
+                g.fillRect(Game.getScreenSize().width - metrics.stringWidth("   ") * 2,
                         0,
-                        metrics.stringWidth(measuredFPS + "") * 3,
+                        metrics.stringWidth("   ") * 3,
                         metrics.getHeight() * 3);
                 g.setFont(f);
                 g.setColor(Color.WHITE);
                 g.drawString(measuredFPS + "",
-                        Game.getScreenSize().width - metrics.stringWidth(measuredFPS + "") * 2,
+                        (int) (Game.getScreenSize().width - metrics.stringWidth("   ") * 1.5),
                         metrics.getHeight() * 2);
             }
         } catch (Exception ignored) { }
