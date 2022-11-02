@@ -9,7 +9,7 @@ public class MultiplyCrate extends Crate {
     
     @Override
     public String getString() {
-        return getValue() + "w";
+        return getValue() + "x";
     }
     
     @Override
