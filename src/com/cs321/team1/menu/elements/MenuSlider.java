@@ -1,19 +1,31 @@
 package com.cs321.team1.menu.elements;
 
-import com.cs321.team1.Game;
 import com.cs321.team1.assets.Controls;
+import com.cs321.team1.game.Game;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.util.function.Consumer;
 
+/**
+ * MenuElement for handling a discrete value slider
+ */
 public class MenuSlider extends MenuElement {
-    private int selected;
     private final int max;
     private final boolean showSlider;
     private final Consumer<Integer> run;
+    private int selected;
     
+    /**
+     * Creates a MenuSlider with a normal display
+     *
+     * @param text       The text display on the slider
+     * @param selected   The currently selected mark on the slider
+     * @param max        The maximum selectable mark on the slider
+     * @param showSlider Whether an actual slider is visible or not
+     * @param run        The action taken when the slider is adjusted
+     */
     public MenuSlider(String text, int selected, int max, boolean showSlider, Consumer<Integer> run) {
         super(text);
         this.selected = selected;
@@ -22,7 +34,19 @@ public class MenuSlider extends MenuElement {
         this.run = run;
     }
     
-    public MenuSlider(int size, String left, String right, int selected, int max, boolean showSlider, Consumer<Integer> run) {
+    /**
+     * Creates a MenuSlider with a fixed length display
+     *
+     * @param size       The fixed size of the display
+     * @param left       The text on the left of the display
+     * @param right      The text on the right of the display
+     * @param selected   The currently selected mark on the slider
+     * @param max        The maximum selectable mark on the slider
+     * @param showSlider Whether an actual slider is visible or not
+     * @param run        The action taken when the slider is adjusted
+     */
+    public MenuSlider(int size, String left, String right, int selected, int max, boolean showSlider,
+                      Consumer<Integer> run) {
         super(size, left, right);
         this.selected = selected;
         this.max = max;
@@ -31,14 +55,10 @@ public class MenuSlider extends MenuElement {
     }
     
     @Override
-    public void update() {
-        if (Controls.LEFT.isPressed()) {
-            selected = Math.floorMod(selected - 1, max + 1);
-            run.accept(selected);
-        } else if (Controls.RIGHT.isPressed() || Controls.SELECT.isPressed()) {
-            selected = (selected + 1) % (max + 1);
-            run.accept(selected);
-        }
+    public int getWidth(Font font) {
+        var stringWidth = new BufferedImage(1, 1, 1).createGraphics().getFontMetrics(font).stringWidth(
+                getText() + "AAAA");
+        return showSlider ? stringWidth * 2 : stringWidth;
     }
     
     @Override
@@ -46,7 +66,9 @@ public class MenuSlider extends MenuElement {
         var fontMetrics = new BufferedImage(1, 1, 1).createGraphics().getFontMetrics(font);
         int textWidth = fontMetrics.stringWidth(getText());
         int textHeight = fontMetrics.getHeight();
-        var image = new BufferedImage(Game.getScreenSize().width, textHeight * 2, BufferedImage.TYPE_INT_ARGB);
+        var image = new BufferedImage(Game.get().getRenderingManager().getScreenSize().x(),
+                textHeight * 2,
+                BufferedImage.TYPE_INT_RGB);
         var graphics = image.createGraphics();
         if (selected != -1) {
             graphics.setColor(new Color(0.5f, 0.5f, 0.5f, 0.8f));
@@ -72,9 +94,13 @@ public class MenuSlider extends MenuElement {
     }
     
     @Override
-    public int getWidth(Font font) {
-        var stringWidth = new BufferedImage(1, 1, 1).createGraphics().getFontMetrics(font).stringWidth(
-                getText() + "AAAA");
-        return showSlider ? stringWidth * 2 : stringWidth;
+    public void update() {
+        if (Controls.LEFT.isPressed()) {
+            selected = Math.floorMod(selected - 1, max + 1);
+            run.accept(selected);
+        } else if (Controls.RIGHT.isPressed() || Controls.SELECT.isPressed()) {
+            selected = (selected + 1) % (max + 1);
+            run.accept(selected);
+        }
     }
 }

@@ -1,25 +1,25 @@
 package com.cs321.team1.menu;
 
-import com.cs321.team1.Game;
 import com.cs321.team1.assets.Controls;
 import com.cs321.team1.assets.audio.Sounds;
+import com.cs321.team1.game.Game;
 import com.cs321.team1.menu.elements.MenuButton;
 
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
 
+/**
+ * Menu for viewing control scheme and adjusting controls
+ */
 public class ControlsMenu extends LevelMenu {
     private final Map<Controls, MenuButton> buttons = new EnumMap<>(Controls.class);
     private final Map<Controls, Integer> oldKeys = new EnumMap<>(Controls.class);
     private final Map<Controls, Integer> newKeys = new EnumMap<>(Controls.class);
     private MenuButton applyButton;
     
-    public MenuButton getButton(Controls control) { return buttons.get(control); }
-    
-    public int getNewKey(Controls control) { return newKeys.get(control); }
-    
-    public void setNewKey(Controls control, int key) { newKeys.put(control, key); }
+    @Override
+    public void finish() { }
     
     @Override
     public void start() {
@@ -27,7 +27,7 @@ public class ControlsMenu extends LevelMenu {
             newKeys.put(it, it.getKey());
             var button = new MenuButton("", () -> {
                 Sounds.SELECT.play();
-                Game.pushSegment(new Controls.ControlChanger(it, this));
+                Game.get().pushSegment(new Controls.ControlChanger(it, this));
             });
             buttons.put(it, button);
             elements.add(button);
@@ -43,11 +43,27 @@ public class ControlsMenu extends LevelMenu {
         elements.add(applyButton);
         elements.add(new MenuButton("Back", () -> {
             Sounds.DESELECT.play();
-            Game.popSegment();
+            Game.get().popSegment();
         }));
         oldKeys.putAll(newKeys);
         refresh();
     }
+    
+    /**
+     * Gets the associated MenuElement for a given control
+     *
+     * @param control The control to get the associated MenuElement
+     * @return The associated MenuElement
+     */
+    public MenuButton getButton(Controls control) { return buttons.get(control); }
+    
+    /**
+     * Gets the not-yet-mapped new key for the given control
+     *
+     * @param control The control to get the new key of
+     * @return The integer keymap of the control to be set to
+     */
+    public int getNewKey(Controls control) { return newKeys.get(control); }
     
     @Override
     public void refresh() {
@@ -57,6 +73,11 @@ public class ControlsMenu extends LevelMenu {
         applyButton.setDisabled(newKeys.containsValue(-1) || newKeys.equals(oldKeys));
     }
     
-    @Override
-    public void finish() { }
+    /**
+     * Sets the not-yet-mapped new key for the given control
+     *
+     * @param control The control to get the new key of
+     * @param key     The integer keymap of the control to be set to
+     */
+    public void setNewKey(Controls control, int key) { newKeys.put(control, key); }
 }

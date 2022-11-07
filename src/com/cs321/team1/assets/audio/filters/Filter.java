@@ -1,12 +1,29 @@
 package com.cs321.team1.assets.audio.filters;
 
+/**
+ * Base class providing support for audio filtering
+ */
 public abstract class Filter {
-    protected byte[] buffer;
+    private byte[] buffer;
     
+    /**
+     * Filters a byte stream (formatted as a byte array) and returns the filtered data
+     *
+     * @param data The data to be filtered
+     * @return The filtered data
+     */
     public byte[] filter(byte[] data) {
         buffer = data.clone();
         applyFilter();
         return buffer;
+    }
+    
+    protected abstract void applyFilter();
+    
+    protected void extendBuffer(double multiple) {
+        byte[] data = new byte[(int) (buffer.length * multiple)];
+        System.arraycopy(buffer, 0, data, 0, buffer.length);
+        buffer = data;
     }
     
     protected short[] getSamples(int channel) {
@@ -33,12 +50,4 @@ public abstract class Filter {
         this.buffer[index * 4 + channel * 2] = (byte) (data & 0xFF);
         this.buffer[index * 4 + channel * 2 + 1] = (byte) ((data >> 8) & 0xFF);
     }
-    
-    protected void extendBuffer(double multiple) {
-        byte[] data = new byte[(int) (buffer.length * multiple)];
-        System.arraycopy(buffer, 0, data, 0, buffer.length);
-        buffer = data;
-    }
-    
-    protected abstract void applyFilter();
 }

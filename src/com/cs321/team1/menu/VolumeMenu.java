@@ -1,12 +1,17 @@
 package com.cs321.team1.menu;
 
-import com.cs321.team1.Game;
 import com.cs321.team1.assets.audio.Music;
 import com.cs321.team1.assets.audio.Sounds;
+import com.cs321.team1.game.Game;
 import com.cs321.team1.menu.elements.MenuButton;
 import com.cs321.team1.menu.elements.MenuSlider;
 
+/**
+ * Menu for changing and testing audio settings
+ */
 public class VolumeMenu extends LevelMenu {
+    @Override
+    public void finish() { }
     
     @Override
     public void start() {
@@ -19,10 +24,7 @@ public class VolumeMenu extends LevelMenu {
         }));
         elements.add(new MenuButton("Back", () -> {
             Sounds.DESELECT.play();
-            Game.popSegment();
+            Game.get().popSegment();
         }));
     }
-    
-    @Override
-    public void finish() {}
 }

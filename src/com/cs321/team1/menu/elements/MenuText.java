@@ -1,23 +1,36 @@
 package com.cs321.team1.menu.elements;
 
-import com.cs321.team1.Game;
+import com.cs321.team1.game.Game;
 
 import java.awt.Font;
 import java.awt.image.BufferedImage;
 
+/**
+ * A MenuElement for displaying text with no interactions
+ * MenuTexts also cannot be selected
+ */
 public class MenuText extends MenuElement {
+    /**
+     * Creates a MenuText element with the given display
+     *
+     * @param text The text to display on the element
+     */
     public MenuText(String text) {
         super(text);
     }
     
     @Override
-    public void update() {}
+    public int getWidth(Font font) {
+        return new BufferedImage(1, 1, 1).createGraphics().getFontMetrics(font).stringWidth(getText() + "AAAA");
+    }
     
     @Override
     public BufferedImage render(Font font, int timeSelected) {
         var fontMetrics = new BufferedImage(1, 1, 1).createGraphics().getFontMetrics(font);
         int textHeight = getHeight(font);
-        var image = new BufferedImage(Game.getScreenSize().width, textHeight, BufferedImage.TYPE_INT_ARGB);
+        var image = new BufferedImage(Game.get().getRenderingManager().getScreenSize().x(),
+                textHeight,
+                BufferedImage.TYPE_INT_RGB);
         var graphics = image.createGraphics();
         graphics.setFont(font);
         int x = fontMetrics.stringWidth("AA");
@@ -27,7 +40,5 @@ public class MenuText extends MenuElement {
     }
     
     @Override
-    public int getWidth(Font font) {
-        return new BufferedImage(1, 1, 1).createGraphics().getFontMetrics(font).stringWidth(getText() + "AAAA");
-    }
+    public void update() { }
 }

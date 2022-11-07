@@ -1,9 +1,9 @@
 package com.cs321.team1.menu;
 
-import com.cs321.team1.Game;
-import com.cs321.team1.GameSegment;
 import com.cs321.team1.assets.Controls;
 import com.cs321.team1.assets.audio.Sounds;
+import com.cs321.team1.game.Game;
+import com.cs321.team1.game.GameSegment;
 import com.cs321.team1.menu.elements.MenuElement;
 import com.cs321.team1.menu.elements.MenuText;
 
@@ -13,10 +13,38 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Abstract class defining basic menu functionality
+ */
 public abstract class Menu implements GameSegment {
     protected final List<MenuElement> elements = new ArrayList<>();
     private int selected = 0;
     private int tick = 0;
+    
+    @Override
+    public void refresh() {
+        tick = 0;
+    }
+    
+    @Override
+    public BufferedImage render() {
+        var screenSize = Game.get().getRenderingManager().getScreenSize();
+        var image = Game.get().getRenderingManager().createImage();
+        var graphics = image.createGraphics();
+        graphics.setColor(new Color(0f, 0f, 0f, 0.8f));
+        graphics.fillRect(0, 0, screenSize.x(), screenSize.y());
+        graphics.setColor(Color.WHITE);
+        var font = Game.get().getRenderingManager().getFont().deriveFont(((float) getTextSize()));
+        var renders = elements.stream().map(it -> it.render(font,
+                it == getSelectableElements().get(selected) ? tick : -1)).toList();
+        int renderHeight = renders.stream().mapToInt(it -> it.getHeight(null)).sum();
+        int y = (screenSize.y() - renderHeight) / 2;
+        for (var render : renders) {
+            graphics.drawImage(render, 0, y, null);
+            y += render.getHeight(null);
+        }
+        return image;
+    }
     
     @Override
     public void update() {
@@ -32,55 +60,31 @@ public abstract class Menu implements GameSegment {
         else if (selected >= getSelectableElements().size()) selected = 0;
         getSelectableElements().get(selected).update();
         if (!(this instanceof MainMenu) && Controls.BACK.isPressed()) {
-            Game.popSegment();
+            Game.get().popSegment();
             Sounds.DESELECT.play();
         }
-    }
-    
-    @Override
-    public void refresh() {
-        tick = 0;
     }
     
     private List<MenuElement> getSelectableElements() {
         return elements.stream().filter(it -> !(it instanceof MenuText)).toList();
     }
     
-    @Override
-    public BufferedImage render() {
-        var screenSize = Game.getScreenSize();
-        var image = Game.getBlankImage();
-        var graphics = image.createGraphics();
-        graphics.setColor(new Color(0f, 0f, 0f, 0.8f));
-        graphics.fillRect(0, 0, screenSize.width, screenSize.height);
-        graphics.setColor(Color.WHITE);
-        var font = Game.font().deriveFont(((float) getTextSize()));
-        var renders = elements.stream().map(it -> it.render(font,
-                it == getSelectableElements().get(selected) ? tick : -1)).toList();
-        int renderHeight = renders.stream().mapToInt(BufferedImage::getHeight).sum();
-        int y = (screenSize.height - renderHeight) / 2;
-        for (var render : renders) {
-            graphics.drawImage(render, 0, y, null);
-            y += render.getHeight();
-        }
-        return image;
-    }
-    
     private int getTextSize() {
         int maxWidth;
         int totalHeight;
-        int textSize = Game.getScreenSize().height / 20 + 1;
+        int textSize = Game.get().getRenderingManager().getScreenSize().y() / 20 + 1;
         do {
             maxWidth = 0;
             totalHeight = 0;
             textSize--;
             for (MenuElement element : elements) {
-                Font font = Game.font().deriveFont(((float) textSize));
+                Font font = Game.get().getRenderingManager().getFont().deriveFont(((float) textSize));
                 int width = element.getWidth(font);
                 if (maxWidth < width) maxWidth = width;
                 totalHeight += element.getHeight(font);
             }
-        } while (maxWidth > Game.getScreenSize().width || totalHeight > Game.getScreenSize().height);
+        } while (maxWidth > Game.get().getRenderingManager().getScreenSize().x() ||
+                totalHeight > Game.get().getRenderingManager().getScreenSize().y());
         return textSize;
     }
 }

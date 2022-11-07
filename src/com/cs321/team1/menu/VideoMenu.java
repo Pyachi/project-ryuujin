@@ -1,32 +1,33 @@
 package com.cs321.team1.menu;
 
-import com.cs321.team1.Game;
 import com.cs321.team1.assets.Resolutions;
 import com.cs321.team1.assets.audio.Sounds;
+import com.cs321.team1.game.Game;
 import com.cs321.team1.menu.elements.MenuButton;
 import com.cs321.team1.menu.elements.MenuSlider;
 
 import java.awt.GraphicsEnvironment;
 
+/**
+ * Menu for changing and testing video settings
+ */
 public class VideoMenu extends LevelMenu {
-    
     private MenuSlider fullscreenButton;
     private MenuSlider resolutionButton;
     private MenuSlider monitorButton;
     private MenuSlider fpsButton;
     private MenuButton applyButton;
-    
     private int monitor;
     private int prevMonitor;
-    
     private Resolutions res;
     private Resolutions prevRes;
-    
     private boolean fullscreen;
     private boolean prevFullscreen;
-    
     private int fps;
     private int prevFps;
+    
+    @Override
+    public void finish() { }
     
     @Override
     public void start() {
@@ -62,13 +63,36 @@ public class VideoMenu extends LevelMenu {
         elements.add(applyButton);
         elements.add(new MenuButton("Back", () -> {
             Sounds.DESELECT.play();
-            Game.popSegment();
+            Game.get().popSegment();
         }));
         updateButtons();
     }
     
-    @Override
-    public void finish() { }
+    private boolean applySettings() {
+        if (haveSettingsChanged()) {
+            Game.get().getRenderingManager().setFullscreen(fullscreen);
+            if (fullscreen) Game.get().getRenderingManager().setMonitor(monitor);
+            else Game.get().getRenderingManager().setScreenSize(res.size);
+            Game.get().getRenderingManager().setFPS(fps * 10);
+            Game.get().getRenderingManager().updateScreen();
+            resetSettings();
+            updateButtons();
+            return true;
+        }
+        return false;
+    }
+    
+    private boolean haveSettingsChanged() {
+        return prevFullscreen != fullscreen || fullscreen && prevMonitor != monitor || !fullscreen && prevRes != res ||
+                prevFps != fps;
+    }
+    
+    private void resetSettings() {
+        fullscreen = prevFullscreen = Game.get().getRenderingManager().isFullscreen();
+        monitor = prevMonitor = Game.get().getRenderingManager().getMonitor();
+        res = prevRes = Resolutions.fromVec2(Game.get().getRenderingManager().getScreenSize());
+        fps = prevFps = Game.get().getRenderingManager().getFPS() / 10;
+    }
     
     private void updateButtons() {
         fullscreenButton.setText(21, "Mode:", (fullscreen ? "Fullscreen" : "Windowed"));
@@ -82,31 +106,5 @@ public class VideoMenu extends LevelMenu {
         }
         fpsButton.setText(21, "FPS: ", fps == 0 ? "VSYNC" : (fps * 10) + "");
         applyButton.setDisabled(!haveSettingsChanged());
-    }
-    
-    private boolean haveSettingsChanged() {
-        return prevFullscreen != fullscreen || fullscreen && prevMonitor != monitor || !fullscreen && prevRes != res ||
-                prevFps != fps;
-    }
-    
-    private boolean applySettings() {
-        if (haveSettingsChanged()) {
-            Game.setFullscreen(fullscreen);
-            if (fullscreen) Game.setMonitor(monitor);
-            else Game.setScreenSize(res.size);
-            Game.setFPS(fps * 10);
-            Game.updateScreen();
-            resetSettings();
-            updateButtons();
-            return true;
-        }
-        return false;
-    }
-    
-    private void resetSettings() {
-        fullscreen = prevFullscreen = Game.isFullscreen();
-        monitor = prevMonitor = Game.getMonitor();
-        res = prevRes = Resolutions.fromDimension(Game.getScreenSize());
-        fps = prevFps = Game.getFPS() / 10;
     }
 }
