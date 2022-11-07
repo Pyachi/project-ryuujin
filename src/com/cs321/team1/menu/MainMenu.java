@@ -37,6 +37,7 @@ public class MainMenu extends Menu {
                     elements.add(new MenuText("Create New Game? (This will erase your save file)"));
                     elements.add(new MenuButton("Yes, I am ready!", () -> {
                         Sounds.SELECT.play();
+                        Game.get().resetCompletedLevels();
                         Game.get().popSegment();
                         Level.load("world");
                     }));
@@ -65,7 +66,6 @@ public class MainMenu extends Menu {
     private void loadGame() {
         try {
             var lvlStrings = Files.readString(new File("ryuujin.sav").toPath()).split("SET");
-            System.out.println(lvlStrings[0]);
             if (!lvlStrings[0].equals("")) Arrays.stream(lvlStrings[0].split("\n")).forEach(it -> Game.get()
                     .completeLevel(it.split("\\|")[1]));
             var levels = Arrays.stream(Arrays.copyOfRange(lvlStrings, 1, lvlStrings.length)).map(it -> Level.fromString(

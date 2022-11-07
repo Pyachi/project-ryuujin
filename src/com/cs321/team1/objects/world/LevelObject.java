@@ -35,7 +35,8 @@ public class LevelObject extends GameObject {
     @Tick
     public void onTick() {
         if (Game.get().isLevelCompleted(lvl)) setTexture(new Texture("map/completedLevel", 2));
-        if (collidesWith(Navigator.class) && Controls.SELECT.isPressed()) Level.load(lvl + "");
+        if (getCollisions(Navigator.class).stream().anyMatch(it -> it.getLocation().equals(getLocation())) &&
+                Controls.SELECT.isPressed()) Level.load(lvl + "");
     }
     
     @Override

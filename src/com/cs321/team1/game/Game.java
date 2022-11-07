@@ -107,6 +107,13 @@ public class Game {
     }
     
     /**
+     * Resets completed level list
+     */
+    public void resetCompletedLevels() {
+        completedLevels.clear();
+    }
+    
+    /**
      * Saves the game-state to a file
      */
     public void saveGame() {

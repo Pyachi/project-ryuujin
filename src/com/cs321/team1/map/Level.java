@@ -110,7 +110,10 @@ public class Level implements GameSegment {
      * @param obj The GameObject being added
      */
     public void addObject(int id, GameObject obj) {
-        obj.setId(id);
+        if (id != -1) {
+            obj.setId(id);
+            if (objs.containsKey(id)) removeObject(objs.get(id));
+        }
         addObject(obj);
     }
     
@@ -121,7 +124,7 @@ public class Level implements GameSegment {
      */
     public void addObject(GameObject obj) {
         obj.setLevel(this);
-        if (obj.getID() == 0) obj.setId(getRandomID());
+        if (obj.getID() == 0) obj.setId(getNextID());
         objs.put(obj.getID(), obj);
         Arrays.stream(obj.getClass().getMethods())
                 .filter(it -> it.isAnnotationPresent(Tick.class))
@@ -258,10 +261,9 @@ public class Level implements GameSegment {
         return false;
     }
     
-    private int getRandomID() {
-        Random rand = new Random();
-        int id = 0;
-        while (id == 0 || objs.containsKey(id)) id = rand.nextInt();
+    private int getNextID() {
+        int id = 1;
+        while (objs.containsKey(id)) id++;
         return id;
     }
     
@@ -276,50 +278,52 @@ public class Level implements GameSegment {
                     cmds.computeIfAbsent(condition, it -> new ArrayList<>()).add(command);
                 }
                 default -> {
+                    int id = -1;
+                    if (line[0].contains("#")) {
+                        id = Integer.parseInt(line[0].split("#")[0]);
+                        line[0] = line[0].split("#")[1];
+                    }
                     var loc = Vec2.fromString(line[1]);
                     switch (line[0]) {
-                        case "NAV" -> addObject(new Navigator(loc));
-                        case "PTH" -> addObject(new NavPath(loc));
-                        case "PLR" -> addObject(new Player(loc));
-                        case "LVL" -> addObject(new LevelObject(loc, line[2]));
-                        case "INT" -> addObject(new IntegerCrate(loc, Integer.parseInt(line[2])));
-                        case "NEG" -> addObject(new NegateCrate(loc));
-                        case "MOD" -> addObject(new ModuloCrate(loc, Integer.parseInt(line[2])));
-                        case "MUL" -> addObject(new MultiplyCrate(loc, Integer.parseInt(line[2])));
-                        case "DIV" -> addObject(new DivideCrate(loc, Integer.parseInt(line[2])));
-                        case "LCK" -> addObject(new LockedDoor(loc, Integer.parseInt(line[2])));
-                        case "PWR" -> addObject(new UnpoweredBeacon(loc, Integer.parseInt(line[2])));
-                        case "CVR" -> addObject(switch (line[2]) {
+                        case "NAV" -> addObject(id, new Navigator(loc));
+                        case "PTH" -> addObject(id, new NavPath(loc));
+                        case "PLR" -> addObject(id, new Player(loc));
+                        case "LVL" -> addObject(id, new LevelObject(loc, line[2]));
+                        case "INT" -> addObject(id, new IntegerCrate(loc, Integer.parseInt(line[2])));
+                        case "NEG" -> addObject(id, new NegateCrate(loc));
+                        case "MOD" -> addObject(id, new ModuloCrate(loc, Integer.parseInt(line[2])));
+                        case "MUL" -> addObject(id, new MultiplyCrate(loc, Integer.parseInt(line[2])));
+                        case "DIV" -> addObject(id, new DivideCrate(loc, Integer.parseInt(line[2])));
+                        case "LCK" -> addObject(id, new LockedDoor(loc, Integer.parseInt(line[2])));
+                        case "PWR" -> addObject(id, new UnpoweredBeacon(loc, Integer.parseInt(line[2])));
+                        case "CVR" -> addObject(id, switch (line[2]) {
                             default -> Conveyor.UP(loc);
                             case "D" -> Conveyor.DOWN(loc);
                             case "L" -> Conveyor.LEFT(loc);
                             case "R" -> Conveyor.RIGHT(loc);
                         });
                         case "FLR" -> {
-                            if (line[2].contains("/")) addObject(new PassableTile(loc, Texture.fromString(line[2])));
-                            else if (line.length == 4) addObject(new PassableTile(loc,
-                                    Vec2.fromString(line[2]),
-                                    Texture.fromString(line[3])));
-                            else addObject(new PassableTile(loc, Vec2.fromString(line[2])));
+                            if (line[2].contains("/")) addObject(id,
+                                    new PassableTile(loc, Texture.fromString(line[2])));
+                            else if (line.length == 4) addObject(id,
+                                    new PassableTile(loc, Vec2.fromString(line[2]), Texture.fromString(line[3])));
+                            else addObject(id, new PassableTile(loc, Vec2.fromString(line[2])));
                         }
                         case "WAL" -> {
-                            if (line[2].contains("/")) addObject(new UnpassableTile(loc, Texture.fromString(line[2])));
-                            else if (line.length == 4) addObject(new UnpassableTile(loc,
-                                    Vec2.fromString(line[2]),
-                                    Texture.fromString(line[3])));
-                            else addObject(new UnpassableTile(loc, Vec2.fromString(line[2])));
+                            if (line[2].contains("/")) addObject(id,
+                                    new UnpassableTile(loc, Texture.fromString(line[2])));
+                            else if (line.length == 4) addObject(id,
+                                    new UnpassableTile(loc, Vec2.fromString(line[2]), Texture.fromString(line[3])));
+                            else addObject(id, new UnpassableTile(loc, Vec2.fromString(line[2])));
                         }
                         case "TGR" -> {
                             var command = cmd.split("->")[1];
                             line = cmd.split("->")[0].split("\\|");
-                            if (line[2].contains("/")) addObject(new Trigger(loc,
-                                    Texture.fromString(line[2]),
-                                    command));
-                            else if (line.length == 4) addObject(new Trigger(loc,
-                                    Vec2.fromString(line[2]),
-                                    Texture.fromString(line[3]),
-                                    command));
-                            else addObject(new Trigger(loc, Vec2.fromString(line[2]), command));
+                            if (line[2].contains("/")) addObject(id,
+                                    new Trigger(loc, Texture.fromString(line[2]), command));
+                            else if (line.length == 4) addObject(id,
+                                    new Trigger(loc, Vec2.fromString(line[2]), Texture.fromString(line[3]), command));
+                            else addObject(id, new Trigger(loc, Vec2.fromString(line[2]), command));
                         }
                     }
                 }
