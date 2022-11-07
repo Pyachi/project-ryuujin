@@ -13,7 +13,7 @@ public class UnpoweredBeacon extends Crate {
      * @param value The power value of the beacon
      */
     public UnpoweredBeacon(Vec2 loc, int value) {
-        super(loc, "map/floor", value);
+        super(loc, "crates/upwr", value);
     }
     
     @Override
@@ -29,11 +29,6 @@ public class UnpoweredBeacon extends Crate {
     @Override
     public Crate getMergedCrate(Vec2 location, Crate other) {
         return null;
-    }
-    
-    @Override
-    public String getString() {
-        return Integer.toString(getValue());
     }
     
     @Override

@@ -12,7 +12,7 @@ public class PoweredBeacon extends Crate {
      * @param loc The location of the beacon
      */
     public PoweredBeacon(Vec2 loc) {
-        super(loc, "crates/interactable", 0);
+        super(loc, "crates/pwr", 0);
     }
     
     @Override

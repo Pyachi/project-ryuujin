@@ -13,7 +13,7 @@ public class LockedDoor extends Crate {
      * @param value The value of the door lock
      */
     public LockedDoor(Vec2 loc, int value) {
-        super(loc, "map/tile", value);
+        super(loc, "crates/lck", value);
     }
     
     @Override
@@ -29,11 +29,6 @@ public class LockedDoor extends Crate {
     @Override
     public Crate getMergedCrate(Vec2 location, Crate other) {
         return null;
-    }
-    
-    @Override
-    public String getString() {
-        return Integer.toString(getValue());
     }
     
     @Override

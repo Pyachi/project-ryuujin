@@ -17,7 +17,6 @@ import java.awt.Graphics2D;
  */
 public abstract class Crate extends GameObject {
     private final int value;
-    private final String texturePath;
     
     /**
      * Creates a crate at the given location, with the given texture and value
@@ -28,10 +27,9 @@ public abstract class Crate extends GameObject {
      */
     public Crate(Vec2 loc, String texturePath, int value) {
         this.value = value;
-        this.texturePath = texturePath;
         setLocation(loc);
         setSize(new Vec2(1, 1).toTile());
-        setTexture(new Texture(texturePath + "_closed", 1));
+        setTexture(new Texture(texturePath, 1));
     }
     
     /**
@@ -95,11 +93,13 @@ public abstract class Crate extends GameObject {
     public abstract Crate getMergedCrate(Vec2 loc, Crate other);
     
     /**
-     * Abstract method to get the display of the crate
+     * Gets the display of the crate
      *
      * @return The display of the crate
      */
-    public abstract String getString();
+    public String getString() {
+        return Integer.toString(getValue());
+    }
     
     /**
      * Gets the internal value of the crate
@@ -119,19 +119,10 @@ public abstract class Crate extends GameObject {
         return getGrabber() != null;
     }
     
-    /**
-     * After 1.2 seconds, change the texture of the crate
-     */
-    @Tick
-    public void openTexture() {
-        if (getTick() == 60) setTexture(new Texture(texturePath, 1));
-    }
-    
     @Override
     public void paint(Graphics2D g) {
         if (isDead()) return;
         super.paint(g);
-        if (getTick() < 60) return;
         g.setFont(Game.get()
                 .getRenderingManager()
                 .getFont()

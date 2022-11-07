@@ -13,7 +13,7 @@ public class IntegerCrate extends Crate {
      * @param value The value of the crate
      */
     public IntegerCrate(Vec2 loc, int value) {
-        super(loc, "crates/integer", value);
+        super(loc, "crates/int", value);
     }
     
     @Override
@@ -27,11 +27,6 @@ public class IntegerCrate extends Crate {
         if (other instanceof IntegerCrate) return new IntegerCrate(loc, other.getValue() + getValue());
         if (other instanceof UnpoweredBeacon) return new PoweredBeacon(loc);
         return null;
-    }
-    
-    @Override
-    public String getString() {
-        return Integer.toString(getValue());
     }
     
     @Override

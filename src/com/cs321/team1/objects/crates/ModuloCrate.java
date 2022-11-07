@@ -13,7 +13,7 @@ public class ModuloCrate extends Crate {
      * @param value The value of the crate
      */
     public ModuloCrate(Vec2 loc, int value) {
-        super(loc, "crates/crate", value);
+        super(loc, "crates/mod", value);
     }
     
     @Override
@@ -25,11 +25,6 @@ public class ModuloCrate extends Crate {
     public Crate getMergedCrate(Vec2 loc, Crate other) {
         if (other instanceof IntegerCrate) return new IntegerCrate(loc, Math.floorMod(other.getValue(), getValue()));
         return null;
-    }
-    
-    @Override
-    public String getString() {
-        return "%" + getValue();
     }
     
     @Override

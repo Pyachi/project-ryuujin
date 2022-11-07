@@ -13,7 +13,7 @@ public class MultiplyCrate extends Crate {
      * @param value The value of the crate
      */
     public MultiplyCrate(Vec2 loc, int value) {
-        super(loc, "crates/crate", value);
+        super(loc, "crates/mul", value);
     }
     
     @Override
@@ -27,11 +27,6 @@ public class MultiplyCrate extends Crate {
         if (other instanceof ModuloCrate) return new ModuloCrate(loc, other.getValue() * getValue());
         if (other instanceof MultiplyCrate) return new MultiplyCrate(loc, other.getValue() * getValue());
         return null;
-    }
-    
-    @Override
-    public String getString() {
-        return getValue() + "x";
     }
     
     @Override

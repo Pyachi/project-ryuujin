@@ -13,7 +13,7 @@ public class DivideCrate extends Crate {
      * @param value The division value of the crate
      */
     public DivideCrate(Vec2 loc, int value) {
-        super(loc, "crates/crate", value);
+        super(loc, "crates/div", value);
     }
     
     @Override
@@ -29,11 +29,6 @@ public class DivideCrate extends Crate {
         if (other instanceof MultiplyCrate) return new MultiplyCrate(loc, other.getValue() / getValue());
         if (other instanceof DivideCrate) return new DivideCrate(loc, other.getValue() * getValue());
         return null;
-    }
-    
-    @Override
-    public String getString() {
-        return "1/" + getValue();
     }
     
     @Override

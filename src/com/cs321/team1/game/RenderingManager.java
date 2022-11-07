@@ -60,6 +60,7 @@ public class RenderingManager extends JPanel {
         }
         setFont(tempFont);
         Runtime.getRuntime().addShutdownHook(new Thread(this::saveOptions));
+        startGameRendering();
     }
     
     /**
@@ -188,7 +189,7 @@ public class RenderingManager extends JPanel {
                     if (str.startsWith("fps: ")) setFPS(Integer.parseInt(str.split("fps: ")[1]));
                 } catch (Exception e) { e.printStackTrace(); }
             }
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception ignored) { }
     }
     
     /**

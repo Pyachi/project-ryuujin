@@ -12,7 +12,7 @@ public class NegateCrate extends Crate {
      * @param loc The location of the crate
      */
     public NegateCrate(Vec2 loc) {
-        super(loc, "crates/negation", -1);
+        super(loc, "crates/neg", -1);
     }
     
     @Override
