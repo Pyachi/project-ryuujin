@@ -63,7 +63,7 @@ public class VideoMenu extends LevelMenu {
         elements.add(applyButton);
         elements.add(new MenuButton("Back", () -> {
             Sounds.DESELECT.play();
-            Game.get().popSegment();
+            Game.get().removeSegment(this);
         }));
         updateButtons();
     }

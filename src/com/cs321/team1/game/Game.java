@@ -93,16 +93,6 @@ public class Game {
     public boolean isLevelCompleted(String lvl) { return completedLevels.contains(lvl); }
     
     /**
-     * Removes a GameSegment from the top of the stack
-     */
-    public GameSegment popSegment() {
-        var seg = segments.remove(0);
-        seg.finish();
-        if (!segments.isEmpty()) segments.get(0).refresh();
-        return seg;
-    }
-    
-    /**
      * Removes GameSegments until the top of the stack is the specified type
      *
      * @param clazz Specified type to set to the top of the stack
