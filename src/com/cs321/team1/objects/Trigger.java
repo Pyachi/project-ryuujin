@@ -2,7 +2,9 @@ package com.cs321.team1.objects;
 
 import com.cs321.team1.assets.Controls;
 import com.cs321.team1.assets.Texture;
+import com.cs321.team1.game.Game;
 import com.cs321.team1.map.Level;
+import com.cs321.team1.map.LevelTransition;
 import com.cs321.team1.map.Vec2;
 
 /**
@@ -73,7 +75,11 @@ public class Trigger extends GameObject {
         var cmd = command.split("\\|");
         return switch (cmd[0]) {
             case "LVL" -> () -> {
-                if (Controls.SELECT.isPressed()) Level.load(cmd[1]);
+                if (Controls.SELECT.isPressed()) {
+                    var lvl = Level.load(cmd[1]);
+                    if (lvl != null) Game.get().pushSegments(new LevelTransition(Game.get().getHighestSegment(), lvl),
+                            lvl);
+                }
             };
             default -> () -> { };
         };

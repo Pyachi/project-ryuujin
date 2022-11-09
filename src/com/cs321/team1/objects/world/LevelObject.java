@@ -4,6 +4,7 @@ import com.cs321.team1.assets.Controls;
 import com.cs321.team1.assets.Texture;
 import com.cs321.team1.game.Game;
 import com.cs321.team1.map.Level;
+import com.cs321.team1.map.LevelTransition;
 import com.cs321.team1.map.Vec2;
 import com.cs321.team1.objects.GameObject;
 import com.cs321.team1.objects.Tick;
@@ -36,7 +37,10 @@ public class LevelObject extends GameObject {
     public void onTick() {
         if (Game.get().isLevelCompleted(lvl)) setTexture(new Texture("map/completedLevel", 2));
         if (getCollisions(Navigator.class).stream().anyMatch(it -> it.getLocation().equals(getLocation())) &&
-                Controls.SELECT.isPressed()) Level.load(lvl + "");
+                Controls.SELECT.isPressed()) {
+            var level = Level.load(lvl);
+            if (level != null) Game.get().pushSegments(new LevelTransition(getLevel(), level), level);
+        }
     }
     
     @Override

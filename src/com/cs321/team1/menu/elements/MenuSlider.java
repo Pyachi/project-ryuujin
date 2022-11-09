@@ -68,7 +68,7 @@ public class MenuSlider extends MenuElement {
         int textHeight = fontMetrics.getHeight();
         var image = new BufferedImage(Game.get().getRenderingManager().getScreenSize().x(),
                 textHeight * 2,
-                BufferedImage.TYPE_INT_RGB);
+                BufferedImage.TYPE_INT_ARGB);
         var graphics = image.createGraphics();
         if (selected != -1) {
             graphics.setColor(new Color(0.5f, 0.5f, 0.5f, 0.8f));

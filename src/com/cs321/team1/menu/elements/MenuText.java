@@ -30,7 +30,7 @@ public class MenuText extends MenuElement {
         int textHeight = getHeight(font);
         var image = new BufferedImage(Game.get().getRenderingManager().getScreenSize().x(),
                 textHeight,
-                BufferedImage.TYPE_INT_RGB);
+                BufferedImage.TYPE_INT_ARGB);
         var graphics = image.createGraphics();
         graphics.setFont(font);
         int x = fontMetrics.stringWidth("AA");

@@ -27,7 +27,7 @@ public class OptionsMenu extends LevelMenu {
         }));
         elements.add(new MenuButton("Back", () -> {
             Sounds.DESELECT.play();
-            Game.get().popSegment();
+            Game.get().removeSegment(this);
         }));
     }
 }

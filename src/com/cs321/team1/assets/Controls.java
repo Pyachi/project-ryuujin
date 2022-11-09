@@ -167,7 +167,7 @@ public enum Controls {
             menu.setNewKey(control, key);
             pressedKeys.clear();
             heldKeys.clear();
-            Game.get().popSegment();
+            Game.get().removeSegment(this);
         }
     }
 }

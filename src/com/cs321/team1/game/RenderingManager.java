@@ -69,7 +69,7 @@ public class RenderingManager extends JPanel {
      * @return Screen-sized empty image to draw on
      */
     public BufferedImage createImage() {
-        return new BufferedImage(getScreenSize().x(), getScreenSize().y(), BufferedImage.TYPE_INT_RGB);
+        return new BufferedImage(getScreenSize().x(), getScreenSize().y(), BufferedImage.TYPE_INT_ARGB);
     }
     
     /**
@@ -89,6 +89,7 @@ public class RenderingManager extends JPanel {
         if (rendering != null) {
             rendering.cancel();
             rendering.purge();
+            rendering = null;
         }
         startGameRendering();
     }

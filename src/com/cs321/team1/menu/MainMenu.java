@@ -3,12 +3,14 @@ package com.cs321.team1.menu;
 import com.cs321.team1.assets.audio.Music;
 import com.cs321.team1.assets.audio.Sounds;
 import com.cs321.team1.game.Game;
+import com.cs321.team1.game.GameSegment;
 import com.cs321.team1.map.Level;
+import com.cs321.team1.map.LevelTransition;
 import com.cs321.team1.menu.elements.MenuButton;
-import com.cs321.team1.menu.elements.MenuText;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -31,22 +33,10 @@ public class MainMenu extends Menu {
     public void start() {
         elements.add(new MenuButton("New Game", () -> {
             Sounds.SELECT.play();
-            if (((MenuButton) elements.get(1)).isDisabled()) Level.load("world");
-            else Game.get().pushSegment(new Menu() {
-                {
-                    elements.add(new MenuText("Create New Game? (This will erase your save file)"));
-                    elements.add(new MenuButton("Yes, I am ready!", () -> {
-                        Sounds.SELECT.play();
-                        Game.get().resetCompletedLevels();
-                        Game.get().popSegment();
-                        Level.load("world");
-                    }));
-                    elements.add(new MenuButton("No wait...", () -> {
-                        Sounds.DESELECT.play();
-                        Game.get().popSegment();
-                    }));
-                }
-            });
+            if (((MenuButton) elements.get(1)).isDisabled()) {
+                var lvl = Level.load("world");
+                if (lvl != null) Game.get().pushSegments(new LevelTransition(this, lvl), lvl);
+            } else Game.get().pushSegment(new NewGameConfirmationMenu());
         }));
         elements.add(new MenuButton("Continue", () -> {
             Sounds.SELECT.play();
@@ -70,8 +60,9 @@ public class MainMenu extends Menu {
                     .completeLevel(it.split("\\|")[1]));
             var levels = Arrays.stream(Arrays.copyOfRange(lvlStrings, 1, lvlStrings.length)).map(it -> Level.fromString(
                     "SET" + it)).toList();
-            for (int x = levels.size() - 1; x >= 0; x--)
-                Game.get().pushSegment(levels.get(x));
+            var segs = new ArrayList<>(levels.stream().map(GameSegment.class::cast).toList());
+            segs.add(0, new LevelTransition(this, levels.get(0)));
+            Game.get().pushSegments(segs.toArray(GameSegment[]::new));
         } catch (Exception e) { e.printStackTrace(); }
     }
 }

@@ -43,7 +43,7 @@ public class ControlsMenu extends LevelMenu {
         elements.add(applyButton);
         elements.add(new MenuButton("Back", () -> {
             Sounds.DESELECT.play();
-            Game.get().popSegment();
+            Game.get().removeSegment(this);
         }));
         oldKeys.putAll(newKeys);
         refresh();

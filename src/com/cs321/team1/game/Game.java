@@ -53,6 +53,13 @@ public class Game {
     public void completeLevel(String lvl) { completedLevels.add(lvl); }
     
     /**
+     * Gets the GameSegment at the top of the stack
+     *
+     * @return The GameSegment at the top of the stack
+     */
+    public GameSegment getHighestSegment() { return segments.get(0); }
+    
+    /**
      * Returns the most recent segment of specified type
      *
      * @param clazz Class type of segment being searched for
@@ -71,6 +78,13 @@ public class Game {
     public RenderingManager getRenderingManager() { return renderingManager; }
     
     /**
+     * Gets the GameSegment at the given index
+     * @param index Index of GameSegment
+     * @return GameSegment at given index
+     */
+    public GameSegment getSegmentAtIndex(int index) { return segments.get(index); }
+    
+    /**
      * Checks if a level has been completed
      *
      * @param lvl The name of the level
@@ -81,9 +95,11 @@ public class Game {
     /**
      * Removes a GameSegment from the top of the stack
      */
-    public void popSegment() {
-        segments.remove(0).finish();
+    public GameSegment popSegment() {
+        var seg = segments.remove(0);
+        seg.finish();
         if (!segments.isEmpty()) segments.get(0).refresh();
+        return seg;
     }
     
     /**
@@ -105,6 +121,26 @@ public class Game {
         seg.start();
         segments.add(0, seg);
     }
+    
+    /**
+     * Adds multiple GameSegments in array order (ie first segment gets placed on top of list, second right below, etc.)
+     *
+     * @param segs GameSegments to add
+     */
+    public void pushSegments(GameSegment... segs) {
+        for (int i = 0; i < segs.length; i++) {
+            var seg = segs[i];
+            seg.start();
+            segments.add(i, seg);
+        }
+    }
+    
+    /**
+     * Removes a specified GameSegment from the game
+     *
+     * @param seg GameSegment to remove
+     */
+    public void removeSegment(GameSegment seg) { if (segments.remove(seg)) seg.finish(); }
     
     /**
      * Resets completed level list

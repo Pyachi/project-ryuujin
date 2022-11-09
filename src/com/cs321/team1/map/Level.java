@@ -36,7 +36,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 /**
@@ -96,11 +95,15 @@ public class Level implements GameSegment {
      *
      * @param name The internal name of the level
      */
-    public static void load(String name) {
+    public static Level load(String name) {
         try {
-            Game.get().pushSegment(Level.fromString(String.join("\n", new BufferedReader(new InputStreamReader(
-                    ResourceLoader.loadStream("resources/levels/" + name + ".ryu"))).lines().toArray(String[]::new))));
-        } catch (Exception e) { e.printStackTrace(); }
+            return Level.fromString(String.join("\n",
+                    new BufferedReader(new InputStreamReader(ResourceLoader.loadStream(
+                            "resources/levels/" + name + ".ryu"))).lines().toArray(String[]::new)));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
     
     /**
