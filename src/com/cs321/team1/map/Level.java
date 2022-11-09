@@ -57,6 +57,7 @@ public class Level implements GameSegment {
     private final Map<Integer, GameObject> objs = new HashMap<>();
     private final Map<Method, Set<GameObject>> ticks = new HashMap<>();
     private final Map<String, List<String>> cmds = new HashMap<>();
+    private boolean complete = false;
     private BufferedImage level;
     private Music music;
     
@@ -203,8 +204,10 @@ public class Level implements GameSegment {
             try { method.invoke(obj); } catch (Exception e) { e.printStackTrace(); }
         }));
         if (Controls.BACK.isPressed()) Game.get().pushSegment(new LevelMenu());
-        if (!isWorld && objs.values().stream().noneMatch(UnpoweredBeacon.class::isInstance)) Game.get().completeLevel(
-                name);
+        if (!isWorld && objs.values().stream().noneMatch(UnpoweredBeacon.class::isInstance)) {
+            Game.get().pushSegment(new LevelCompletion(this));
+            Game.get().completeLevel(name);
+        }
         cmds.forEach((condition, commandList) -> new ArrayList<>(commandList).forEach(command -> {
             if (checkCMD(condition, command)) commandList.remove(command);
         }));
