@@ -1,0 +1,9 @@
+SET|T:9:9|17|false
+PLR|T:5:5
+WAL|T:4:9|1:map/tile
+WAL|T:6:9|1:map/tile
+PWR|T:5:9|12
+LCK|T:5:8|3
+INT|T:2:2|3
+INT|T:2:8|7
+INT|T:7:4|5
