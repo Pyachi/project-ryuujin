@@ -60,7 +60,7 @@ public abstract class Menu implements GameSegment {
         else if (selected >= getSelectableElements().size()) selected = 0;
         getSelectableElements().get(selected).update();
         if (!(this instanceof MainMenu) && Controls.BACK.isPressed()) {
-            Game.get().popSegment();
+            Game.get().removeSegment(this);
             Sounds.DESELECT.play();
         }
     }

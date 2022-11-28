@@ -87,6 +87,19 @@ public class Texture {
     }
     
     /**
+     * Fills entire image with texture
+     *
+     * @param image Image to fill
+     * @param tick  Lifetime of image (for animations)
+     */
+    public void fillImage(BufferedImage image, int tick) {
+        if (this.image != null) image.createGraphics().drawImage(this.image.getSubimage(0,
+                size.y() * ((tick / 5) % frames),
+                size.x(),
+                size.y()), 0, 0, image.getWidth(), image.getHeight(), null);
+    }
+    
+    /**
      * Paints texture onto provided GameObject
      *
      * @param obj  Object to paint texture onto

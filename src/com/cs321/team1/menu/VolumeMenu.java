@@ -24,7 +24,7 @@ public class VolumeMenu extends LevelMenu {
         }));
         elements.add(new MenuButton("Back", () -> {
             Sounds.DESELECT.play();
-            Game.get().popSegment();
+            Game.get().removeSegment(this);
         }));
     }
 }

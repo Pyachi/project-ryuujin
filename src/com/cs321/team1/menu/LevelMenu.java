@@ -5,6 +5,7 @@ import com.cs321.team1.assets.audio.Sounds;
 import com.cs321.team1.assets.audio.filters.Filters;
 import com.cs321.team1.game.Game;
 import com.cs321.team1.map.Level;
+import com.cs321.team1.map.LevelTransition;
 import com.cs321.team1.menu.elements.MenuButton;
 
 import java.awt.image.BufferedImage;
@@ -20,36 +21,43 @@ public class LevelMenu extends Menu {
     
     @Override
     public void start() {
-        var lvl = Game.get().getHighestSegmentOfType(Level.class);
+        Game game = Game.get();
+        var lvl = game.getHighestSegmentOfType(Level.class);
+        if (lvl == null) return;
         elements.add(new MenuButton("Resume", () -> {
             Sounds.DESELECT.play();
-            Game.get().popSegment();
+            game.removeSegment(this);
         }));
         elements.add(new MenuButton("Options", () -> {
             Sounds.SELECT.play();
-            Game.get().pushSegment(new OptionsMenu());
+            game.pushSegment(new OptionsMenu());
         }));
-        if (lvl != null && !lvl.isWorld) {
+        if (!lvl.isWorld) {
             elements.add(new MenuButton("Restart Level", () -> {
                 Sounds.SELECT.play();
-                Game.get().popSegmentsTo(Level.class);
-                Game.get().popSegment();
-                Level.load(lvl.name);
+                game.popSegmentsTo(Level.class);
+                var newLVL = Level.load(lvl.name);
+                if (newLVL != null) {
+                    game.pushSegments(new LevelTransition(lvl, newLVL), newLVL);
+                    game.removeSegment(lvl);
+                }
             }));
             elements.add(new MenuButton("Return to Map", () -> {
                 Sounds.DESELECT.play();
-                Game.get().popSegmentsTo(Level.class);
-                Game.get().popSegment();
+                game.popSegmentsTo(Level.class);
+                game.pushSegment(new LevelTransition(lvl, game.getSegmentAtIndex(1)));
+                game.removeSegment(lvl);
             }));
         }
         elements.add(new MenuButton("Quit to Menu", () -> {
             Sounds.DESELECT.play();
-            Game.get().saveGame();
-            Game.get().popSegmentsTo(MainMenu.class);
+            game.saveGame();
+            game.popSegmentsTo(MainMenu.class);
+            game.pushSegment(new LevelTransition(lvl, Game.get().getHighestSegment()));
         }));
         elements.add(new MenuButton("Quit to Desktop", () -> {
             Sounds.DESELECT.play();
-            Game.get().saveGame();
+            game.saveGame();
             System.exit(0);
         }));
         Music.applyFilter(Filters.MUFFLE);
