@@ -7,76 +7,74 @@ import com.cs321.team1.game.Game;
 import com.cs321.team1.map.Level;
 import com.cs321.team1.map.LevelTransition;
 import com.cs321.team1.menu.elements.MenuButton;
-
 import java.awt.image.BufferedImage;
 
-/**
- * Menu seen when a level or world map is paused. Used mainly to access other menus
- */
 public class LevelMenu extends Menu {
-    @Override
-    public void finish() {
-        Music.applyFilter(null);
+
+  @Override
+  public void finish() {
+    Music.applyFilter(null);
+  }
+
+  @Override
+  public void start() {
+    Game game = Game.get();
+    var lvl = game.getHighestSegmentOfType(Level.class);
+    if (lvl == null) {
+      return;
     }
-    
-    @Override
-    public void start() {
-        Game game = Game.get();
-        var lvl = game.getHighestSegmentOfType(Level.class);
-        if (lvl == null) return;
-        elements.add(new MenuButton("Resume", () -> {
-            Sounds.DESELECT.play();
-            game.removeSegment(this);
-        }));
-        elements.add(new MenuButton("Options", () -> {
-            Sounds.SELECT.play();
-            game.pushSegment(new OptionsMenu());
-        }));
-        if (!lvl.isWorld) {
-            elements.add(new MenuButton("Restart Level", () -> {
-                Sounds.SELECT.play();
-                game.popSegmentsTo(Level.class);
-                var newLVL = Level.load(lvl.name);
-                if (newLVL != null) {
-                    game.pushSegments(new LevelTransition(lvl, newLVL), newLVL);
-                    game.removeSegment(lvl);
-                }
-            }));
-            elements.add(new MenuButton("Return to Map", () -> {
-                Sounds.DESELECT.play();
-                game.popSegmentsTo(Level.class);
-                game.pushSegment(new LevelTransition(lvl, game.getSegmentAtIndex(1)));
-                game.removeSegment(lvl);
-            }));
+    elements.add(new MenuButton("Resume", () -> {
+      Sounds.DESELECT.play();
+      game.removeSegment(this);
+    }));
+    elements.add(new MenuButton("Options", () -> {
+      Sounds.SELECT.play();
+      game.pushSegment(new OptionsMenu());
+    }));
+    if (!lvl.isWorld) {
+      elements.add(new MenuButton("Restart Level", () -> {
+        Sounds.SELECT.play();
+        game.popSegmentsTo(Level.class);
+        var newLVL = Level.load(lvl.name);
+        if (newLVL != null) {
+          game.pushSegments(new LevelTransition(lvl, newLVL), newLVL);
+          game.removeSegment(lvl);
         }
-        elements.add(new MenuButton("Quit to Menu", () -> {
-            Sounds.DESELECT.play();
-            game.saveGame();
-            game.popSegmentsTo(MainMenu.class);
-            game.pushSegment(new LevelTransition(lvl, Game.get().getHighestSegment()));
-        }));
-        elements.add(new MenuButton("Quit to Desktop", () -> {
-            Sounds.DESELECT.play();
-            game.saveGame();
-            System.exit(0);
-        }));
-        Music.applyFilter(Filters.MUFFLE);
+      }));
+      elements.add(new MenuButton("Return to Map", () -> {
+        Sounds.DESELECT.play();
+        game.popSegmentsTo(Level.class);
+        game.pushSegment(new LevelTransition(lvl, game.getSegmentAtIndex(1)));
+        game.removeSegment(lvl);
+      }));
     }
-    
-    @Override
-    public BufferedImage render() {
-        var image = Game.get().getRenderingManager().createImage();
-        var g = image.createGraphics();
-        var lvl = Game.get().getHighestSegmentOfType(Level.class);
-        if (lvl == null) return super.render();
-        var lvlImage = lvl.getLevelImage();
-        g.drawImage(lvlImage,
-                (image.getWidth() - lvlImage.getWidth()) / 2,
-                (image.getHeight() - lvlImage.getHeight()) / 2,
-                lvlImage.getWidth(),
-                lvlImage.getHeight(),
-                null);
-        g.drawImage(super.render(), 0, 0, image.getWidth(), image.getHeight(), null);
-        return image;
+    elements.add(new MenuButton("Quit to Menu", () -> {
+      Sounds.DESELECT.play();
+      game.saveGame();
+      game.popSegmentsTo(MainMenu.class);
+      game.pushSegment(new LevelTransition(lvl, Game.get().getHighestSegment()));
+    }));
+    elements.add(new MenuButton("Quit to Desktop", () -> {
+      Sounds.DESELECT.play();
+      game.saveGame();
+      System.exit(0);
+    }));
+    Music.applyFilter(Filters.MUFFLE);
+  }
+
+  @Override
+  public BufferedImage render() {
+    var image = Game.get().getRenderingManager().createImage();
+    var g = image.createGraphics();
+    var lvl = Game.get().getHighestSegmentOfType(Level.class);
+    if (lvl == null) {
+      return super.render();
     }
+    var lvlImage = lvl.getLevelImage();
+    g.drawImage(lvlImage, (image.getWidth() - lvlImage.getWidth()) / 2,
+        (image.getHeight() - lvlImage.getHeight()) / 2, lvlImage.getWidth(), lvlImage.getHeight(),
+        null);
+    g.drawImage(super.render(), 0, 0, image.getWidth(), image.getHeight(), null);
+    return image;
+  }
 }
