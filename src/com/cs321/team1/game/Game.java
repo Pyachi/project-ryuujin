@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-
 public class Game {
 
   private static Game instance = null;
@@ -75,7 +74,7 @@ public class Game {
 
   public void pushSegments(GameSegment... segs) {
     for (int i = 0; i < segs.length; i++) {
-      var seg = segs[i];
+      GameSegment seg = segs[i];
       seg.start();
       segments.add(i, seg);
     }
@@ -93,7 +92,7 @@ public class Game {
 
   public void saveGame() {
     try {
-      var file = new FileWriter("ryuujin.sav");
+      FileWriter file = new FileWriter("ryuujin.sav");
       completedLevels.forEach(lvl -> {
         try {
           file.write("CMP|" + lvl + "\n");

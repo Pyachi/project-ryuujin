@@ -7,6 +7,7 @@ import com.cs321.team1.game.Game;
 import com.cs321.team1.map.Level;
 import com.cs321.team1.map.LevelTransition;
 import com.cs321.team1.menu.elements.MenuButton;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 public class LevelMenu extends Menu {
@@ -19,7 +20,7 @@ public class LevelMenu extends Menu {
   @Override
   public void start() {
     Game game = Game.get();
-    var lvl = game.getHighestSegmentOfType(Level.class);
+    Level lvl = game.getHighestSegmentOfType(Level.class);
     if (lvl == null) {
       return;
     }
@@ -35,7 +36,7 @@ public class LevelMenu extends Menu {
       elements.add(new MenuButton("Restart Level", () -> {
         Sounds.SELECT.play();
         game.popSegmentsTo(Level.class);
-        var newLVL = Level.load(lvl.name);
+        Level newLVL = Level.load(lvl.name);
         if (newLVL != null) {
           game.pushSegments(new LevelTransition(lvl, newLVL), newLVL);
           game.removeSegment(lvl);
@@ -64,13 +65,13 @@ public class LevelMenu extends Menu {
 
   @Override
   public BufferedImage render() {
-    var image = Game.get().getRenderingManager().createImage();
-    var g = image.createGraphics();
-    var lvl = Game.get().getHighestSegmentOfType(Level.class);
+    BufferedImage image = Game.get().getRenderingManager().createImage();
+    Graphics2D g = image.createGraphics();
+    Level lvl = Game.get().getHighestSegmentOfType(Level.class);
     if (lvl == null) {
       return super.render();
     }
-    var lvlImage = lvl.getLevelImage();
+    BufferedImage lvlImage = lvl.getLevelImage();
     g.drawImage(lvlImage, (image.getWidth() - lvlImage.getWidth()) / 2,
         (image.getHeight() - lvlImage.getHeight()) / 2, lvlImage.getWidth(), lvlImage.getHeight(),
         null);

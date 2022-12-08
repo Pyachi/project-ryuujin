@@ -3,8 +3,8 @@ package com.cs321.team1.map;
 import com.cs321.team1.game.Game;
 import com.cs321.team1.game.GameSegment;
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-
 
 public class LevelTransition implements GameSegment {
 
@@ -21,9 +21,9 @@ public class LevelTransition implements GameSegment {
 
   @Override
   public BufferedImage render() {
-    var image = Game.get().getRenderingManager().createImage();
-    var g = image.createGraphics();
-    var lvlImage = tick <= 20 ? from.render() : to.render();
+    BufferedImage image = Game.get().getRenderingManager().createImage();
+    Graphics2D g = image.createGraphics();
+    BufferedImage lvlImage = tick <= 20 ? from.render() : to.render();
     g.setColor(Color.BLACK);
     if (lvlImage != null) {
       g.drawImage(lvlImage, (image.getWidth() - lvlImage.getWidth()) / 2,

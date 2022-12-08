@@ -6,7 +6,6 @@ import com.cs321.team1.assets.audio.Sounds;
 import com.cs321.team1.map.Vec2;
 import com.cs321.team1.objects.crates.Crate;
 
-
 public class Player extends GameObject {
 
   private Direction dir = Direction.SOUTH;
@@ -15,13 +14,11 @@ public class Player extends GameObject {
   private int tryX = 0;
   private int tryY = 0;
 
-
   public Player(Vec2 loc) {
     setTexture("player/right");
     setSize(new Vec2(1, 1).toTile());
     setLocation(loc);
   }
-
 
   public boolean canMove(int x, int y) {
     super.move(x, y);
@@ -31,7 +28,6 @@ public class Player extends GameObject {
     super.move(-x, -y);
     return !collision;
   }
-
 
   @Tick(priority = 1)
   public void confirmMovement() {
@@ -47,7 +43,6 @@ public class Player extends GameObject {
     move(0, y);
   }
 
-
   @Tick(priority = 2)
   public void confirmMovementAgain() {
     if (!blocked) {
@@ -62,16 +57,13 @@ public class Player extends GameObject {
     move(0, y);
   }
 
-
   public Crate getGrabbedCrate() {
     return grabbedCrate;
   }
 
-
   public void setGrabbedCrate(Crate crate) {
     grabbedCrate = crate;
   }
-
 
   public void move(int x, int y) {
     if (grabbedCrate == null) {
@@ -109,7 +101,6 @@ public class Player extends GameObject {
   public String toString() {
     return "PLR|" + getLocation().toString();
   }
-
 
   @Tick(priority = 0)
   public void movement() {
@@ -149,10 +140,18 @@ public class Player extends GameObject {
         setTexture("player/right_walk_animated");
       } else {
         switch (dir) {
-          case NORTH -> setTexture("player/up_idle_animated");
-          case SOUTH -> setTexture("player/down_idle_animated");
-          case EAST -> setTexture("player/right_idle_animated");
-          case WEST -> setTexture("player/left_idle_animated");
+          case NORTH:
+            setTexture("player/up_idle_animated");
+            break;
+          case SOUTH:
+            setTexture("player/down_idle_animated");
+            break;
+          case EAST:
+            setTexture("player/right_idle_animated");
+            break;
+          case WEST:
+            setTexture("player/left_idle_animated");
+            break;
         }
       }
     }
@@ -161,13 +160,24 @@ public class Player extends GameObject {
 
   private void handleCrates() {
     if (grabbedCrate == null && Controls.GRAB.isHeld()) {
+      Vec2 loc;
+      switch (dir) {
+        default:
+          loc = getLocation().add(new Vec2(8, 0));
+          break;
+        case SOUTH:
+          loc = getLocation().add(new Vec2(8, 16));
+          break;
+        case WEST:
+          loc = getLocation().add(new Vec2(0, 8));
+          break;
+        case EAST:
+          loc = getLocation().add(new Vec2(16, 8));
+          break;
+      }
       getLevel().getObjects().stream().filter(Crate.class::isInstance).map(Crate.class::cast)
-          .filter(it -> it.collidesWith(switch (dir) {
-            case NORTH -> getLocation().add(new Vec2(8, 0));
-            case SOUTH -> getLocation().add(new Vec2(8, 16));
-            case WEST -> getLocation().add(new Vec2(0, 8));
-            case EAST -> getLocation().add(new Vec2(16, 8));
-          }) && it.canGrab() && !it.isGrabbed()).findFirst().ifPresent(crate -> {
+          .filter(it -> it.collidesWith(loc) && it.canGrab() && !it.isGrabbed()).findFirst()
+          .ifPresent(crate -> {
             Sounds.PICKUP.play();
             grabbedCrate = crate;
           });

@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
 
-
 public class ControlsMenu extends LevelMenu {
 
   private final Map<Controls, MenuButton> buttons = new EnumMap<>(Controls.class);
@@ -24,14 +23,14 @@ public class ControlsMenu extends LevelMenu {
   public void start() {
     Arrays.stream(Controls.values()).forEach(it -> {
       newKeys.put(it, it.getKey());
-      var button = new MenuButton("", () -> {
+      MenuButton button = new MenuButton("", () -> {
         Sounds.SELECT.play();
         Game.get().pushSegment(new Controls.ControlChanger(it, this));
       });
       buttons.put(it, button);
       elements.add(button);
     });
-    var applyButton = new MenuButton("Apply Settings", () -> {
+    MenuButton applyButton = new MenuButton("Apply Settings", () -> {
       Sounds.SELECT.play();
       newKeys.forEach(Controls::setKey);
       oldKeys.clear();

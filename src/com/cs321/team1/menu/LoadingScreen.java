@@ -6,6 +6,7 @@ import com.cs321.team1.assets.audio.Sounds;
 import com.cs321.team1.game.Game;
 import com.cs321.team1.game.GameSegment;
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 public class LoadingScreen implements GameSegment {
@@ -26,12 +27,12 @@ public class LoadingScreen implements GameSegment {
 
   @Override
   public BufferedImage render() {
-    var image = Game.get().getRenderingManager().createImage();
-    var graphics = image.createGraphics();
+    BufferedImage image = Game.get().getRenderingManager().createImage();
+    Graphics2D graphics = image.createGraphics();
     tex.fillCanvas(graphics, 0);
     graphics.setColor(new Color(0F, 0F, 0F, 1F - Math.min(opacity / 100F, 1F)));
-    graphics.fillRect(0, 0, Game.get().getRenderingManager().getScreenSize().x(),
-        Game.get().getRenderingManager().getScreenSize().y());
+    graphics.fillRect(0, 0, Game.get().getRenderingManager().getScreenSize().x,
+        Game.get().getRenderingManager().getScreenSize().y);
     return image;
   }
 

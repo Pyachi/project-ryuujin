@@ -2,7 +2,6 @@ package com.cs321.team1.objects.crates;
 
 import com.cs321.team1.map.Vec2;
 
-
 public class UnpoweredBeacon extends Crate {
 
   public UnpoweredBeacon(Vec2 loc, int value) {

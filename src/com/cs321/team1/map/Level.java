@@ -24,6 +24,7 @@ import com.cs321.team1.objects.crates.UnpoweredBeacon;
 import com.cs321.team1.objects.world.LevelObject;
 import com.cs321.team1.objects.world.NavPath;
 import com.cs321.team1.objects.world.Navigator;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -36,14 +37,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+import java.util.stream.Collectors;
 
 public class Level implements GameSegment {
 
   public final String name;
-
   public final Vec2 size;
-
   public final boolean isWorld;
   private final Map<Integer, GameObject> objs = new HashMap<>();
   private final Map<Method, Set<GameObject>> ticks = new HashMap<>();
@@ -61,10 +60,10 @@ public class Level implements GameSegment {
   }
 
   public static Level fromString(String lvl) {
-    var lines = Arrays.stream(lvl.replaceAll("\r", "").split("\n"))
+    String[] lines = Arrays.stream(lvl.replaceAll("\r", "").split("\n"))
         .filter(it -> !it.startsWith("//")).toArray(String[]::new);
-    var set = lines[0].split("\\|");
-    var level = new Level(Vec2.fromString(set[1]), set[2], Boolean.parseBoolean(set[3]));
+    String[] set = lines[0].split("\\|");
+    Level level = new Level(Vec2.fromString(set[1]), set[2], Boolean.parseBoolean(set[3]));
     for (int i = 1; i < lines.length; i++) {
       level.parseCommand(lines[i]);
     }
@@ -112,8 +111,8 @@ public class Level implements GameSegment {
 
   public int getScale() {
     int scale = 20;
-    var screenSize = Game.get().getRenderingManager().getScreenSize();
-    while (scale * size.x() > screenSize.x() || scale * size.y() > screenSize.y()) {
+    Vec2 screenSize = Game.get().getRenderingManager().getScreenSize();
+    while (scale * size.x > screenSize.x || scale * size.y > screenSize.y) {
       scale--;
     }
     return scale;
@@ -121,7 +120,7 @@ public class Level implements GameSegment {
 
   @Override
   public void onScreenSizeChange() {
-    level = new BufferedImage(size.x() * getScale(), size.y() * getScale(),
+    level = new BufferedImage(size.x * getScale(), size.y * getScale(),
         BufferedImage.TYPE_INT_ARGB);
     render();
   }
@@ -135,12 +134,12 @@ public class Level implements GameSegment {
 
   @Override
   public BufferedImage render() {
-    var list = new ArrayList<>(
-        objs.values().stream().filter(it -> it.getTexture() != null).toList());
-    list.sort(Comparator.comparingInt(it -> it.getTexture().priority));
-    var graphics = level.createGraphics();
+    List<GameObject> list = objs.values().stream().filter(it -> it.getTexture() != null)
+        .sorted(Comparator.comparingInt(it -> it.getTexture().priority))
+        .collect(Collectors.toList());
+    Graphics2D graphics = level.createGraphics();
     list.forEach(it -> it.paint(graphics));
-    var image = Game.get().getRenderingManager().createImage();
+    BufferedImage image = Game.get().getRenderingManager().createImage();
     image.createGraphics().drawImage(level, (image.getWidth() - level.getWidth()) / 2,
         (image.getHeight() - level.getHeight()) / 2, null);
     return image;
@@ -156,8 +155,9 @@ public class Level implements GameSegment {
   @Override
   public void update() {
     objs.values().forEach(GameObject::incTick);
-    var methods = new ArrayList<>(ticks.keySet().stream().toList());
-    methods.sort(Comparator.comparingInt(it -> it.getAnnotation(Tick.class).priority()));
+    List<Method> methods = ticks.keySet().stream()
+        .sorted(Comparator.comparingInt(it -> it.getAnnotation(Tick.class).priority()))
+        .collect(Collectors.toList());
     methods.forEach(method -> new HashSet<>(ticks.get(method)).forEach(obj -> {
       try {
         method.invoke(obj);
@@ -185,14 +185,14 @@ public class Level implements GameSegment {
   }
 
   public void removeObject(int id) {
-    var obj = objs.remove(id);
+    GameObject obj = objs.remove(id);
     ticks.values().forEach(it -> it.remove(obj));
   }
 
   @Override
   public String toString() {
     removeBase();
-    var start = "SET|" + size.toString() + "|" + name + "|" + isWorld + "\n";
+    String start = "SET|" + size.toString() + "|" + name + "|" + isWorld + "\n";
     StringBuilder builder = new StringBuilder();
     if (music != null) {
       builder.append("MSC|").append(music.name()).append("\n");
@@ -208,16 +208,16 @@ public class Level implements GameSegment {
 
   private void addBase() {
     addObject(1, new PassableTile(new Vec2(1, 1).toTile(), size, new Texture("map/base", -1)));
-    addObject(2, new UnpassableTile(new Vec2(1, 0).toTile(), new Vec2(size.x(), 1).toTile()));
-    addObject(3, new UnpassableTile(new Vec2(1, size.y() / 16 + 1).toTile(),
-        new Vec2(size.x(), 1).toTile()));
-    addObject(4, new UnpassableTile(new Vec2(0, 1).toTile(), new Vec2(1, size.y()).toTile()));
-    addObject(5, new UnpassableTile(new Vec2(size.x() / 16 + 1, 1).toTile(),
-        new Vec2(1, size.y()).toTile()));
+    addObject(2, new UnpassableTile(new Vec2(1, 0).toTile(), new Vec2(size.x, 1).toTile()));
+    addObject(3,
+        new UnpassableTile(new Vec2(1, size.y / 16 + 1).toTile(), new Vec2(size.x, 1).toTile()));
+    addObject(4, new UnpassableTile(new Vec2(0, 1).toTile(), new Vec2(1, size.y).toTile()));
+    addObject(5,
+        new UnpassableTile(new Vec2(size.x / 16 + 1, 1).toTile(), new Vec2(1, size.y).toTile()));
   }
 
   private boolean checkCMD(String condition, String command) {
-    var cond = condition.split("\\|");
+    String[] cond = condition.split("\\|");
     if ("LVL".equals(cond[0])) {
       if (Game.get().isLevelCompleted(cond[1])) {
         parseCommand(command);
@@ -237,40 +237,76 @@ public class Level implements GameSegment {
 
   private void parseCommand(String cmd) {
     try {
-      var line = cmd.split("\\|");
+      String[] line = cmd.split("\\|");
       switch (line[0]) {
-        case "MSC" -> music = Music.valueOf(line[1]);
-        case "CMD" -> {
-          var condition = cmd.split("->")[0].replaceAll("CMD\\|", "");
-          var command = cmd.split("->")[1];
+        case "MSC":
+          music = Music.valueOf(line[1]);
+          break;
+        case "CMD":
+          String condition = cmd.split("->")[0].replaceAll("CMD\\|", "");
+          String command = cmd.split("->")[1];
           cmds.computeIfAbsent(condition, it -> new ArrayList<>()).add(command);
-        }
-        default -> {
+          break;
+        default:
           int id = -1;
           if (line[0].contains("#")) {
             id = Integer.parseInt(line[0].split("#")[0]);
             line[0] = line[0].split("#")[1];
           }
-          var loc = Vec2.fromString(line[1]);
+          Vec2 loc = Vec2.fromString(line[1]);
           switch (line[0]) {
-            case "NAV" -> addObject(id, new Navigator(loc));
-            case "PTH" -> addObject(id, new NavPath(loc));
-            case "PLR" -> addObject(id, new Player(loc));
-            case "LVL" -> addObject(id, new LevelObject(loc, line[2]));
-            case "INT" -> addObject(id, new IntegerCrate(loc, Integer.parseInt(line[2])));
-            case "NEG" -> addObject(id, new NegateCrate(loc));
-            case "MOD" -> addObject(id, new ModuloCrate(loc, Integer.parseInt(line[2])));
-            case "MUL" -> addObject(id, new MultiplyCrate(loc, Integer.parseInt(line[2])));
-            case "DIV" -> addObject(id, new DivideCrate(loc, Integer.parseInt(line[2])));
-            case "LCK" -> addObject(id, new LockedDoor(loc, Integer.parseInt(line[2])));
-            case "PWR" -> addObject(id, new UnpoweredBeacon(loc, Integer.parseInt(line[2])));
-            case "CVR" -> addObject(id, switch (line[2]) {
-              default -> Conveyor.UP(loc);
-              case "D" -> Conveyor.DOWN(loc);
-              case "L" -> Conveyor.LEFT(loc);
-              case "R" -> Conveyor.RIGHT(loc);
-            });
-            case "FLR" -> {
+            case "NAV":
+              addObject(id, new Navigator(loc));
+              break;
+            case "PTH":
+              addObject(id, new NavPath(loc));
+              break;
+            case "PLR":
+              addObject(id, new Player(loc));
+              break;
+            case "LVL":
+              addObject(id, new LevelObject(loc, line[2]));
+              break;
+            case "INT":
+              addObject(id, new IntegerCrate(loc, Integer.parseInt(line[2])));
+              break;
+            case "NEG":
+              addObject(id, new NegateCrate(loc));
+              break;
+            case "MOD":
+              addObject(id, new ModuloCrate(loc, Integer.parseInt(line[2])));
+              break;
+            case "MUL":
+              addObject(id, new MultiplyCrate(loc, Integer.parseInt(line[2])));
+              break;
+            case "DIV":
+              addObject(id, new DivideCrate(loc, Integer.parseInt(line[2])));
+              break;
+            case "LCK":
+              addObject(id, new LockedDoor(loc, Integer.parseInt(line[2])));
+              break;
+            case "PWR":
+              addObject(id, new UnpoweredBeacon(loc, Integer.parseInt(line[2])));
+              break;
+            case "CVR":
+              GameObject object;
+              switch (line[2]) {
+                default:
+                  object = Conveyor.UP(loc);
+                  break;
+                case "D":
+                  object = Conveyor.DOWN(loc);
+                  break;
+                case "L":
+                  object = Conveyor.LEFT(loc);
+                  break;
+                case "R":
+                  object = Conveyor.RIGHT(loc);
+                  break;
+              }
+              addObject(id, object);
+              break;
+            case "FLR":
               if (line[2].contains("/")) {
                 addObject(id, new PassableTile(loc, Texture.fromString(line[2])));
               } else if (line.length == 4) {
@@ -279,8 +315,8 @@ public class Level implements GameSegment {
               } else {
                 addObject(id, new PassableTile(loc, Vec2.fromString(line[2])));
               }
-            }
-            case "WAL" -> {
+              break;
+            case "WAL":
               if (line[2].contains("/")) {
                 addObject(id, new UnpassableTile(loc, Texture.fromString(line[2])));
               } else if (line.length == 4) {
@@ -289,22 +325,21 @@ public class Level implements GameSegment {
               } else {
                 addObject(id, new UnpassableTile(loc, Vec2.fromString(line[2])));
               }
-            }
-            case "TGR" -> {
-              var command = cmd.split("->")[1];
+              break;
+            case "TGR":
+              String comm = cmd.split("->")[1];
               line = cmd.split("->")[0].split("\\|");
               if (line[2].contains("/")) {
-                addObject(id, new Trigger(loc, Texture.fromString(line[2]), command));
+                addObject(id, new Trigger(loc, Texture.fromString(line[2]), comm));
               } else if (line.length == 4) {
                 addObject(id,
-                    new Trigger(loc, Vec2.fromString(line[2]), Texture.fromString(line[3]),
-                        command));
+                    new Trigger(loc, Vec2.fromString(line[2]), Texture.fromString(line[3]), comm));
               } else {
-                addObject(id, new Trigger(loc, Vec2.fromString(line[2]), command));
+                addObject(id, new Trigger(loc, Vec2.fromString(line[2]), comm));
               }
-            }
+              break;
           }
-        }
+          break;
       }
     } catch (Exception e) {
       e.printStackTrace();

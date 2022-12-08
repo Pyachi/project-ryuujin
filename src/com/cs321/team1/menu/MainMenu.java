@@ -9,9 +9,9 @@ import com.cs321.team1.map.LevelTransition;
 import com.cs321.team1.menu.elements.MenuButton;
 import java.io.File;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.Arrays;
-
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class MainMenu extends Menu {
 
@@ -32,7 +32,7 @@ public class MainMenu extends Menu {
     elements.add(new MenuButton("New Game", () -> {
       Sounds.SELECT.play();
       if (((MenuButton) elements.get(1)).isDisabled()) {
-        var lvl = Level.load("world");
+        Level lvl = Level.load("world");
         if (lvl != null) {
           Game.get().pushSegments(new LevelTransition(this, lvl), lvl);
         }
@@ -57,16 +57,19 @@ public class MainMenu extends Menu {
 
   private void loadGame() {
     try {
-      var lvlStrings = Files.readString(new File("ryuujin.sav").toPath()).split("SET");
+      StringBuilder builder = new StringBuilder();
+      Files.lines(new File("ryuujin.sav").toPath()).forEach(builder::append);
+      String[] lvlStrings = builder.toString().split("SET");
       if (!lvlStrings[0].equals("")) {
         Arrays.stream(lvlStrings[0].split("\n"))
             .forEach(it -> Game.get().completeLevel(it.split("\\|")[1]));
       }
-      var levels = Arrays.stream(Arrays.copyOfRange(lvlStrings, 1, lvlStrings.length))
-          .map(it -> Level.fromString("SET" + it)).toList();
-      var segs = new ArrayList<>(levels.stream().map(GameSegment.class::cast).toList());
+      List<Level> levels = Arrays.stream(Arrays.copyOfRange(lvlStrings, 1, lvlStrings.length))
+          .map(it -> Level.fromString("SET" + it)).collect(Collectors.toList());
+      List<GameSegment> segs = levels.stream().map(GameSegment.class::cast)
+          .collect(Collectors.toList());
       segs.add(0, new LevelTransition(this, levels.get(0)));
-      Game.get().pushSegments(segs.toArray(GameSegment[]::new));
+      Game.get().pushSegments(segs.toArray(new GameSegment[]{}));
     } catch (Exception e) {
       e.printStackTrace();
     }

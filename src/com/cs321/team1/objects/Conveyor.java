@@ -4,7 +4,6 @@ import com.cs321.team1.assets.Texture;
 import com.cs321.team1.map.Vec2;
 import com.cs321.team1.objects.crates.Crate;
 
-
 public class Conveyor extends GameObject {
 
   private final int x;
@@ -25,26 +24,21 @@ public class Conveyor extends GameObject {
     }
   }
 
-
   public static Conveyor DOWN(Vec2 loc) {
     return new Conveyor(loc, 0, 1);
   }
-
 
   public static Conveyor LEFT(Vec2 loc) {
     return new Conveyor(loc, -1, 0);
   }
 
-
   public static Conveyor RIGHT(Vec2 loc) {
     return new Conveyor(loc, 1, 0);
   }
 
-
   public static Conveyor UP(Vec2 loc) {
     return new Conveyor(loc, 0, -1);
   }
-
 
   @Tick(priority = 3)
   public void move() {
@@ -62,15 +56,27 @@ public class Conveyor extends GameObject {
 
   @Override
   public String toString() {
-    var type = switch (x) {
-      case -1 -> "L";
-      case 1 -> "R";
-      default -> switch (y) {
-        case -1 -> "U";
-        case 1 -> "D";
-        default -> "X";
-      };
-    };
+    String type;
+    switch (x) {
+      case -1:
+        type = "L";
+        break;
+      case 1:
+        type = "R";
+        break;
+      default:
+        switch (y) {
+          case -1:
+            type = "U";
+            break;
+          case 1:
+            type = "D";
+            break;
+          default:
+            type = "X";
+            break;
+        }
+    }
     return "CVR|" + getLocation().toString() + "|" + type;
   }
 

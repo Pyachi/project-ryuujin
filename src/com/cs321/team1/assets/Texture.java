@@ -7,15 +7,11 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
-
 public class Texture {
 
   private static final String TEXTURES_PATH = "resources/textures/";
-
   public final int priority;
-
   public final int frames;
-
   public final Vec2 size;
   private final BufferedImage image;
   private final String path;
@@ -37,47 +33,42 @@ public class Texture {
     }
     this.priority = priority;
     image = tempImage;
-    var width = image.getWidth();
+    int width = image.getWidth();
     frames = path.contains("animated") ? image.getHeight() / width : 1;
-    var height = path.contains("animated") ? image.getHeight() / frames : image.getHeight();
+    int height = path.contains("animated") ? image.getHeight() / frames : image.getHeight();
     size = new Vec2(width, height);
   }
 
-
   public static Texture fromString(String tex) {
-    var args = tex.split(":");
+    String[] args = tex.split(":");
     return new Texture(args[1], Integer.parseInt(args[0]));
   }
 
-
   public void fillCanvas(Graphics2D g, int tick) {
     if (image != null) {
-      g.drawImage(image.getSubimage(0, size.y() * ((tick / 5) % frames), size.x(), size.y()), 0, 0,
-          Game.get().getRenderingManager().getScreenSize().x(),
-          Game.get().getRenderingManager().getScreenSize().y(), null);
+      g.drawImage(image.getSubimage(0, size.y * ((tick / 5) % frames), size.x, size.y), 0, 0,
+          Game.get().getRenderingManager().getScreenSize().x,
+          Game.get().getRenderingManager().getScreenSize().y, null);
     }
   }
-
 
   public void fillImage(BufferedImage image, int tick) {
     if (this.image != null) {
-      image.createGraphics().drawImage(
-          this.image.getSubimage(0, size.y() * ((tick / 5) % frames), size.x(), size.y()), 0, 0,
-          image.getWidth(), image.getHeight(), null);
+      image.createGraphics()
+          .drawImage(this.image.getSubimage(0, size.y * ((tick / 5) % frames), size.x, size.y), 0,
+              0, image.getWidth(), image.getHeight(), null);
     }
   }
-
 
   public void paint(GameObject obj, Graphics2D g, int tick) {
     if (image != null) {
-      g.drawImage(image.getSubimage(0, size.y() * ((tick / 5) % frames), size.x(), size.y()),
-          (obj.getLocation().x() - 16) * obj.getLevel().getScale(),
-          (obj.getLocation().y() - 16) * obj.getLevel().getScale(),
-          obj.getSize().x() * obj.getLevel().getScale(),
-          obj.getSize().y() * obj.getLevel().getScale(), null);
+      g.drawImage(image.getSubimage(0, size.y * ((tick / 5) % frames), size.x, size.y),
+          (obj.getLocation().x - 16) * obj.getLevel().getScale(),
+          (obj.getLocation().y - 16) * obj.getLevel().getScale(),
+          obj.getSize().x * obj.getLevel().getScale(), obj.getSize().y * obj.getLevel().getScale(),
+          null);
     }
   }
-
 
   @Override
   public String toString() {

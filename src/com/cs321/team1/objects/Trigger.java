@@ -7,12 +7,10 @@ import com.cs321.team1.map.Level;
 import com.cs321.team1.map.LevelTransition;
 import com.cs321.team1.map.Vec2;
 
-
 public class Trigger extends GameObject {
 
   private final Runnable run;
   private final String command;
-
 
   public Trigger(Vec2 loc, Vec2 size, Texture tex, String command) {
     setLocation(loc);
@@ -22,7 +20,6 @@ public class Trigger extends GameObject {
     run = getCommand();
   }
 
-
   public Trigger(Vec2 loc, Texture tex, String command) {
     setTexture(tex);
     setSize(tex.size);
@@ -31,14 +28,12 @@ public class Trigger extends GameObject {
     run = getCommand();
   }
 
-
   public Trigger(Vec2 location, Vec2 size, String command) {
     setLocation(location);
     setSize(size);
     this.command = command;
     run = getCommand();
   }
-
 
   @Tick(priority = 3)
   public void run() {
@@ -53,18 +48,21 @@ public class Trigger extends GameObject {
   }
 
   private Runnable getCommand() {
-    var cmd = command.split("\\|");
-    return switch (cmd[0]) {
-      case "LVL" -> () -> {
-        if (Controls.SELECT.isPressed()) {
-          var lvl = Level.load(cmd[1]);
-          if (lvl != null) {
-            Game.get().pushSegments(new LevelTransition(Game.get().getHighestSegment(), lvl), lvl);
+    String[] cmd = command.split("\\|");
+    switch (cmd[0]) {
+      case "LVL":
+        return () -> {
+          if (Controls.SELECT.isPressed()) {
+            Level lvl = Level.load(cmd[1]);
+            if (lvl != null) {
+              Game.get()
+                  .pushSegments(new LevelTransition(Game.get().getHighestSegment(), lvl), lvl);
+            }
           }
-        }
-      };
-      default -> () -> {
-      };
-    };
+        };
+      default:
+        return () -> {
+        };
+    }
   }
 }

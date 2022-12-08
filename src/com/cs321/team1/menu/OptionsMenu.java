@@ -4,7 +4,6 @@ import com.cs321.team1.assets.audio.Sounds;
 import com.cs321.team1.game.Game;
 import com.cs321.team1.menu.elements.MenuButton;
 
-
 public class OptionsMenu extends LevelMenu {
 
   @Override

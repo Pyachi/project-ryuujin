@@ -7,7 +7,6 @@ import com.cs321.team1.menu.elements.MenuButton;
 import com.cs321.team1.menu.elements.MenuSlider;
 import java.awt.GraphicsEnvironment;
 
-
 public class VideoMenu extends LevelMenu {
 
   private MenuSlider fullscreenButton;

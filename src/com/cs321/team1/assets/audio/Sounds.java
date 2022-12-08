@@ -3,11 +3,13 @@ package com.cs321.team1.assets.audio;
 import com.cs321.team1.assets.ResourceLoader;
 import com.cs321.team1.assets.audio.filters.Filters;
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 
 public enum Sounds {
@@ -37,18 +39,21 @@ public enum Sounds {
   }
 
   public static void init() {
-      if (initialized) {
-          return;
-      }
+    if (initialized) {
+      return;
+    }
     initialized = true;
     try {
       for (Sounds sound : values()) {
         try {
-          var stream = ResourceLoader.loadStream(sound.path);
-          sound.data = AudioSystem.getAudioInputStream(stream).readAllBytes();
-            for (Filters filter : Filters.values()) {
-                sound.filteredData.put(filter, filter.filter.filter(sound.data));
-            }
+          AudioInputStream audioStream = AudioSystem.getAudioInputStream(
+              ResourceLoader.loadStream(sound.path));
+          byte[] data = new byte[audioStream.available()];
+          audioStream.read(data);
+          sound.data = data;
+          for (Filters filter : Filters.values()) {
+            sound.filteredData.put(filter, filter.filter.filter(sound.data));
+          }
         } catch (Exception e) {
           e.printStackTrace();
         }
@@ -60,7 +65,7 @@ public enum Sounds {
 
   public void play() {
     try {
-      var clip = AudioSystem.getClip();
+      Clip clip = AudioSystem.getClip();
       clip.open(new AudioInputStream(new ByteArrayInputStream(data), FORMAT, data.length));
       ((FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN)).setValue(
           (float) (20 * Math.log10(volume / 100.0)));
@@ -72,7 +77,7 @@ public enum Sounds {
 
   public void playFiltered(Filters filter) {
     try {
-      var clip = AudioSystem.getClip();
+      Clip clip = AudioSystem.getClip();
       byte[] data = filteredData.get(filter);
       clip.open(new AudioInputStream(new ByteArrayInputStream(data), FORMAT, data.length));
       ((FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN)).setValue(

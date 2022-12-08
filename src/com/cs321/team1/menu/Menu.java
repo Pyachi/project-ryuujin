@@ -4,14 +4,17 @@ import com.cs321.team1.assets.Controls;
 import com.cs321.team1.assets.audio.Sounds;
 import com.cs321.team1.game.Game;
 import com.cs321.team1.game.GameSegment;
+import com.cs321.team1.map.Vec2;
 import com.cs321.team1.menu.elements.MenuElement;
 import com.cs321.team1.menu.elements.MenuText;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.stream.Collectors;
 
 public abstract class Menu implements GameSegment {
 
@@ -26,19 +29,19 @@ public abstract class Menu implements GameSegment {
 
   @Override
   public BufferedImage render() {
-    var screenSize = Game.get().getRenderingManager().getScreenSize();
-    var image = Game.get().getRenderingManager().createImage();
-    var graphics = image.createGraphics();
+    Vec2 screenSize = Game.get().getRenderingManager().getScreenSize();
+    BufferedImage image = Game.get().getRenderingManager().createImage();
+    Graphics2D graphics = image.createGraphics();
     graphics.setColor(new Color(0f, 0f, 0f, 0.8f));
-    graphics.fillRect(0, 0, screenSize.x(), screenSize.y());
+    graphics.fillRect(0, 0, screenSize.x, screenSize.y);
     graphics.setColor(Color.WHITE);
-    var font = Game.get().getRenderingManager().getFont().deriveFont(((float) getTextSize()));
-    var renders = elements.stream()
+    Font font = Game.get().getRenderingManager().getFont().deriveFont(((float) getTextSize()));
+    List<Image> renders = elements.stream()
         .map(it -> it.render(font, it == getSelectableElements().get(selected) ? tick : -1))
-        .toList();
+        .collect(Collectors.toList());
     int renderHeight = renders.stream().mapToInt(it -> it.getHeight(null)).sum();
-    int y = (screenSize.y() - renderHeight) / 2;
-    for (var render : renders) {
+    int y = (screenSize.y - renderHeight) / 2;
+    for (Image render : renders) {
       graphics.drawImage(render, 0, y, null);
       y += render.getHeight(null);
     }
@@ -68,13 +71,13 @@ public abstract class Menu implements GameSegment {
   }
 
   private List<MenuElement> getSelectableElements() {
-    return elements.stream().filter(it -> !(it instanceof MenuText)).toList();
+    return elements.stream().filter(it -> !(it instanceof MenuText)).collect(Collectors.toList());
   }
 
   private int getTextSize() {
     int maxWidth;
     int totalHeight;
-    int textSize = Game.get().getRenderingManager().getScreenSize().y() / 20 + 1;
+    int textSize = Game.get().getRenderingManager().getScreenSize().y / 20 + 1;
     do {
       maxWidth = 0;
       totalHeight = 0;
@@ -87,8 +90,8 @@ public abstract class Menu implements GameSegment {
         }
         totalHeight += element.getHeight(font);
       }
-    } while (maxWidth > Game.get().getRenderingManager().getScreenSize().x()
-        || totalHeight > Game.get().getRenderingManager().getScreenSize().y());
+    } while (maxWidth > Game.get().getRenderingManager().getScreenSize().x
+        || totalHeight > Game.get().getRenderingManager().getScreenSize().y);
     return textSize;
   }
 }

@@ -6,7 +6,6 @@ import com.cs321.team1.map.Vec2;
 import com.cs321.team1.objects.GameObject;
 import com.cs321.team1.objects.Tick;
 
-
 public class Navigator extends GameObject {
 
   private boolean moving = false;
@@ -14,13 +13,11 @@ public class Navigator extends GameObject {
   private int moveX = 0;
   private int moveY = 0;
 
-
   public Navigator(Vec2 loc) {
     setTexture(new Texture("player/nav", 5));
     setSize(new Vec2(16, 16));
     setLocation(loc);
   }
-
 
   @Tick
   public void checkMovement() {

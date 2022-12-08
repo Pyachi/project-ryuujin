@@ -4,9 +4,10 @@ import com.cs321.team1.assets.Controls;
 import com.cs321.team1.game.Game;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.function.Consumer;
-
 
 public class MenuSlider extends MenuElement {
 
@@ -34,19 +35,19 @@ public class MenuSlider extends MenuElement {
 
   @Override
   public int getWidth(Font font) {
-    var stringWidth = new BufferedImage(1, 1, 1).createGraphics().getFontMetrics(font)
+    int stringWidth = new BufferedImage(1, 1, 1).createGraphics().getFontMetrics(font)
         .stringWidth(getText() + "AAAA");
     return showSlider ? stringWidth * 2 : stringWidth;
   }
 
   @Override
   public BufferedImage render(Font font, int timeSelected) {
-    var fontMetrics = new BufferedImage(1, 1, 1).createGraphics().getFontMetrics(font);
+    FontMetrics fontMetrics = new BufferedImage(1, 1, 1).createGraphics().getFontMetrics(font);
     int textWidth = fontMetrics.stringWidth(getText());
     int textHeight = fontMetrics.getHeight();
-    var image = new BufferedImage(Game.get().getRenderingManager().getScreenSize().x(),
+    BufferedImage image = new BufferedImage(Game.get().getRenderingManager().getScreenSize().x,
         textHeight * 2, BufferedImage.TYPE_INT_ARGB);
-    var graphics = image.createGraphics();
+    Graphics2D graphics = image.createGraphics();
     if (selected != -1) {
       graphics.setColor(new Color(0.5f, 0.5f, 0.5f, 0.8f));
       graphics.fillRect(0, 0, Math.min((image.getWidth() / 10 * timeSelected), image.getWidth()),

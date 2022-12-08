@@ -18,8 +18,8 @@ public class LevelCompletion implements GameSegment {
 
   @Override
   public BufferedImage render() {
-    var lvlImage = level.render();
-    var completionImage = new BufferedImage((int) (lvlImage.getWidth() * (tick / 50.0)),
+    BufferedImage lvlImage = level.render();
+    BufferedImage completionImage = new BufferedImage((int) (lvlImage.getWidth() * (tick / 50.0)),
         (int) (lvlImage.getHeight() * (tick / 50.0)), BufferedImage.TYPE_INT_ARGB);
     texture.fillImage(completionImage, tick);
     lvlImage.getGraphics()

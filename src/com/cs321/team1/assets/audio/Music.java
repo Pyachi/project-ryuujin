@@ -7,8 +7,10 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
+import javax.sound.sampled.DataLine.Info;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.SourceDataLine;
 
@@ -34,9 +36,9 @@ public enum Music {
 
   public static void applyFilter(Filters filter) {
     try {
-      var song = values()[selected];
+      Music song = values()[selected];
       stream = new ByteArrayInputStream(filter == null ? song.data : song.filteredData.get(filter));
-      stream.readNBytes(distance);
+      stream.read(new byte[distance], 0, distance);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -62,8 +64,11 @@ public enum Music {
     try {
       for (Music song : values()) {
         try {
-          var stream = ResourceLoader.loadStream(song.path);
-          song.data = AudioSystem.getAudioInputStream(stream).readAllBytes();
+          AudioInputStream audioStream = AudioSystem.getAudioInputStream(
+              ResourceLoader.loadStream(song.path));
+          byte[] data = new byte[audioStream.available()];
+          audioStream.read(data);
+          song.data = data;
           for (Filters filter : Filters.values()) {
             song.filteredData.put(filter, filter.filter.filter(song.data));
           }
@@ -73,7 +78,7 @@ public enum Music {
       }
       new Thread(() -> {
         try {
-          var info = new DataLine.Info(SourceDataLine.class, FORMAT);
+          Info info = new DataLine.Info(SourceDataLine.class, FORMAT);
           line = (SourceDataLine) AudioSystem.getLine(info);
           line.open(FORMAT, 11025);
           line.start();
@@ -82,9 +87,8 @@ public enum Music {
           byte[] buffer = new byte[4096];
           int count;
           while (true) {
-            while (stream == null) {
-              Thread.onSpinWait();
-            }
+            while (stream == null)
+              ;
             while ((count = stream.read(buffer, 0, 4096)) != -1) {
               distance += count;
               line.write(buffer, 0, count);

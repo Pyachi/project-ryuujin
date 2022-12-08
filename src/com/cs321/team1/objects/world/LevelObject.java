@@ -10,11 +10,9 @@ import com.cs321.team1.objects.GameObject;
 import com.cs321.team1.objects.Tick;
 import java.awt.Graphics2D;
 
-
 public class LevelObject extends GameObject {
 
   private final String lvl;
-
 
   public LevelObject(Vec2 loc, String lvl) {
     this.lvl = lvl;
@@ -23,7 +21,6 @@ public class LevelObject extends GameObject {
     setLocation(loc);
   }
 
-
   @Tick
   public void onTick() {
     if (Game.get().isLevelCompleted(lvl)) {
@@ -31,7 +28,7 @@ public class LevelObject extends GameObject {
     }
     if (getCollisions(Navigator.class).stream()
         .anyMatch(it -> it.getLocation().equals(getLocation())) && Controls.SELECT.isPressed()) {
-      var level = Level.load(lvl);
+      Level level = Level.load(lvl);
       if (level != null) {
         Game.get().pushSegments(new LevelTransition(getLevel(), level), level);
       }
@@ -48,9 +45,9 @@ public class LevelObject extends GameObject {
         (float) 16 * getLevel().getScale() * 0.5F / g.getFontMetrics(
             Game.get().getRenderingManager().getFont()).stringWidth(lvl + "")));
     g.drawString(lvl + "",
-        getLocation().x() * getLevel().getScale() - g.getFontMetrics().stringWidth(lvl + "") / 2
+        getLocation().x * getLevel().getScale() - g.getFontMetrics().stringWidth(lvl + "") / 2
             - 8 * getLevel().getScale(),
-        getLocation().y() * getLevel().getScale() + g.getFontMetrics().getHeight() / 2
+        getLocation().y * getLevel().getScale() + g.getFontMetrics().getHeight() / 2
             - 8 * getLevel().getScale());
   }
 

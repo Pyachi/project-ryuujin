@@ -16,7 +16,7 @@ public class NewGameConfirmationMenu extends Menu {
     elements.add(new MenuButton("Yes, I am ready!", () -> {
       Sounds.SELECT.play();
       game.resetCompletedLevels();
-      var lvl = Level.load("world");
+      Level lvl = Level.load("world");
       if (lvl != null) {
         game.pushSegments(new LevelTransition(this, lvl), lvl);
       }

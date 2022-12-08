@@ -2,16 +2,23 @@ package com.cs321.team1.map;
 
 import java.awt.Dimension;
 
+public class Vec2 {
 
-public record Vec2(int x, int y) {
+  public final int x;
+  public final int y;
+
+  public Vec2(int x, int y) {
+    this.x = x;
+    this.y = y;
+  }
 
   public static Vec2 fromDimension(Dimension dim) {
     return new Vec2(dim.width, dim.height);
   }
 
   public static Vec2 fromString(String str) {
-    var args = str.split(":");
-    var vec2 = new Vec2(Integer.parseInt(args[1]), Integer.parseInt(args[2]));
+    String[] args = str.split(":");
+    Vec2 vec2 = new Vec2(Integer.parseInt(args[1]), Integer.parseInt(args[2]));
     return args[0].equals("T") ? vec2.toTile() : vec2;
   }
 

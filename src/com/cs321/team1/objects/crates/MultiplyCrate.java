@@ -2,7 +2,6 @@ package com.cs321.team1.objects.crates;
 
 import com.cs321.team1.map.Vec2;
 
-
 public class MultiplyCrate extends Crate {
 
   public MultiplyCrate(Vec2 loc, int value) {

@@ -4,7 +4,6 @@ import com.cs321.team1.map.Vec2;
 import java.awt.Dimension;
 import java.util.Arrays;
 
-
 public enum Resolutions {
   _640x480(640, 480),
   _800x600(800, 600),
@@ -18,7 +17,6 @@ public enum Resolutions {
   _1920x1200(1920, 1200),
   _2560x1440(2560, 1440),
   _3840x2160(3840, 2160);
-
   public final Vec2 size;
 
   Resolutions(int width, int height) {

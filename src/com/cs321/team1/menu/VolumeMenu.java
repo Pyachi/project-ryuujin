@@ -6,7 +6,6 @@ import com.cs321.team1.game.Game;
 import com.cs321.team1.menu.elements.MenuButton;
 import com.cs321.team1.menu.elements.MenuSlider;
 
-
 public class VolumeMenu extends LevelMenu {
 
   @Override

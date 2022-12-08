@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.swing.JFrame;
 
-
 public enum Controls {
   UP(KeyEvent.VK_W),
   DOWN(KeyEvent.VK_S),
@@ -101,18 +100,15 @@ public enum Controls {
       } else {
         menu.getButton(control).setText(20, control.name() + ":", " ");
       }
-
       if (pressedKeys.isEmpty()) {
         return;
       }
-
       int key = pressedKeys.stream().findAny().orElse(control.getKey());
       for (Controls other : Controls.values()) {
         if (menu.getNewKey(other) == key && other != control) {
           menu.setNewKey(other, -1);
         }
       }
-
       menu.setNewKey(control, key);
       pressedKeys.clear();
       heldKeys.clear();

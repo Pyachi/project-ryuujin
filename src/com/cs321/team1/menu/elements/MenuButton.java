@@ -5,8 +5,9 @@ import com.cs321.team1.assets.audio.Sounds;
 import com.cs321.team1.game.Game;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-
 
 public class MenuButton extends MenuElement {
 
@@ -31,11 +32,11 @@ public class MenuButton extends MenuElement {
 
   @Override
   public BufferedImage render(Font font, int timeSelected) {
-    var fontMetrics = new BufferedImage(1, 1, 1).createGraphics().getFontMetrics(font);
+    FontMetrics fontMetrics = new BufferedImage(1, 1, 1).createGraphics().getFontMetrics(font);
     int textHeight = getHeight(font);
-    var image = new BufferedImage(Game.get().getRenderingManager().getScreenSize().x(), textHeight,
-        BufferedImage.TYPE_INT_ARGB);
-    var graphics = image.createGraphics();
+    BufferedImage image = new BufferedImage(Game.get().getRenderingManager().getScreenSize().x,
+        textHeight, BufferedImage.TYPE_INT_ARGB);
+    Graphics2D graphics = image.createGraphics();
     if (timeSelected != -1) {
       graphics.setColor(new Color(0.5f, 0.5f, 0.5f, 0.8f));
       graphics.fillRect(0, 0, Math.min((image.getWidth() / 10 * timeSelected), image.getWidth()),
@@ -60,11 +61,9 @@ public class MenuButton extends MenuElement {
     }
   }
 
-
   public boolean isDisabled() {
     return disabled;
   }
-
 
   public void setDisabled(boolean disabled) {
     this.disabled = disabled;
