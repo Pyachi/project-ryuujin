@@ -2,6 +2,7 @@ package com.cs321.team1.map;
 
 import com.cs321.team1.game.Game;
 import com.cs321.team1.game.GameSegment;
+import java.awt.Color;
 import java.awt.Graphics2D;
 
 public class LevelTransition implements GameSegment {
@@ -18,33 +19,28 @@ public class LevelTransition implements GameSegment {
   @Override
   public void render(Graphics2D buffer) {
     from.render(buffer);
-//    VolatileImage image = ResourceUtil.createImage();
-//    Graphics g = image.getGraphics();
-//    VolatileImage lvlImage = tick <= 10 ? from.render() : to.render();
-//    g.setColor(Color.BLACK);
-//    if (lvlImage != null) {
-//      g.drawImage(lvlImage, (image.getWidth(null) - lvlImage.getWidth()) / 2,
-//          (image.getHeight() - lvlImage.getHeight()) / 2, lvlImage.getWidth(), lvlImage.getHeight(),
-//          null);
-//    }
-//    if (tick <= 10) {
-//      g.fillRect((int) (image.getWidth() - (image.getWidth() * (tick / 10.0))), 0,
-//          (int) (image.getWidth() * (tick / 10.0)), image.getHeight());
-//    } else {
-//      g.fillRect(0, 0, (int) (image.getWidth() * ((20.0 - tick) / 10.0)), image.getHeight());
-//    }
-//    return image;
+    if (tick <= 20) {
+      from.render(buffer);
+    } else {
+      to.render(buffer);
+    }
+    buffer.setColor(Color.BLACK);
+    if (tick <= 20) {
+      buffer.fillRect(
+          (int) (Game.get().settings.getScreenSize().x() - (Game.get().settings.getScreenSize().x()
+              * (tick / 20.0))), 0, (int) (Game.get().settings.getScreenSize().x() * (tick / 20.0)),
+          Game.get().settings.getScreenSize().y());
+    } else {
+      buffer.fillRect(0, 0,
+          (int) (Game.get().settings.getScreenSize().x() * ((40.0 - tick) / 20.0)),
+          Game.get().settings.getScreenSize().y());
+    }
   }
 
   @Override
   public void update() {
     tick++;
-    if (tick <= 10) {
-      from.update();
-    } else {
-      to.update();
-    }
-    if (tick > 20) {
+    if (tick > 40) {
       Game.get().removeSegment(this);
     }
   }

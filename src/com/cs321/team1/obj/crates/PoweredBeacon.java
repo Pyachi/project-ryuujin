@@ -14,7 +14,7 @@ public class PoweredBeacon extends Crate {
   }
 
   @Override
-  public boolean canGrab() {
+  public boolean isMovable() {
     return false;
   }
 

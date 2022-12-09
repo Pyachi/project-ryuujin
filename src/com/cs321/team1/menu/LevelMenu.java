@@ -44,15 +44,15 @@ public class LevelMenu extends Menu {
       elements.add(new MenuButton("Return to Map", () -> {
         Sounds.DESELECT.play();
         game.popSegmentsTo(Level.class);
-//        game.pushSegment(new LevelTransition(lvl, game.getSegmentAtIndex(1)));
         game.removeSegment(lvl);
+        game.pushSegment(new LevelTransition(lvl, game.getHighestSegment()));
       }));
     }
     elements.add(new MenuButton("Quit to Menu", () -> {
       Sounds.DESELECT.play();
       game.saveGame();
       game.popSegmentsTo(MainMenu.class);
-      game.pushSegment(new LevelTransition(lvl, Game.get().getHighestSegment()));
+      game.pushSegment(new LevelTransition(lvl, game.getHighestSegment()));
     }));
     elements.add(new MenuButton("Quit to Desktop", () -> {
       Sounds.DESELECT.play();

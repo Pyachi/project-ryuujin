@@ -18,5 +18,5 @@ CVR|T:5:6|R
 CVR|T:6:6|R
 WAL|T:5:7|1:map/tile
 WAL|T:6:7|1:map/tile
-INT|R:40:64|7
+INT|T:3:4|7
 PWR|T:8:6|7

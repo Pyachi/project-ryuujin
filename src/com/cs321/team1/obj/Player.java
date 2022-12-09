@@ -4,55 +4,29 @@ import com.cs321.team1.obj.crates.Crate;
 import com.cs321.team1.util.Controls;
 import com.cs321.team1.util.Texture;
 import com.cs321.team1.util.Vec2;
-import com.cs321.team1.util.audio.Sounds;
 
 public class Player extends GameObject {
 
-  private Direction dir = Direction.SOUTH;
-  private Crate grabbedCrate = null;
+  private boolean moving = false;
+  private int moveTick = 0;
+  private int moveX = 0;
+  private int moveY = 0;
+  private Controls buffered;
 
   public Player(Vec2 loc) {
-    setTexture("player/right");
+    setTexture("player/right_idle_animated");
     setSize(new Vec2(1, 1).toTile());
     setLocation(loc);
-    registerTick(1, this::tick);
+    registerTick(1, this::checkMovement);
   }
 
   public boolean canMove(int x, int y) {
-    super.move(x, y);
+    move(x, y);
     boolean collision = collidesWith(Player.class) || collidesWith(UnpassableTile.class)
         || collidesWith(Crate.class) && getCollisions(Crate.class).stream()
-        .anyMatch(it -> it != grabbedCrate);
-    super.move(-x, -y);
+        .anyMatch(crate -> !crate.canMove(x, y));
+    move(-x, -y);
     return !collision;
-  }
-
-  public Crate getGrabbedCrate() {
-    return grabbedCrate;
-  }
-
-  public void setGrabbedCrate(Crate crate) {
-    grabbedCrate = crate;
-  }
-
-  public void move(int x, int y) {
-    if (grabbedCrate == null) {
-      if (canMove(x, 0)) {
-        super.move(x, 0);
-      }
-      if (canMove(0, y)) {
-        super.move(0, y);
-      }
-    } else {
-      if (canMove(x, 0) && grabbedCrate.canMove(x, 0)) {
-        super.move(x, 0);
-        grabbedCrate.move(x, 0);
-      }
-      if (canMove(0, y) && grabbedCrate.canMove(0, y)) {
-        super.move(0, y);
-        grabbedCrate.move(0, y);
-      }
-    }
   }
 
   @Override
@@ -60,75 +34,59 @@ public class Player extends GameObject {
     return "PLR|" + getLocation().toString();
   }
 
-  private void tick() {
-    handleCrates();
-    calculateMovement();
-  }
-
-  private void calculateMovement() {
-    int x = 0, y = 0;
-    if (Controls.UP.isHeld()) {
-      y -= 1;
-    }
-    if (Controls.DOWN.isHeld()) {
-      y += 1;
-    }
-    if (Controls.LEFT.isHeld()) {
-      x -= 1;
-    }
-    if (Controls.RIGHT.isHeld()) {
-      x += 1;
-    }
-    if (grabbedCrate == null) {
-      if (y < 0) {
-        dir = Direction.NORTH;
-        setTexture("player/up_walk_animated");
-      } else if (y > 0) {
-        dir = Direction.SOUTH;
-        setTexture("player/down_walk_animated");
-      } else if (x < 0) {
-        dir = Direction.WEST;
-        setTexture("player/left_walk_animated");
-      } else if (x > 0) {
-        dir = Direction.EAST;
-        setTexture("player/right_walk_animated");
-      } else {
-        switch (dir) {
-          case NORTH -> setTexture("player/up_idle_animated");
-          case SOUTH -> setTexture("player/down_idle_animated");
-          case EAST -> setTexture("player/right_idle_animated");
-          case WEST -> setTexture("player/left_idle_animated");
-        }
+  private void checkMovement() {
+    if (moveTick < 5) {
+      if (Controls.UP.isPressed()) {
+        buffered = Controls.UP;
+      } else if (Controls.DOWN.isPressed()) {
+        buffered = Controls.DOWN;
+      } else if (Controls.LEFT.isPressed()) {
+        buffered = Controls.LEFT;
+      } else if (Controls.RIGHT.isPressed()) {
+        buffered = Controls.RIGHT;
       }
     }
-    move(x, y);
+    if (moving) {
+      moveTick--;
+      super.move(moveX, moveY);
+      if (moveTick == 0) {
+        moving = false;
+        switch (getTexture().path.replace("player/", "").split("_")[0]) {
+          case "up" -> setTexture("player/up_idle_animated");
+          case "down" -> setTexture("player/down_idle_animated");
+          case "left" -> setTexture("player/left_idle_animated");
+          default -> setTexture("player/right_idle_animated");
+        }
+      }
+    } else {
+      if (buffered == Controls.UP && canMove(0, -1)) {
+        startMoving(0, -1);
+        setTexture("player/up_walk_animated");
+      } else if (buffered == Controls.DOWN && canMove(0, 1)) {
+        startMoving(0, 1);
+        setTexture("player/down_walk_animated");
+      } else if (buffered == Controls.LEFT  && canMove(-1, 0)) {
+        startMoving(-1, 0);
+        setTexture("player/left_walk_animated");
+      } else if (buffered == Controls.RIGHT && canMove(1, 0)) {
+        startMoving(1, 0);
+        setTexture("player/right_walk_animated");
+      }
+    }
   }
 
-  private void handleCrates() {
-    if (grabbedCrate == null && Controls.GRAB.isHeld()) {
-      Vec2 loc = switch (dir) {
-        default -> getLocation().add(8, 0);
-        case SOUTH -> getLocation().add(8, 16);
-        case WEST -> getLocation().add(0, 8);
-        case EAST -> getLocation().add(16, 8);
-      };
-      getLevel().getObjects().stream().filter(Crate.class::isInstance).map(Crate.class::cast)
-          .filter(it -> it.collidesWith(loc) && it.canGrab() && !it.isGrabbed()).findFirst()
-          .ifPresent(crate -> {
-            Sounds.PICKUP.play();
-            grabbedCrate = crate;
-          });
-    }
-    if (grabbedCrate != null && (!Controls.GRAB.isHeld() || grabbedCrate.isDead())) {
-      grabbedCrate = null;
-    }
+  public void startMoving(int x, int y) {
+    move(x,y);
+    getCollisions(Crate.class).forEach(it -> it.startMoving(x,y));
+    move(-x,-y);
+    buffered = null;
+    moveX = x;
+    moveY = y;
+    moving = true;
+    moveTick = 16;
   }
 
   private void setTexture(String path) {
     setTexture(new Texture(path, 2));
-  }
-
-  private enum Direction {
-    NORTH, SOUTH, EAST, WEST
   }
 }

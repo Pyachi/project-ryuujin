@@ -9,12 +9,12 @@ public class LockedDoor extends Crate {
   }
 
   @Override
-  public boolean canBeAppliedTo(Crate other) {
+  public boolean isMovable() {
     return false;
   }
 
   @Override
-  public boolean canGrab() {
+  public boolean canBeAppliedTo(Crate other) {
     return false;
   }
 

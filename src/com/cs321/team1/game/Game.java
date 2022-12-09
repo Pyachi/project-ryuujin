@@ -46,6 +46,10 @@ public class Game {
     return segments.stream().filter(clazz::isInstance).map(clazz::cast).findFirst().orElse(null);
   }
 
+  public GameSegment getSegmentAtIndex(int index) {
+    return segments.get(index);
+  }
+
   public void popSegmentsTo(Class<? extends GameSegment> clazz) {
     while (!clazz.isInstance(segments.get(0))) {
       segments.remove(0).finish();

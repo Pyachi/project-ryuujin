@@ -27,25 +27,6 @@ public abstract class Menu implements GameSegment {
   }
 
   @Override
-  public void render(Graphics2D buffer) {
-    Vec2 screenSize = Game.get().settings.getScreenSize();
-    buffer.setColor(new Color(0f, 0f, 0f, 0.8f));
-    buffer.fillRect(0, 0, screenSize.x(), screenSize.y());
-    buffer.setColor(Color.WHITE);
-    Font font = Game.get().renderer.getFont().deriveFont(((float) getTextSize()));
-    List<Image> renders = elements.stream()
-        .map(it -> it.render(font, it == getSelectableElements().get(selected) ? tick : -1))
-        .toList();
-    int renderHeight = renders.stream().mapToInt(it -> it.getHeight(null)).sum();
-    int y = (screenSize.y() - renderHeight) / 2;
-    for (Image render : renders) {
-      buffer.drawImage(render, 0, y, null);
-      y += render.getHeight(null);
-      render.flush();
-    }
-  }
-
-  @Override
   public void update() {
     tick++;
     if (Controls.DOWN.isPressed()) {
@@ -64,6 +45,25 @@ public abstract class Menu implements GameSegment {
     if (!(this instanceof MainMenu) && Controls.BACK.isPressed()) {
       Game.get().removeSegment(this);
       Sounds.DESELECT.play();
+    }
+  }
+
+  @Override
+  public void render(Graphics2D buffer) {
+    Vec2 screenSize = Game.get().settings.getScreenSize();
+    buffer.setColor(Color.BLACK);
+    buffer.fillRect(0, 0, screenSize.x(), screenSize.y());
+    buffer.setColor(Color.WHITE);
+    Font font = Game.get().renderer.getFont().deriveFont(((float) getTextSize()));
+    List<Image> renders = elements.stream()
+        .map(it -> it.render(font, it == getSelectableElements().get(selected) ? tick : -1))
+        .toList();
+    int renderHeight = renders.stream().mapToInt(it -> it.getHeight(null)).sum();
+    int y = (screenSize.y() - renderHeight) / 2;
+    for (Image render : renders) {
+      buffer.drawImage(render, 0, y, null);
+      y += render.getHeight(null);
+      render.flush();
     }
   }
 

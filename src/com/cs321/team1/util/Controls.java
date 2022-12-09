@@ -16,7 +16,6 @@ public enum Controls {
   DOWN(KeyEvent.VK_S),
   LEFT(KeyEvent.VK_A),
   RIGHT(KeyEvent.VK_D),
-  GRAB(KeyEvent.VK_SHIFT),
   SELECT(KeyEvent.VK_SPACE),
   BACK(KeyEvent.VK_ESCAPE),
   FULLSCREEN(KeyEvent.VK_F11),

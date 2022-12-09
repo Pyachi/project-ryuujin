@@ -24,6 +24,7 @@ import com.cs321.team1.util.ResourceUtil;
 import com.cs321.team1.util.Texture;
 import com.cs321.team1.util.Vec2;
 import com.cs321.team1.util.audio.Music;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -157,6 +158,9 @@ public class Level implements GameSegment {
     var image = ResourceUtil.createImage(getScale() * size.x(), getScale() * size.y());
     var graphics = image.createGraphics();
     list.forEach(it -> it.paint(graphics));
+    buffer.setColor(Color.BLACK);
+    buffer.fillRect(0, 0, Game.get().settings.getScreenSize().x(),
+        Game.get().settings.getScreenSize().y());
     buffer.drawImage(image, (Game.get().settings.getScreenSize().x() - image.getWidth()) / 2,
         (Game.get().settings.getScreenSize().y() - image.getHeight()) / 2, null);
     image.flush();
@@ -174,6 +178,7 @@ public class Level implements GameSegment {
         command -> builder.append("CMD|").append(condition).append("->").append(command)
             .append("\n")));
     getObjects().forEach(it -> builder.append(it.toString()).append("\n"));
+    addBase();
     return start + builder;
   }
 

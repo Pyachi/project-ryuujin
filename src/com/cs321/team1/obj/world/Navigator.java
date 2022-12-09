@@ -22,7 +22,7 @@ public class Navigator extends GameObject {
   private void checkMovement() {
     if (moving) {
       moveTick--;
-      super.move(moveX, moveY);
+      move(moveX, moveY);
       if (moveTick == 0) {
         moving = false;
       }
@@ -45,9 +45,9 @@ public class Navigator extends GameObject {
   }
 
   private boolean canMove(int x, int y) {
-    super.move(x * 16, y * 16);
+    move(x * 16, y * 16);
     boolean collision = collidesWith(LevelObject.class) || collidesWith(NavPath.class);
-    super.move(-x * 16, -y * 16);
+    move(-x * 16, -y * 16);
     return collision;
   }
 

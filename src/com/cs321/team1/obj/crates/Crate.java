@@ -2,7 +2,6 @@ package com.cs321.team1.obj.crates;
 
 import com.cs321.team1.game.Game;
 import com.cs321.team1.obj.GameObject;
-import com.cs321.team1.obj.Particle;
 import com.cs321.team1.obj.Player;
 import com.cs321.team1.obj.UnpassableTile;
 import com.cs321.team1.util.Texture;
@@ -13,6 +12,10 @@ import java.awt.Graphics2D;
 
 public abstract class Crate extends GameObject {
 
+  private boolean moving = false;
+  private int moveTick = 0;
+  private int moveX = 0;
+  private int moveY = 0;
   private final int value;
 
   public Crate(Vec2 loc, String texturePath, int value) {
@@ -20,33 +23,45 @@ public abstract class Crate extends GameObject {
     setLocation(loc);
     setSize(new Vec2(1, 1).toTile());
     setTexture(new Texture(texturePath, 1));
-    registerTick(2, this::checkMerge);
+    registerTick(2, this::tick);
+  }
+
+  public void startMoving(int x, int y) {
+    moveX = x;
+    moveY = y;
+    moving = true;
+    moveTick = 16;
+  }
+
+  public boolean isMovable() {
+    return true;
   }
 
   public abstract boolean canBeAppliedTo(Crate other);
 
-  public boolean canGrab() {
-    return true;
-  }
-
   public boolean canMove(int x, int y) {
+    if (!isMovable()) {
+      return false;
+    }
     move(x, y);
     boolean collision =
-        getCollisions(Player.class).stream().anyMatch(it -> it.getGrabbedCrate() != this)
-            || collidesWith(UnpassableTile.class) || getCollisions(Crate.class).stream()
-            .anyMatch(it -> !canBeAppliedTo(it) && !it.canBeAppliedTo(this));
+        collidesWith(Player.class) || collidesWith(UnpassableTile.class) || getCollisions(
+            Crate.class).stream().anyMatch(it -> !canBeAppliedTo(it) && !it.canBeAppliedTo(this));
     move(-x, -y);
     return !collision;
   }
 
-  private void checkMerge() {
-    getCollisions(Crate.class).stream().filter(this::canBeAppliedTo).findAny()
-        .ifPresent(this::generateNew);
-  }
-
-  public Player getGrabber() {
-    return getLevel().getObjects().stream().filter(Player.class::isInstance).map(Player.class::cast)
-        .filter(it -> it.getGrabbedCrate() == this).findFirst().orElse(null);
+  private void tick() {
+    if (moving) {
+      moveTick--;
+      move(moveX, moveY);
+      if (moveTick == 0) {
+        moving = false;
+      }
+    } else {
+      getCollisions(Crate.class).stream().filter(crate -> crate.getLocation().equals(getLocation()))
+          .filter(this::canBeAppliedTo).findAny().ifPresent(this::generateNew);
+    }
   }
 
   public abstract Crate getMergedCrate(Vec2 loc, Crate other);
@@ -59,42 +74,35 @@ public abstract class Crate extends GameObject {
     return value;
   }
 
-  public boolean isGrabbed() {
-    return getGrabber() != null;
-  }
-
   @Override
   public void paint(Graphics2D buffer) {
     if (isDead()) {
       return;
     }
-    super.paint(buffer);
-    buffer.setFont(Game.get().renderer.getFont().deriveFont(
-        (float) 16 * getLevel().getScale() * 0.4F / buffer.getFontMetrics(Game.get().renderer.getFont())
-            .stringWidth(getString())));
-    buffer.setColor(Color.WHITE);
-    buffer.drawString(getString(),
-        getLocation().x() * getLevel().getScale() - buffer.getFontMetrics().stringWidth(getString()) / 2
-            - 8 * getLevel().getScale(),
-        getLocation().y() * getLevel().getScale() + buffer.getFontMetrics().getHeight() / 2
-            - 7 * getLevel().getScale());
+    try { //Yay, race conditions...
+      super.paint(buffer);
+      buffer.setFont(Game.get().renderer.getFont().deriveFont(
+          (float) 16 * getLevel().getScale() * 0.4F / buffer.getFontMetrics(
+              Game.get().renderer.getFont()).stringWidth(getString())));
+      buffer.setColor(Color.WHITE);
+      buffer.drawString(getString(), getLocation().x() * getLevel().getScale()
+              - buffer.getFontMetrics().stringWidth(getString()) / 2 - 8 * getLevel().getScale(),
+          getLocation().y() * getLevel().getScale() + buffer.getFontMetrics().getHeight() / 2
+              - 7 * getLevel().getScale());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   private void generateNew(Crate other) {
     if (isDead()) {
       return;
     }
-    Crate replacedCrate = (!other.canGrab() || canBeAppliedTo(other)) ? other : this;
-    Crate newCrate = getMergedCrate(replacedCrate.getLocation(), other);
+    Crate newCrate = getMergedCrate(getLocation(), other);
     if (newCrate != null) {
       getLevel().addObject(newCrate);
-      getLevel().addObject(new Particle((replacedCrate == this ? other : this).getLocation(),
-          new Texture("crates/explosion_animated", 4)));
     }
     Sounds.MERGE.play();
-    if (replacedCrate.isGrabbed()) {
-      replacedCrate.getGrabber().setGrabbedCrate(newCrate);
-    }
     other.kill();
     kill();
   }

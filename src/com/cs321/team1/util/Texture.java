@@ -12,7 +12,7 @@ public class Texture {
   public final int priority;
   public final int frames;
   public final Vec2 size;
-  private final String path;
+  public final String path;
   public final BufferedImage buffer;
 
   public Texture(String path, int priority) {

@@ -42,16 +42,16 @@ public class Conveyor extends GameObject {
   }
 
   private void move() {
-    getCollisions(Player.class).forEach(it -> {
-      if (it.getCollisions(Conveyor.class).get(0) == this && it.canMove(x, y)) {
-        it.move(x, y);
-      }
-    });
-    getCollisions(Crate.class).forEach(it -> {
-      if (it.getCollisions(Conveyor.class).get(0) == this && it.canMove(x, y) && !it.isGrabbed()) {
-        it.move(x, y);
-      }
-    });
+//    getCollisions(Player.class).forEach(it -> {
+//      if (it.getCollisions(Conveyor.class).get(0) == this && it.canMove(x, y)) {
+//        it.move(x, y);
+//      }
+//    });
+//    getCollisions(Crate.class).forEach(it -> {
+//      if (it.getCollisions(Conveyor.class).get(0) == this && it.canMove(x, y) && !it.isGrabbed()) {
+//        it.move(x, y);
+//      }
+//    });
   }
 
   @Override
