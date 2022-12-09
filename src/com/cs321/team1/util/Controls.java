@@ -22,7 +22,6 @@ public enum Controls {
   DEBUG(KeyEvent.VK_F3);
   private static final Set<Integer> pressedKeys = new HashSet<>();
   private static final Set<Integer> heldKeys = new HashSet<>();
-  private static boolean initialized = false;
   private int key;
 
   Controls(int key) {
@@ -31,11 +30,6 @@ public enum Controls {
 
   public static void init(JFrame window) {
     Game.getLogger().info("Initializing keyboard...");
-    if (initialized) {
-      Game.getLogger().warning("Keyboard already initialized!");
-      return;
-    }
-    initialized = true;
     window.addKeyListener(new KeyListener() {
       @Override
       public void keyTyped(KeyEvent e) {

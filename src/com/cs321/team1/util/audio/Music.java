@@ -65,6 +65,7 @@ public enum Music {
           song.filteredData.put(filter, filter.filter.filter(song.data));
         }
       }
+      Game.getLogger().info("Music initialized!");
     } catch (Exception e) {
       Game.getLogger().warning("Could not initialize music!");
     }
@@ -92,7 +93,6 @@ public enum Music {
         Game.getLogger().warning("An error has occurred during music playback");
       }
     }).start();
-    Game.getLogger().info("Music initialized!");
   }
 
   public void play() {

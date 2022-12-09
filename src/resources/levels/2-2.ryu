@@ -1,7 +1,7 @@
-SET|T:7:5|2-2|false
+SET|7:5|2-2|false
 MSC|SOMBIENCE
-PLR|T:2:3
-INT|T:4:2|4
-INT|T:4:4|3
-NEG|T:6:2
-PWR|T:6:4|-1
+PLR|2:3
+INT|4:2|4
+INT|4:4|3
+NEG|6:2
+PWR|6:4|-1

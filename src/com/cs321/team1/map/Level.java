@@ -70,7 +70,7 @@ public class Level implements GameSegment {
           ResourceUtil.loadStream("resources/levels/" + name + ".ryu"))).lines()
           .toArray(String[]::new)));
     } catch (Exception e) {
-      Game.getLogger().warning("Could not load level: " + name);
+      Game.getLogger().error("Could not load level: " + name, e);
       return null;
     }
   }

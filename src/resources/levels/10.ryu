@@ -1,5 +1,5 @@
-SET|T:7:7|10|false
-PLR|T:6:2
-INT|T:3:3|13
-MOD|T:5:3|5
-PWR|T:4:5|3
+SET|7:7|10|false
+PLR|6:2
+INT|3:3|13
+MOD|5:3|5
+PWR|4:5|3

@@ -1,6 +1,6 @@
-SET|T:9:3|1-2|false
+SET|9:3|1-2|false
 MSC|SOMBIENCE
-PLR|T:2:2
-INT|T:4:2|3
-INT|T:6:2|4
-PWR|T:8:2|7
+PLR|2:2
+INT|4:2|3
+INT|6:2|4
+PWR|8:2|7

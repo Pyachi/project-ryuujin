@@ -82,7 +82,6 @@ public class Log {
     logger.log(Level.SEVERE, message);
     var buffer = new StringWriter();
     var printer = new PrintWriter(buffer);
-    e.printStackTrace();
     e.printStackTrace(printer);
     logger.log(Level.SEVERE, buffer.toString());
   }

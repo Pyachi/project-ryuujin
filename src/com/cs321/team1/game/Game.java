@@ -1,15 +1,21 @@
 package com.cs321.team1.game;
 
 import com.cs321.team1.map.Level;
+import com.cs321.team1.map.LevelTransition;
 import com.cs321.team1.menu.LoadingScreen;
+import com.cs321.team1.menu.MainMenu;
 import com.cs321.team1.util.Controls;
+import java.io.File;
 import java.io.FileWriter;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.stream.Collectors;
 
 public class Game {
 
@@ -94,23 +100,59 @@ public class Game {
   }
 
   public void saveGame() {
-    try {
-      var file = new FileWriter("ryuujin.sav");
+    log.info("Saving progress...");
+    try (var file = new FileWriter("ryuujin.sav")) {
+
+      log.info("Saving completed levels:");
       for (var level : completedLevels) {
         file.write("CMP|" + level + "\n");
+        log.info(level);
       }
+
+      log.info("Saving active levels:");
       for (var segment : segments) {
-        if (!(segment instanceof Level)) return;
+        if (!(segment instanceof Level)) continue;
         file.write(segment.toString());
+        log.info(((Level) segment).name);
       }
-      file.close();
+
+      log.info("Progress saved!");
     } catch (Exception e) {
-      getLogger().error("An error has occurred while trying to save the game!", e);
+      log.error("An error has occurred while trying to save the game!", e);
+    }
+  }
+
+  public void loadGame() {
+    log.info("Loading save file...");
+    try {
+      var lvlStrings = Files.readString(new File("ryuujin.sav").toPath()).split("SET");
+
+      log.info("Loading completed levels:");
+      if (!lvlStrings[0].equals("")) for (String cmd : lvlStrings[0].split("\\n")) {
+        String level = cmd.split("\\|")[1];
+        completeLevel(level);
+        log.info(level);
+      }
+
+      log.info("Loading active levels:");
+      List<Level> levels = Arrays.stream(Arrays.copyOfRange(lvlStrings, 1, lvlStrings.length))
+          .map(it -> Level.fromString("SET" + it)).toList();
+      List<GameSegment> segments = levels.stream().map(GameSegment.class::cast)
+          .collect(Collectors.toList());
+      segments.forEach(it -> {
+        if (it instanceof Level) log.info(((Level) it).name);
+      });
+      segments.add(0, new LevelTransition(getHighestSegmentOfType(MainMenu.class), levels.get(0)));
+      pushSegments(segments.toArray(new GameSegment[]{}));
+
+      log.info("Save file loaded!");
+    } catch (Exception e) {
+      log.severe("Could not load save file!");
     }
   }
 
   private void startGameLogic() {
-    getLogger().info("Initializing game...");
+    log.info("Initializing game...");
     pushSegment(new LoadingScreen());
     new Timer().scheduleAtFixedRate(new TimerTask() {
       @Override
@@ -118,11 +160,11 @@ public class Game {
         try {
           update();
         } catch (Exception e) {
-          Game.getLogger().error("An error has occurred during the game loop!", e);
+          log.error("An error has occurred during the game loop!", e);
         }
       }
     }, 0L, 20L);
-    getLogger().info("Game initialized!");
+    log.info("Game initialized!");
   }
 
   private void update() {

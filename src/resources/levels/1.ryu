@@ -1,5 +1,5 @@
-SET|T:5:5|1|false
-PLR|T:3:2
-INT|T:1:5|5
-PWR|T:5:5|5
+SET|5:5|1|false
+PLR|3:2
+INT|1:5|5
+PWR|5:5|5
 MSC|SOMBIENCE

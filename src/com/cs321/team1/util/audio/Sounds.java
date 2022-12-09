@@ -46,10 +46,10 @@ public enum Sounds {
           sound.filteredData.put(filter, filter.filter.filter(sound.data));
         }
       }
+      Game.getLogger().info("Sound effects initialized!");
     } catch (Exception e) {
       Game.getLogger().info("Could not initialize sound effects!");
     }
-    Game.getLogger().info("Sound effects initialized!");
   }
 
   public void play() {

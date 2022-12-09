@@ -38,7 +38,7 @@ public class MainMenu extends Menu {
     }));
     elements.add(new MenuButton("Continue", () -> {
       Sounds.SELECT.play();
-      loadGame();
+      Game.get().loadGame();
     }));
     elements.add(new MenuButton("Options", () -> {
       Sounds.SELECT.play();
@@ -49,23 +49,5 @@ public class MainMenu extends Menu {
       System.exit(0);
     }));
     Music.DAY.play();
-  }
-
-  private void loadGame() {
-    try {
-      var lvlStrings = Files.readString(new File("ryuujin.sav").toPath()).split("SET");
-      if (!lvlStrings[0].equals("")) {
-        Arrays.stream(lvlStrings[0].split("\n"))
-            .forEach(it -> Game.get().completeLevel(it.split("\\|")[1]));
-      }
-      List<Level> levels = Arrays.stream(Arrays.copyOfRange(lvlStrings, 1, lvlStrings.length))
-          .map(it -> Level.fromString("SET" + it)).toList();
-      List<GameSegment> segs = levels.stream().map(GameSegment.class::cast)
-          .collect(Collectors.toList());
-      segs.add(0, new LevelTransition(this, levels.get(0)));
-      Game.get().pushSegments(segs.toArray(new GameSegment[]{}));
-    } catch (Exception e) {
-      Game.getLogger().severe("Could not load save file!");
-    }
   }
 }
