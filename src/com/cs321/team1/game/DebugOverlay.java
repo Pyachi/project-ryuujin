@@ -29,8 +29,8 @@ public class DebugOverlay {
 
     graphics.setColor(Color.BLACK);
     graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5F));
-    graphics.fillRect(0, 0, Game.get().settings.getScreenSize().x() / 2,
-        Game.get().settings.getScreenSize().y());
+    graphics.fillRect(0, 0, Game.get().settings.getScreenSize().x() / 3,
+        Game.get().settings.getScreenSize().y() / 3);
 
     graphics.setColor(Color.WHITE);
     graphics.setComposite(AlphaComposite.SrcOver);

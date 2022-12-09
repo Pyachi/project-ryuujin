@@ -36,13 +36,13 @@ public class Player extends GameObject {
 
   private void checkMovement() {
     if (moveTick < 5) {
-      if (Controls.UP.isPressed()) {
+      if (Controls.UP.isHeld()) {
         buffered = Controls.UP;
-      } else if (Controls.DOWN.isPressed()) {
+      } else if (Controls.DOWN.isHeld()) {
         buffered = Controls.DOWN;
-      } else if (Controls.LEFT.isPressed()) {
+      } else if (Controls.LEFT.isHeld()) {
         buffered = Controls.LEFT;
-      } else if (Controls.RIGHT.isPressed()) {
+      } else if (Controls.RIGHT.isHeld()) {
         buffered = Controls.RIGHT;
       }
     }
@@ -65,7 +65,7 @@ public class Player extends GameObject {
       } else if (buffered == Controls.DOWN && canMove(0, 1)) {
         startMoving(0, 1);
         setTexture("player/down_walk_animated");
-      } else if (buffered == Controls.LEFT  && canMove(-1, 0)) {
+      } else if (buffered == Controls.LEFT && canMove(-1, 0)) {
         startMoving(-1, 0);
         setTexture("player/left_walk_animated");
       } else if (buffered == Controls.RIGHT && canMove(1, 0)) {
@@ -76,9 +76,9 @@ public class Player extends GameObject {
   }
 
   public void startMoving(int x, int y) {
-    move(x,y);
-    getCollisions(Crate.class).forEach(it -> it.startMoving(x,y));
-    move(-x,-y);
+    move(x, y);
+    getCollisions(Crate.class).forEach(it -> it.startMoving(x, y));
+    move(-x, -y);
     buffered = null;
     moveX = x;
     moveY = y;
