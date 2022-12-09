@@ -16,8 +16,9 @@ public class Game {
   private static Game instance = null;
   private final List<GameSegment> segments = new ArrayList<>();
   private final Set<String> completedLevels = new HashSet<>();
-  public final Renderer renderer = new Renderer();
-  public final Settings settings = new Settings();
+  private final Renderer renderer = new Renderer();
+  private final Settings settings = new Settings();
+  private final Log log = new Log();
 
   private Game() {
     instance = this;
@@ -32,6 +33,18 @@ public class Game {
       instance = new Game();
     }
     return instance;
+  }
+
+  public static Renderer getRenderer() {
+    return get().renderer;
+  }
+
+  public static Settings getSettings() {
+    return get().settings;
+  }
+
+  public static Log getLogger() {
+    return get().log;
   }
 
   public GameSegment getHighestSegment() {
@@ -87,54 +100,48 @@ public class Game {
   public void saveGame() {
     try {
       var file = new FileWriter("ryuujin.sav");
-      completedLevels.forEach(level -> {
-        try {
-          file.write("CMP|" + level + "\n");
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      });
-      segments.forEach(segment -> {
+      for (var level : completedLevels) {
+        file.write("CMP|" + level + "\n");
+      }
+      for (var segment : segments) {
         if (!(segment instanceof Level)) {
           return;
         }
-        try {
-          file.write(segment.toString());
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      });
+        file.write(segment.toString());
+      }
       file.close();
     } catch (Exception e) {
-      e.printStackTrace();
+      getLogger().error("An error has occurred while trying to save the game!", e);
     }
   }
 
   private void startGameLogic() {
+    getLogger().info("Initializing game...");
     pushSegment(new LoadingScreen());
     new Timer().scheduleAtFixedRate(new TimerTask() {
       @Override
       public void run() {
-        update();
+        try {
+          update();
+        } catch (Exception e) {
+          Game.getLogger().error("An error has occurred during the game loop!", e);
+        }
       }
     }, 0L, 20L);
+    getLogger().info("Game initialized!");
   }
 
   private void update() {
-    try {
-      if (getHighestSegmentOfType(Controls.ControlChanger.class) == null) {
-        if (Controls.FULLSCREEN.isPressed()) {
-          settings.setFullscreen(!settings.isFullscreen());
-          renderer.updateScreen();
-        }
-        if (Controls.DEBUG.isPressed()) {
-          settings.setDebug(!settings.isDebug());
-        }
+    if (getHighestSegmentOfType(Controls.ControlChanger.class) == null) {
+      if (Controls.FULLSCREEN.isPressed()) {
+        settings.setFullscreen(!settings.isFullscreen());
+        renderer.updateScreen();
       }
-      segments.get(0).update();
-    } catch (Exception e) {
-      e.printStackTrace();
+      if (Controls.DEBUG.isPressed()) {
+        settings.setDebug(!settings.isDebug());
+      }
     }
+    segments.get(0).update();
   }
 
   public static void main(String[] args) {

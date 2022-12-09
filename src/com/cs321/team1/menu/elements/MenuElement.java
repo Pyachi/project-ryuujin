@@ -17,7 +17,7 @@ public abstract class MenuElement {
   }
 
   public int getHeight(Font font) {
-    return Game.get().renderer.getFontMetrics(font).getHeight() * 2;
+    return Game.getRenderer().getFontMetrics(font).getHeight() * 2;
   }
 
   public String getText() {

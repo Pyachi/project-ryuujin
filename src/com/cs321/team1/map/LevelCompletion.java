@@ -22,12 +22,12 @@ public class LevelCompletion implements GameSegment {
   public void render(Graphics2D buffer) {
     level.render(buffer);
     VolatileImage completionImage = ResourceUtil.createImage(
-        (int) (Game.get().settings.getScreenSize().x() * (tick / 50.0)),
-        (int) (Game.get().settings.getScreenSize().y() * (tick / 50.0)));
+        (int) (Game.getSettings().getScreenSize().x() * (tick / 50.0)),
+        (int) (Game.getSettings().getScreenSize().y() * (tick / 50.0)));
     texture.fillImage(completionImage, tick);
     buffer.drawImage(completionImage,
-        (Game.get().settings.getScreenSize().x() - completionImage.getWidth()) / 2,
-        (Game.get().settings.getScreenSize().y() - completionImage.getHeight()) / 2,
+        (Game.getSettings().getScreenSize().x() - completionImage.getWidth()) / 2,
+        (Game.getSettings().getScreenSize().y() - completionImage.getHeight()) / 2,
         completionImage.getWidth(), completionImage.getHeight(), null);
     completionImage.flush();
   }

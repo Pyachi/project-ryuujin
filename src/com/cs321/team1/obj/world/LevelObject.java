@@ -39,18 +39,14 @@ public class LevelObject extends GameObject {
     if (isDead()) {
       return;
     }
-    try { //Yay, race conditions...
-      super.paint(buffer);
-      buffer.setFont(Game.get().renderer.getFont().deriveFont(
-          (float) 16 * getLevel().getScale() * 0.5F / buffer.getFontMetrics(
-              Game.get().renderer.getFont()).stringWidth(lvl + "")));
-      buffer.drawString(lvl + "", getLocation().x() * getLevel().getScale()
-              - buffer.getFontMetrics().stringWidth(lvl + "") / 2 - 8 * getLevel().getScale(),
-          getLocation().y() * getLevel().getScale() + buffer.getFontMetrics().getHeight() / 2
-              - 8 * getLevel().getScale());
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+    super.paint(buffer);
+    buffer.setFont(Game.getRenderer().getFont().deriveFont(
+        (float) 16 * getLevel().getScale() * 0.5F / buffer.getFontMetrics(
+            Game.getRenderer().getFont()).stringWidth(lvl + "")));
+    buffer.drawString(lvl + "", getLocation().x() * getLevel().getScale()
+            - buffer.getFontMetrics().stringWidth(lvl + "") / 2 - 8 * getLevel().getScale(),
+        getLocation().y() * getLevel().getScale() + buffer.getFontMetrics().getHeight() / 2
+            - 8 * getLevel().getScale());
   }
 
   @Override

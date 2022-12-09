@@ -4,7 +4,7 @@ import java.util.function.Supplier;
 
 public enum Framerate {
   UNLIMITED(() -> 1000000000, "Unlimited"),
-  VSYNC(() -> Game.get().renderer.getGraphicsConfiguration().getDevice().getDisplayMode()
+  VSYNC(() -> Game.getRenderer().getGraphicsConfiguration().getDevice().getDisplayMode()
       .getRefreshRate(), "VSYNC"),
   _30(() -> 30, "30"),
   _60(() -> 60, "60"),

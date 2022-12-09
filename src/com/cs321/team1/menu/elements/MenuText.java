@@ -16,14 +16,14 @@ public class MenuText extends MenuElement {
 
   @Override
   public int getWidth(Font font) {
-    return Game.get().renderer.getFontMetrics(font).stringWidth(getText() + "AAAA");
+    return Game.getRenderer().getFontMetrics(font).stringWidth(getText() + "AAAA");
   }
 
   @Override
   public VolatileImage render(Font font, int timeSelected) {
-    FontMetrics fontMetrics = Game.get().renderer.getFontMetrics(font);
+    FontMetrics fontMetrics = Game.getRenderer().getFontMetrics(font);
     int textHeight = getHeight(font);
-    VolatileImage image = ResourceUtil.createImage(Game.get().settings.getScreenSize().x(),
+    VolatileImage image = ResourceUtil.createImage(Game.getSettings().getScreenSize().x(),
         textHeight);
     Graphics2D graphics = image.createGraphics();
     graphics.setFont(font);

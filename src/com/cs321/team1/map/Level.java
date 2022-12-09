@@ -71,7 +71,7 @@ public class Level implements GameSegment {
           ResourceUtil.loadStream("resources/levels/" + name + ".ryu"))).lines()
           .toArray(String[]::new)));
     } catch (Exception e) {
-      e.printStackTrace();
+      Game.getLogger().warning("Could not load level: " + name);
       return null;
     }
   }
@@ -108,7 +108,7 @@ public class Level implements GameSegment {
 
   public int getScale() {
     int scale = 20;
-    var screenSize = Game.get().settings.getScreenSize();
+    var screenSize = Game.getSettings().getScreenSize();
     while (scale * size.x() > screenSize.x() || scale * size.y() > screenSize.y()) {
       scale--;
     }
@@ -159,10 +159,10 @@ public class Level implements GameSegment {
     var graphics = image.createGraphics();
     list.forEach(it -> it.paint(graphics));
     buffer.setColor(Color.BLACK);
-    buffer.fillRect(0, 0, Game.get().settings.getScreenSize().x(),
-        Game.get().settings.getScreenSize().y());
-    buffer.drawImage(image, (Game.get().settings.getScreenSize().x() - image.getWidth()) / 2,
-        (Game.get().settings.getScreenSize().y() - image.getHeight()) / 2, null);
+    buffer.fillRect(0, 0, Game.getSettings().getScreenSize().x(),
+        Game.getSettings().getScreenSize().y());
+    buffer.drawImage(image, (Game.getSettings().getScreenSize().x() - image.getWidth()) / 2,
+        (Game.getSettings().getScreenSize().y() - image.getHeight()) / 2, null);
     image.flush();
   }
 
@@ -269,7 +269,7 @@ public class Level implements GameSegment {
         }
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      Game.getLogger().warning("Could not parse command: " + cmd);
     }
   }
 

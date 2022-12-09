@@ -28,43 +28,46 @@ public class Renderer extends JFrame {
     try {
       setFont(
           Font.createFont(Font.TRUETYPE_FONT, ResourceUtil.loadStream("resources/PressStart.ttf")));
-    } catch (FontFormatException | IOException e) {
-      e.printStackTrace();
+    } catch (Exception e) {
+      Game.getLogger().warning("Could not load custom font!");
     }
   }
 
   void start() {
+    Game.getLogger().info("Initializing renderer...");
     new Thread(() -> {
       while (true) {
-        long start = System.nanoTime();
-        if (!disabled) {
-          render();
-          debugOverlay.frames++;
-        }
-        long elapsed = System.nanoTime() - start;
-        long wait = (Game.get().settings.getFramerate().getInterval() - elapsed) / 1000000;
-        if (wait < 0) {
-          wait = 0;
-        }
         try {
+          long start = System.nanoTime();
+          if (!disabled) {
+            render();
+            debugOverlay.frames++;
+          }
+          long elapsed = System.nanoTime() - start;
+          long wait = (Game.getSettings().getFramerate().getInterval() - elapsed) / 1000000;
+          if (wait < 0) {
+            wait = 0;
+          }
           Thread.sleep(wait);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
+        } catch (Exception e) {
+          Game.getLogger().warning("An error has occurred during the rendering loop!");
         }
       }
     }).start();
+    Game.getLogger().info("Renderer initialized!");
   }
 
   public void updateScreen() {
     disabled = true;
+    Game.getLogger().info("Refreshing screen...");
     dispose();
-    setUndecorated(Game.get().settings.isFullscreen());
+    setUndecorated(Game.getSettings().isFullscreen());
     var bounds = getGraphicsConfiguration().getDevice().getDefaultConfiguration().getBounds();
-    if (Game.get().settings.isFullscreen()) {
+    if (Game.getSettings().isFullscreen()) {
       setLocation(bounds.x, bounds.y);
       panel.setPreferredSize(new Dimension(bounds.width, bounds.height));
     } else {
-      var screenSize = Game.get().settings.getScreenSize();
+      var screenSize = Game.getSettings().getScreenSize();
       setLocation(bounds.x + (bounds.width - screenSize.x()) / 2,
           bounds.y + (bounds.height - screenSize.y()) / 2);
       panel.setPreferredSize(new Dimension(screenSize.x(), screenSize.y()));
@@ -72,6 +75,7 @@ public class Renderer extends JFrame {
     pack();
     setVisible(true);
     createBufferStrategy(2);
+    Game.getLogger().info("Screen refreshed!");
     disabled = false;
   }
 
@@ -81,7 +85,7 @@ public class Renderer extends JFrame {
     if (Game.get().getHighestSegment() != null) {
       Game.get().getHighestSegment().render(graphics);
     }
-    if (Game.get().settings.isDebug()) {
+    if (Game.getSettings().isDebug()) {
       debugOverlay.render(graphics);
     }
     if (!disabled) {

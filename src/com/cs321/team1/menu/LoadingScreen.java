@@ -31,8 +31,8 @@ public class LoadingScreen implements GameSegment {
     tex.fillImage(image, 0);
     buffer.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
     buffer.setColor(new Color(0F, 0F, 0F, 1F - Math.min(opacity / 100F, 1F)));
-    buffer.fillRect(0, 0, Game.get().settings.getScreenSize().x(),
-        Game.get().settings.getScreenSize().y());
+    buffer.fillRect(0, 0, Game.getSettings().getScreenSize().x(),
+        Game.getSettings().getScreenSize().y());
     image.flush();
   }
 

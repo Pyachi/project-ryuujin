@@ -37,16 +37,16 @@ public class MenuSelection extends MenuElement {
 
   @Override
   public int getWidth(Font font) {
-    int stringWidth = Game.get().renderer.getFontMetrics(font).stringWidth(getText() + "AAAA");
+    int stringWidth = Game.getRenderer().getFontMetrics(font).stringWidth(getText() + "AAAA");
     return showSlider ? stringWidth * 2 : stringWidth;
   }
 
   @Override
   public VolatileImage render(Font font, int timeSelected) {
-    FontMetrics fontMetrics = Game.get().renderer.getFontMetrics(font);
+    FontMetrics fontMetrics = Game.getRenderer().getFontMetrics(font);
     int textWidth = fontMetrics.stringWidth(getText());
     int textHeight = fontMetrics.getHeight();
-    VolatileImage image = ResourceUtil.createImage(Game.get().settings.getScreenSize().x(),
+    VolatileImage image = ResourceUtil.createImage(Game.getSettings().getScreenSize().x(),
         textHeight * 2);
     Graphics2D graphics = image.createGraphics();
     if (selected != -1) {

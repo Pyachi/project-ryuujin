@@ -32,14 +32,15 @@ public abstract class Menu implements GameSegment {
     if (Controls.DOWN.isPressed()) {
       tick = 0;
       selected++;
+      if (selected >= getSelectableElements().size()) {
+        selected = 0;
+      }
     } else if (Controls.UP.isPressed()) {
       tick = 0;
       selected--;
-    }
-    if (selected < 0) {
-      selected = getSelectableElements().size() - 1;
-    } else if (selected >= getSelectableElements().size()) {
-      selected = 0;
+      if (selected < 0) {
+        selected = getSelectableElements().size() - 1;
+      }
     }
     getSelectableElements().get(selected).update();
     if (!(this instanceof MainMenu) && Controls.BACK.isPressed()) {
@@ -50,11 +51,11 @@ public abstract class Menu implements GameSegment {
 
   @Override
   public void render(Graphics2D buffer) {
-    Vec2 screenSize = Game.get().settings.getScreenSize();
+    Vec2 screenSize = Game.getSettings().getScreenSize();
     buffer.setColor(Color.BLACK);
     buffer.fillRect(0, 0, screenSize.x(), screenSize.y());
     buffer.setColor(Color.WHITE);
-    Font font = Game.get().renderer.getFont().deriveFont(((float) getTextSize()));
+    Font font = Game.getRenderer().getFont().deriveFont(((float) getTextSize()));
     List<Image> renders = elements.stream()
         .map(it -> it.render(font, it == getSelectableElements().get(selected) ? tick : -1))
         .toList();
@@ -74,21 +75,21 @@ public abstract class Menu implements GameSegment {
   private int getTextSize() {
     int maxWidth;
     int totalHeight;
-    int textSize = Game.get().settings.getScreenSize().y() / 20 + 1;
+    int textSize = Game.getSettings().getScreenSize().y() / 20 + 1;
     do {
       maxWidth = 0;
       totalHeight = 0;
       textSize--;
       for (MenuElement element : elements) {
-        Font font = Game.get().renderer.getFont().deriveFont(((float) textSize));
+        Font font = Game.getRenderer().getFont().deriveFont(((float) textSize));
         int width = element.getWidth(font);
         if (maxWidth < width) {
           maxWidth = width;
         }
         totalHeight += element.getHeight(font);
       }
-    } while (maxWidth > Game.get().settings.getScreenSize().x()
-        || totalHeight > Game.get().settings.getScreenSize().y());
+    } while (maxWidth > Game.getSettings().getScreenSize().x()
+        || totalHeight > Game.getSettings().getScreenSize().y());
     return textSize;
   }
 }

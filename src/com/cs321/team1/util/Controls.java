@@ -30,7 +30,9 @@ public enum Controls {
   }
 
   public static void init(JFrame window) {
+    Game.getLogger().info("Initializing keyboard...");
     if (initialized) {
+      Game.getLogger().warning("Keyboard already initialized!");
       return;
     }
     initialized = true;
@@ -51,6 +53,7 @@ public enum Controls {
         heldKeys.remove(e.getKeyCode());
       }
     });
+    Game.getLogger().info("Keyboard initialized!");
   }
 
   public static String keyNameFromInt(int key) {

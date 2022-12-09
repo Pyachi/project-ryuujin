@@ -9,15 +9,15 @@ import java.io.FileWriter;
 
 public class Settings {
 
-  Settings() {
-    loadOptions();
-    Runtime.getRuntime().addShutdownHook(new Thread(this::saveOptions));
-  }
-
   private boolean debug;
   private boolean fullscreen;
   private Resolution resolution = Resolution._640x480;
   private Framerate framerate = Framerate.VSYNC;
+
+  Settings() {
+    loadOptions();
+    Runtime.getRuntime().addShutdownHook(new Thread(this::saveOptions));
+  }
 
   public Vec2 getScreenSize() {
     return resolution.size;
@@ -58,27 +58,24 @@ public class Settings {
   void loadOptions() {
     try (var file = new BufferedReader(new FileReader("options.txt"))) {
       for (var str : file.lines().toList()) {
-        try {
-          if (str.startsWith("fullscreen: ")) {
-            setFullscreen(Boolean.parseBoolean(str.split("fullscreen: ")[1]));
-          }
-          if (str.startsWith("resolution: ")) {
-            setResolution(Resolution.values()[Integer.parseInt(str.split("resolution: ")[1])]);
-          }
-          if (str.startsWith("framerate: ")) {
-            setFramerate(Framerate.values()[Integer.parseInt(str.split("framerate: ")[1])]);
-          }
-          if (str.startsWith("music: ")) {
-            Music.setVolume(Integer.parseInt(str.split("music: ")[1]));
-          }
-          if (str.startsWith("sound: ")) {
-            Sounds.setVolume(Integer.parseInt(str.split("sound: ")[1]));
-          }
-        } catch (Exception e) {
-          e.printStackTrace();
+        if (str.startsWith("fullscreen: ")) {
+          setFullscreen(Boolean.parseBoolean(str.split("fullscreen: ")[1]));
+        }
+        if (str.startsWith("resolution: ")) {
+          setResolution(Resolution.values()[Integer.parseInt(str.split("resolution: ")[1])]);
+        }
+        if (str.startsWith("framerate: ")) {
+          setFramerate(Framerate.values()[Integer.parseInt(str.split("framerate: ")[1])]);
+        }
+        if (str.startsWith("music: ")) {
+          Music.setVolume(Integer.parseInt(str.split("music: ")[1]));
+        }
+        if (str.startsWith("sound: ")) {
+          Sounds.setVolume(Integer.parseInt(str.split("sound: ")[1]));
         }
       }
-    } catch (Exception ignored) {
+    } catch (Exception e) {
+      Game.getLogger().warning("Could not load options from file!");
     }
   }
 
@@ -90,7 +87,7 @@ public class Settings {
       file.write("music: " + Music.getVolume() + "\n");
       file.write("sound: " + Sounds.getVolume() + "\n");
     } catch (Exception e) {
-      e.printStackTrace();
+      Game.getLogger().warning("Could not save options to file!");
     }
   }
 }

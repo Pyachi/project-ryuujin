@@ -53,18 +53,18 @@ public class VideoMenu extends LevelMenu {
   }
 
   private void applySettings() {
-    Game.get().settings.setFullscreen(isFullscreen);
-    Game.get().settings.setResolution(newResolution);
-    Game.get().settings.setFramerate(newFramerate);
-    Game.get().renderer.updateScreen();
+    Game.getSettings().setFullscreen(isFullscreen);
+    Game.getSettings().setResolution(newResolution);
+    Game.getSettings().setFramerate(newFramerate);
+    Game.getRenderer().updateScreen();
     resetSettings();
     updateButtons();
   }
 
   private void resetSettings() {
-    isFullscreen = wasFullscreen = Game.get().settings.isFullscreen();
-    newResolution = oldResolution = Game.get().settings.getResolution();
-    newFramerate = oldFramerate = Game.get().settings.getFramerate();
+    isFullscreen = wasFullscreen = Game.getSettings().isFullscreen();
+    newResolution = oldResolution = Game.getSettings().getResolution();
+    newFramerate = oldFramerate = Game.getSettings().getFramerate();
   }
 
   private void updateButtons() {

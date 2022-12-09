@@ -79,19 +79,15 @@ public abstract class Crate extends GameObject {
     if (isDead()) {
       return;
     }
-    try { //Yay, race conditions...
-      super.paint(buffer);
-      buffer.setFont(Game.get().renderer.getFont().deriveFont(
-          (float) 16 * getLevel().getScale() * 0.4F / buffer.getFontMetrics(
-              Game.get().renderer.getFont()).stringWidth(getString())));
-      buffer.setColor(Color.WHITE);
-      buffer.drawString(getString(), getLocation().x() * getLevel().getScale()
-              - buffer.getFontMetrics().stringWidth(getString()) / 2 - 8 * getLevel().getScale(),
-          getLocation().y() * getLevel().getScale() + buffer.getFontMetrics().getHeight() / 2
-              - 7 * getLevel().getScale());
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+    super.paint(buffer);
+    buffer.setFont(Game.getRenderer().getFont().deriveFont(
+        (float) 16 * getLevel().getScale() * 0.4F / buffer.getFontMetrics(
+            Game.getRenderer().getFont()).stringWidth(getString())));
+    buffer.setColor(Color.WHITE);
+    buffer.drawString(getString(), getLocation().x() * getLevel().getScale()
+            - buffer.getFontMetrics().stringWidth(getString()) / 2 - 8 * getLevel().getScale(),
+        getLocation().y() * getLevel().getScale() + buffer.getFontMetrics().getHeight() / 2
+            - 7 * getLevel().getScale());
   }
 
   private void generateNew(Crate other) {

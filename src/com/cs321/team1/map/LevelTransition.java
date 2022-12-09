@@ -27,13 +27,13 @@ public class LevelTransition implements GameSegment {
     buffer.setColor(Color.BLACK);
     if (tick <= 20) {
       buffer.fillRect(
-          (int) (Game.get().settings.getScreenSize().x() - (Game.get().settings.getScreenSize().x()
-              * (tick / 20.0))), 0, (int) (Game.get().settings.getScreenSize().x() * (tick / 20.0)),
-          Game.get().settings.getScreenSize().y());
+          (int) (Game.getSettings().getScreenSize().x() - (Game.getSettings().getScreenSize().x()
+              * (tick / 20.0))), 0, (int) (Game.getSettings().getScreenSize().x() * (tick / 20.0)),
+          Game.getSettings().getScreenSize().y());
     } else {
       buffer.fillRect(0, 0,
-          (int) (Game.get().settings.getScreenSize().x() * ((40.0 - tick) / 20.0)),
-          Game.get().settings.getScreenSize().y());
+          (int) (Game.getSettings().getScreenSize().x() * ((40.0 - tick) / 20.0)),
+          Game.getSettings().getScreenSize().y());
     }
   }
 

@@ -1,5 +1,6 @@
 package com.cs321.team1.util.audio;
 
+import com.cs321.team1.game.Game;
 import com.cs321.team1.util.ResourceUtil;
 import com.cs321.team1.util.audio.filters.Filters;
 import java.io.ByteArrayInputStream;
@@ -21,7 +22,6 @@ public enum Music {
   private static int volume = 50;
   private static int selected = -1;
   private static volatile InputStream stream;
-  private static boolean initialized = false;
   private static int distance;
   private static SourceDataLine line = null;
   private final String path;
@@ -38,7 +38,11 @@ public enum Music {
       stream = new ByteArrayInputStream(filter == null ? song.data : song.filteredData.get(filter));
       stream.readNBytes(distance);
     } catch (Exception e) {
-      e.printStackTrace();
+      if (filter != null) {
+        Game.getLogger().warning("Filter could not be applied: " + filter.name());
+      } else {
+        Game.getLogger().warning("Filter could not be removed!");
+      }
     }
   }
 
@@ -55,49 +59,43 @@ public enum Music {
   }
 
   public static void init() {
-    if (initialized) {
-      return;
-    }
-    initialized = true;
+    Game.getLogger().info("Initializing music...");
     try {
       for (Music song : values()) {
-        try {
-          var stream = ResourceUtil.loadStream(song.path);
-          song.data = AudioSystem.getAudioInputStream(stream).readAllBytes();
-          for (Filters filter : Filters.values()) {
-            song.filteredData.put(filter, filter.filter.filter(song.data));
-          }
-        } catch (Exception e) {
-          e.printStackTrace();
+        var stream = ResourceUtil.loadStream(song.path);
+        song.data = AudioSystem.getAudioInputStream(stream).readAllBytes();
+        for (Filters filter : Filters.values()) {
+          song.filteredData.put(filter, filter.filter.filter(song.data));
         }
       }
-      new Thread(() -> {
-        try {
-          var info = new DataLine.Info(SourceDataLine.class, FORMAT);
-          line = (SourceDataLine) AudioSystem.getLine(info);
-          line.open(FORMAT, 11025);
-          line.start();
-          ((FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN)).setValue(
-              (float) (20 * Math.log10(volume / 100.0)));
-          byte[] buffer = new byte[4096];
-          int count;
-          while (true) {
-            while (stream == null) {
-              Thread.onSpinWait();
-            }
-            while ((count = stream.read(buffer, 0, 4096)) != -1) {
-              distance += count;
-              line.write(buffer, 0, count);
-            }
-            values()[selected].play();
-          }
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      }).start();
     } catch (Exception e) {
-      e.printStackTrace();
+      Game.getLogger().warning("Could not initialize music!");
     }
+    new Thread(() -> {
+      try {
+        var info = new DataLine.Info(SourceDataLine.class, FORMAT);
+        line = (SourceDataLine) AudioSystem.getLine(info);
+        line.open(FORMAT, 11025);
+        line.start();
+        ((FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN)).setValue(
+            (float) (20 * Math.log10(volume / 100.0)));
+        byte[] buffer = new byte[4096];
+        int count;
+        while (true) {
+          while (stream == null) {
+            Thread.onSpinWait();
+          }
+          while ((count = stream.read(buffer, 0, 4096)) != -1) {
+            distance += count;
+            line.write(buffer, 0, count);
+          }
+          values()[selected].play();
+        }
+      } catch (Exception e) {
+        Game.getLogger().warning("An error has occurred during music playback");
+      }
+    }).start();
+    Game.getLogger().info("Music initialized!");
   }
 
   public void play() {
@@ -109,7 +107,7 @@ public enum Music {
       stream = new ByteArrayInputStream(data);
       distance = 0;
     } catch (Exception e) {
-      e.printStackTrace();
+      Game.getLogger().warning("Could not play song: " + name());
     }
   }
 }

@@ -1,5 +1,6 @@
 package com.cs321.team1.util.audio;
 
+import com.cs321.team1.game.Game;
 import com.cs321.team1.util.ResourceUtil;
 import com.cs321.team1.util.audio.filters.Filters;
 import java.io.ByteArrayInputStream;
@@ -19,7 +20,6 @@ public enum Sounds {
   private static final AudioFormat FORMAT = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100F,
       16, 2, 4, 44100F, false);
   private static int volume = 50;
-  private static boolean initialized = false;
   private final String path;
   private final Map<Filters, byte[]> filteredData = new HashMap<>();
   private byte[] data;
@@ -37,25 +37,19 @@ public enum Sounds {
   }
 
   public static void init() {
-    if (initialized) {
-      return;
-    }
-    initialized = true;
+    Game.getLogger().info("Initializing sound effects...");
     try {
       for (Sounds sound : values()) {
-        try {
-          var stream = ResourceUtil.loadStream(sound.path);
-          sound.data = AudioSystem.getAudioInputStream(stream).readAllBytes();
-          for (Filters filter : Filters.values()) {
-            sound.filteredData.put(filter, filter.filter.filter(sound.data));
-          }
-        } catch (Exception e) {
-          e.printStackTrace();
+        var stream = ResourceUtil.loadStream(sound.path);
+        sound.data = AudioSystem.getAudioInputStream(stream).readAllBytes();
+        for (Filters filter : Filters.values()) {
+          sound.filteredData.put(filter, filter.filter.filter(sound.data));
         }
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      Game.getLogger().info("Could not initialize sound effects!");
     }
+    Game.getLogger().info("Sound effects initialized!");
   }
 
   public void play() {
@@ -66,7 +60,7 @@ public enum Sounds {
           (float) (20 * Math.log10(volume / 100.0)));
       clip.start();
     } catch (Exception e) {
-      e.printStackTrace();
+      Game.getLogger().warning("Could not play sound: " + name());
     }
   }
 
@@ -79,7 +73,7 @@ public enum Sounds {
           (float) (20 * Math.log10(volume / 100.0)));
       clip.start();
     } catch (Exception e) {
-      e.printStackTrace();
+      Game.getLogger().warning("Could not play filtered sound: " + name());
     }
   }
 }

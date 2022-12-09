@@ -20,8 +20,8 @@ public class ResourceUtil {
   }
 
   public static VolatileImage createImage() {
-    Vec2 screenSize = Game.get().settings.getScreenSize();
-    VolatileImage image = Game.get().renderer.getGraphicsConfiguration()
+    Vec2 screenSize = Game.getSettings().getScreenSize();
+    VolatileImage image = Game.getRenderer().getGraphicsConfiguration()
         .createCompatibleVolatileImage(screenSize.x(), screenSize.y(), Transparency.TRANSLUCENT);
     Graphics2D graphics = image.createGraphics();
     graphics.setColor(Color.BLACK);
@@ -32,7 +32,7 @@ public class ResourceUtil {
   }
 
   public static VolatileImage createImage(int x, int y) {
-    VolatileImage image = Game.get().renderer.getGraphicsConfiguration()
+    VolatileImage image = Game.getRenderer().getGraphicsConfiguration()
         .createCompatibleVolatileImage(x, y, Transparency.TRANSLUCENT);
     Graphics2D graphics = image.createGraphics();
     graphics.setColor(Color.BLACK);

@@ -69,7 +69,7 @@ public class MainMenu extends Menu {
       segs.add(0, new LevelTransition(this, levels.get(0)));
       Game.get().pushSegments(segs.toArray(new GameSegment[]{}));
     } catch (Exception e) {
-      e.printStackTrace();
+      Game.getLogger().severe("Could not load save file!");
     }
   }
 }

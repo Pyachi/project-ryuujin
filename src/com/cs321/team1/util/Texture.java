@@ -1,5 +1,6 @@
 package com.cs321.team1.util;
 
+import com.cs321.team1.game.Game;
 import com.cs321.team1.obj.GameObject;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -21,11 +22,13 @@ public class Texture {
     try {
       buffer = ImageIO.read(ResourceUtil.loadStream(TEXTURES_PATH + path + ".png"));
     } catch (Exception e) {
+      Game.getLogger().warning(path + " texture not found!");
       try {
         buffer = ImageIO.read(ResourceUtil.loadStream(TEXTURES_PATH + "null.png"));
         priority = 100;
       } catch (Exception ex) {
         //This should never happen, but hard-crash just in case
+        Game.getLogger().severe("Fallback texture missing, shutting down!!!");
         System.exit(-1);
         throw new RuntimeException(ex);
       }
