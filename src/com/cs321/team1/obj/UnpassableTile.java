@@ -6,20 +6,19 @@ import com.cs321.team1.util.Vec2;
 public class UnpassableTile extends GameObject {
 
   public UnpassableTile(Vec2 loc, Vec2 size, Texture tex) {
-    setTexture(tex);
+    if (tex != null) {
+      setTexture(tex);
+    }
     setLocation(loc);
     setSize(size);
   }
 
   public UnpassableTile(Vec2 loc, Texture tex) {
-    setTexture(tex);
-    setLocation(loc);
-    setSize(tex.size);
+    this(loc, tex.size, tex);
   }
 
   public UnpassableTile(Vec2 loc, Vec2 size) {
-    setLocation(loc);
-    setSize(size);
+    this(loc, size, null);
   }
 
   @Override

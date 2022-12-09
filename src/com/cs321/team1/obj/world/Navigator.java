@@ -16,9 +16,10 @@ public class Navigator extends GameObject {
     setTexture(new Texture("player/nav", 5));
     setSize(new Vec2(16, 16));
     setLocation(loc);
+    registerTick(1, this::checkMovement);
   }
 
-  public void checkMovement() {
+  private void checkMovement() {
     if (moving) {
       moveTick--;
       super.move(moveX, moveY);

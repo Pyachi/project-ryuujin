@@ -15,27 +15,23 @@ public class Trigger extends GameObject {
   public Trigger(Vec2 loc, Vec2 size, Texture tex, String command) {
     setLocation(loc);
     setSize(size);
-    setTexture(tex);
+    if (tex != null) {
+      setTexture(tex);
+    }
     this.command = command;
     run = getCommand();
+    registerTick(2, this::tick);
   }
 
   public Trigger(Vec2 loc, Texture tex, String command) {
-    setTexture(tex);
-    setSize(tex.size);
-    setLocation(loc);
-    this.command = command;
-    run = getCommand();
+    this(loc, tex.size, tex, command);
   }
 
   public Trigger(Vec2 location, Vec2 size, String command) {
-    setLocation(location);
-    setSize(size);
-    this.command = command;
-    run = getCommand();
+    this(location, size, null, command);
   }
 
-  public void run() {
+  private void tick() {
     if (collidesWith(Player.class)) {
       run.run();
     }

@@ -11,9 +11,10 @@ public class NavPath extends GameObject {
   public NavPath(Vec2 loc) {
     setSize(new Vec2(16, 16));
     setLocation(loc);
+    registerTick(1, this::checkDirections);
   }
 
-  public void checkDirections() {
+  private void checkDirections() {
     if (measured) {
       return;
     }

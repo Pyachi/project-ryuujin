@@ -1,10 +1,9 @@
 package com.cs321.team1.game;
 
-import com.cs321.team1.util.ResourceUtil;
+import com.cs321.team1.map.Level;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.image.VolatileImage;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -37,9 +36,12 @@ public class DebugOverlay {
     graphics.setComposite(AlphaComposite.SrcOver);
     graphics.setFont(font);
     graphics.drawString("FPS: " + fps, metrics.getHeight(), metrics.getHeight() * 2);
-    graphics.drawString("FD: " + Game.get().settings.getFramerate().getInterval(), metrics.getHeight(),
-        metrics.getHeight() * 4);
+    graphics.drawString("FD: " + Game.get().settings.getFramerate().getInterval(),
+        metrics.getHeight(), metrics.getHeight() * 4);
     graphics.drawString("ST: " + Game.get().getHighestSegment().getClass().getSimpleName(),
         metrics.getHeight(), metrics.getHeight() * 6);
+    Level level = Game.get().getHighestSegmentOfType(Level.class);
+    graphics.drawString("LO: " + (level == null ? 0 : level.getObjects().size()),
+        metrics.getHeight(), metrics.getHeight() * 8);
   }
 }

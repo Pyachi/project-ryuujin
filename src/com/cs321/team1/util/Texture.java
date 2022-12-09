@@ -1,6 +1,5 @@
 package com.cs321.team1.util;
 
-import com.cs321.team1.game.Game;
 import com.cs321.team1.obj.GameObject;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -44,13 +43,6 @@ public class Texture {
     return new Texture(args[1], Integer.parseInt(args[0]));
   }
 
-  public void fillCanvas(Graphics2D g, int tick) {
-    if (buffer != null) {
-      g.drawImage(buffer.getSubimage(0, size.y() * ((tick / 5) % frames), size.x(), size.y()), 0, 0,
-          Game.get().settings.getScreenSize().x(), Game.get().settings.getScreenSize().y(), null);
-    }
-  }
-
   public void fillImage(VolatileImage image, int tick) {
     if (this.buffer != null) {
       image.createGraphics().drawImage(
@@ -59,9 +51,10 @@ public class Texture {
     }
   }
 
-  public void paint(GameObject obj, Graphics2D g, int tick) {
-    if (buffer != null) {
-      g.drawImage(buffer.getSubimage(0, size.y() * ((tick / 5) % frames), size.x(), size.y()),
+  public void paint(GameObject obj, Graphics2D buffer, int tick) {
+    if (this.buffer != null) {
+      buffer.drawImage(
+          this.buffer.getSubimage(0, size.y() * ((tick / 5) % frames), size.x(), size.y()),
           (obj.getLocation().x() - 16) * obj.getLevel().getScale(),
           (obj.getLocation().y() - 16) * obj.getLevel().getScale(),
           obj.getSize().x() * obj.getLevel().getScale(),

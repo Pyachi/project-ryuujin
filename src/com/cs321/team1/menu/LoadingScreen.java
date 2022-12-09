@@ -2,6 +2,7 @@ package com.cs321.team1.menu;
 
 import com.cs321.team1.game.Game;
 import com.cs321.team1.game.GameSegment;
+import com.cs321.team1.util.ResourceUtil;
 import com.cs321.team1.util.Texture;
 import com.cs321.team1.util.audio.Music;
 import com.cs321.team1.util.audio.Sounds;
@@ -26,10 +27,13 @@ public class LoadingScreen implements GameSegment {
 
   @Override
   public void render(Graphics2D buffer) {
-    tex.fillCanvas(buffer, 0);
+    var image = ResourceUtil.createImage();
+    tex.fillImage(image, 0);
+    buffer.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
     buffer.setColor(new Color(0F, 0F, 0F, 1F - Math.min(opacity / 100F, 1F)));
     buffer.fillRect(0, 0, Game.get().settings.getScreenSize().x(),
         Game.get().settings.getScreenSize().y());
+    image.flush();
   }
 
   @Override

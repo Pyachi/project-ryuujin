@@ -25,7 +25,6 @@ import com.cs321.team1.util.Texture;
 import com.cs321.team1.util.Vec2;
 import com.cs321.team1.util.audio.Music;
 import java.awt.Graphics2D;
-import java.awt.image.VolatileImage;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -76,6 +75,18 @@ public class Level implements GameSegment {
     }
   }
 
+  public void addObject(GameObject obj) {
+    obj.setLevel(this);
+    if (obj.getID() == 0) {
+      obj.setId(getNextID());
+    }
+    objs.put(obj.getID(), obj);
+  }
+
+  public void removeObject(GameObject obj) {
+    objs.remove(obj.getID());
+  }
+
   public void addObject(int id, GameObject obj) {
     if (id != -1) {
       obj.setId(id);
@@ -86,12 +97,8 @@ public class Level implements GameSegment {
     addObject(obj);
   }
 
-  public void addObject(GameObject obj) {
-    obj.setLevel(this);
-    if (obj.getID() == 0) {
-      obj.setId(getNextID());
-    }
-    objs.put(obj.getID(), obj);
+  public void removeObject(int id) {
+    objs.remove(id);
   }
 
   public Set<GameObject> getObjects() {
@@ -108,25 +115,6 @@ public class Level implements GameSegment {
   }
 
   @Override
-  public void restart() {
-    if (music != null) {
-      music.play();
-    }
-  }
-
-  @Override
-  public void render(Graphics2D buffer) {
-    var list = objs.values().stream().filter(it -> it.getTexture() != null)
-        .sorted(Comparator.comparingInt(it -> it.getTexture().priority)).toList();
-    var image = ResourceUtil.createImage(getScale() * size.x(), getScale() * size.y());
-    var graphics = image.createGraphics();
-    list.forEach(it -> it.paint(graphics));
-    buffer.drawImage(image, (Game.get().settings.getScreenSize().x() - image.getWidth()) / 2,
-        (Game.get().settings.getScreenSize().y() - image.getHeight()) / 2, null);
-    image.flush();
-  }
-
-  @Override
   public void start() {
     if (music != null) {
       music.play();
@@ -134,12 +122,24 @@ public class Level implements GameSegment {
   }
 
   @Override
+  public void restart() {
+    start();
+  }
+
+  @Override
   public void update() {
-    objs.values().forEach(GameObject::age);
+    getObjects().forEach(GameObject::age);
+
+    Map<Integer, List<Runnable>> ticks = new HashMap<>();
+    getObjects().forEach(it -> it.getTicks()
+        .forEach((key, list) -> ticks.computeIfAbsent(key, ArrayList::new).addAll(list)));
+    ticks.entrySet().stream().sorted(Comparator.comparingInt(Map.Entry::getKey))
+        .map(Map.Entry::getValue).forEach(it -> it.forEach(Runnable::run));
+
     if (Controls.BACK.isPressed()) {
       Game.get().pushSegment(new LevelMenu());
     }
-    if (!isWorld && objs.values().stream().noneMatch(UnpoweredBeacon.class::isInstance)) {
+    if (!isWorld && getObjects().stream().noneMatch(UnpoweredBeacon.class::isInstance)) {
       Game.get().pushSegment(new LevelCompletion(this));
       Game.get().completeLevel(name);
     }
@@ -150,12 +150,16 @@ public class Level implements GameSegment {
     }));
   }
 
-  public void removeObject(GameObject obj) {
-    objs.remove(obj.getID());
-  }
-
-  public void removeObject(int id) {
-    GameObject obj = objs.remove(id);
+  @Override
+  public void render(Graphics2D buffer) {
+    var list = getObjects().stream().filter(it -> it.getTexture() != null)
+        .sorted(Comparator.comparingInt(it -> it.getTexture().priority)).toList();
+    var image = ResourceUtil.createImage(getScale() * size.x(), getScale() * size.y());
+    var graphics = image.createGraphics();
+    list.forEach(it -> it.paint(graphics));
+    buffer.drawImage(image, (Game.get().settings.getScreenSize().x() - image.getWidth()) / 2,
+        (Game.get().settings.getScreenSize().y() - image.getHeight()) / 2, null);
+    image.flush();
   }
 
   @Override
@@ -169,9 +173,7 @@ public class Level implements GameSegment {
     cmds.forEach((condition, commandList) -> commandList.forEach(
         command -> builder.append("CMD|").append(condition).append("->").append(command)
             .append("\n")));
-    for (var obj : objs.values()) {
-      builder.append(obj.toString()).append("\n");
-    }
+    getObjects().forEach(it -> builder.append(it.toString()).append("\n"));
     return start + builder;
   }
 
@@ -185,23 +187,10 @@ public class Level implements GameSegment {
         new Vec2(1, size.y()).toTile()));
   }
 
-  private boolean checkCMD(String condition, String command) {
-    var cond = condition.split("\\|");
-    if ("LVL".equals(cond[0])) {
-      if (Game.get().isLevelCompleted(cond[1])) {
-        parseCommand(command);
-        return true;
-      }
+  private void removeBase() {
+    for (int i = 1; i <= 5; i++) {
+      removeObject(i);
     }
-    return false;
-  }
-
-  private int getNextID() {
-    int id = 1;
-    while (objs.containsKey(id)) {
-      id++;
-    }
-    return id;
   }
 
   private void parseCommand(String cmd) {
@@ -279,9 +268,22 @@ public class Level implements GameSegment {
     }
   }
 
-  private void removeBase() {
-    for (int i = 1; i <= 5; i++) {
-      removeObject(i);
+  private boolean checkCMD(String condition, String command) {
+    var cond = condition.split("\\|");
+    if ("LVL".equals(cond[0])) {
+      if (Game.get().isLevelCompleted(cond[1])) {
+        parseCommand(command);
+        return true;
+      }
     }
+    return false;
+  }
+
+  private int getNextID() {
+    int id = 1;
+    while (objs.containsKey(id)) {
+      id++;
+    }
+    return id;
   }
 }

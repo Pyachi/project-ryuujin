@@ -2,11 +2,7 @@ package com.cs321.team1.map;
 
 import com.cs321.team1.game.Game;
 import com.cs321.team1.game.GameSegment;
-import com.cs321.team1.util.ResourceUtil;
-import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.image.VolatileImage;
 
 public class LevelTransition implements GameSegment {
 

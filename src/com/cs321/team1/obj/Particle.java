@@ -8,12 +8,13 @@ public class Particle extends GameObject {
   public final int lifetime;
 
   public Particle(Vec2 loc, Texture texture) {
-    setLocation(loc.add(-((texture.size.x()- 16) / 2), -((texture.size.y()- 16) / 2)));
+    setLocation(loc.add(-((texture.size.x() - 16) / 2), -((texture.size.y() - 16) / 2)));
     setTexture(texture);
     lifetime = 5 * texture.frames;
+    registerTick(1, this::deathClock);
   }
 
-  public void deathClock() {
+  private void deathClock() {
     if (getAge() >= lifetime) {
       kill();
     }

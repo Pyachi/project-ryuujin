@@ -19,6 +19,7 @@ public abstract class Crate extends GameObject {
     setLocation(loc);
     setSize(new Vec2(1, 1).toTile());
     setTexture(new Texture(texturePath, 1));
+    registerTick(2, this::checkMerge);
   }
 
   public abstract boolean canBeAppliedTo(Crate other);
@@ -37,7 +38,7 @@ public abstract class Crate extends GameObject {
     return !collision;
   }
 
-  public void checkMerge() {
+  private void checkMerge() {
     getCollisions(Crate.class).stream().filter(this::canBeAppliedTo).findAny()
         .ifPresent(this::generateNew);
   }
@@ -71,9 +72,9 @@ public abstract class Crate extends GameObject {
         (float) 16 * getLevel().getScale() * 0.4F / g.getFontMetrics(Game.get().renderer.getFont())
             .stringWidth(getString())));
     g.drawString(getString(),
-        getLocation().x()* getLevel().getScale() - g.getFontMetrics().stringWidth(getString()) / 2
+        getLocation().x() * getLevel().getScale() - g.getFontMetrics().stringWidth(getString()) / 2
             - 8 * getLevel().getScale(),
-        getLocation().y()* getLevel().getScale() + g.getFontMetrics().getHeight() / 2
+        getLocation().y() * getLevel().getScale() + g.getFontMetrics().getHeight() / 2
             - 7 * getLevel().getScale());
   }
 

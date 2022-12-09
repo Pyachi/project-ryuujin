@@ -22,6 +22,7 @@ public class Conveyor extends GameObject {
     } else if (x == 1) {
       setTexture("map/conveyor_right_animated");
     }
+    registerTick(3, this::move);
   }
 
   public static Conveyor DOWN(Vec2 loc) {
@@ -40,7 +41,7 @@ public class Conveyor extends GameObject {
     return new Conveyor(loc, 0, -1);
   }
 
-  public void move() {
+  private void move() {
     getCollisions(Player.class).forEach(it -> {
       if (it.getCollisions(Conveyor.class).get(0) == this && it.canMove(x, y)) {
         it.move(x, y);

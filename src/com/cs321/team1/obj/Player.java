@@ -10,14 +10,12 @@ public class Player extends GameObject {
 
   private Direction dir = Direction.SOUTH;
   private Crate grabbedCrate = null;
-  private boolean blocked = false;
-  private int tryX = 0;
-  private int tryY = 0;
 
   public Player(Vec2 loc) {
     setTexture("player/right");
     setSize(new Vec2(1, 1).toTile());
     setLocation(loc);
+    registerTick(1, this::tick);
   }
 
   public boolean canMove(int x, int y) {
@@ -27,32 +25,6 @@ public class Player extends GameObject {
         .anyMatch(it -> it != grabbedCrate);
     super.move(-x, -y);
     return !collision;
-  }
-
-  public void confirmMovement() {
-    if (!blocked) {
-      return;
-    }
-    blocked = false;
-    int x = tryX;
-    int y = tryY;
-    tryX = 0;
-    tryY = 0;
-    move(x, 0);
-    move(0, y);
-  }
-
-  public void confirmMovementAgain() {
-    if (!blocked) {
-      return;
-    }
-    blocked = false;
-    int x = tryX;
-    int y = tryY;
-    tryX = 0;
-    tryY = 0;
-    move(x, 0);
-    move(0, y);
   }
 
   public Crate getGrabbedCrate() {
@@ -67,30 +39,18 @@ public class Player extends GameObject {
     if (grabbedCrate == null) {
       if (canMove(x, 0)) {
         super.move(x, 0);
-      } else {
-        blocked = true;
-        tryX += x;
       }
       if (canMove(0, y)) {
         super.move(0, y);
-      } else {
-        blocked = true;
-        tryY += y;
       }
     } else {
       if (canMove(x, 0) && grabbedCrate.canMove(x, 0)) {
         super.move(x, 0);
         grabbedCrate.move(x, 0);
-      } else {
-        blocked = true;
-        tryX += x;
       }
       if (canMove(0, y) && grabbedCrate.canMove(0, y)) {
         super.move(0, y);
         grabbedCrate.move(0, y);
-      } else {
-        blocked = true;
-        tryY += y;
       }
     }
   }
@@ -100,10 +60,7 @@ public class Player extends GameObject {
     return "PLR|" + getLocation().toString();
   }
 
-  public void movement() {
-    blocked = false;
-    tryX = 0;
-    tryY = 0;
+  private void tick() {
     handleCrates();
     calculateMovement();
   }

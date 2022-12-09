@@ -18,9 +18,10 @@ public class LevelObject extends GameObject {
     setTexture(new Texture("map/level", 2));
     setSize(new Vec2(16, 16));
     setLocation(loc);
+    registerTick(1, this::onTick);
   }
 
-  public void onTick() {
+  private void onTick() {
     if (Game.get().isLevelCompleted(lvl)) {
       setTexture(new Texture("map/completedLevel", 2));
     }
@@ -43,9 +44,9 @@ public class LevelObject extends GameObject {
         (float) 16 * getLevel().getScale() * 0.5F / g.getFontMetrics(Game.get().renderer.getFont())
             .stringWidth(lvl + "")));
     g.drawString(lvl + "",
-        getLocation().x()* getLevel().getScale() - g.getFontMetrics().stringWidth(lvl + "") / 2
+        getLocation().x() * getLevel().getScale() - g.getFontMetrics().stringWidth(lvl + "") / 2
             - 8 * getLevel().getScale(),
-        getLocation().y()* getLevel().getScale() + g.getFontMetrics().getHeight() / 2
+        getLocation().y() * getLevel().getScale() + g.getFontMetrics().getHeight() / 2
             - 8 * getLevel().getScale());
   }
 
