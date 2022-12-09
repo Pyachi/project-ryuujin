@@ -2,6 +2,7 @@ package com.cs321.team1.menu.elements;
 
 import com.cs321.team1.game.Game;
 import com.cs321.team1.util.ResourceUtil;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
@@ -26,6 +27,7 @@ public class MenuText extends MenuElement {
         textHeight);
     Graphics2D graphics = image.createGraphics();
     graphics.setFont(font);
+    graphics.setColor(Color.WHITE);
     int x = fontMetrics.stringWidth("AA");
     int y = (image.getHeight() - textHeight / 2) / 2 + fontMetrics.getAscent();
     graphics.drawString(getText(), x, y);

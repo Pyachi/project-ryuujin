@@ -35,18 +35,18 @@ public class LevelObject extends GameObject {
   }
 
   @Override
-  public void paint(Graphics2D g) {
+  public void paint(Graphics2D buffer) {
     if (isDead()) {
       return;
     }
-    super.paint(g);
-    g.setFont(Game.get().renderer.getFont().deriveFont(
-        (float) 16 * getLevel().getScale() * 0.5F / g.getFontMetrics(Game.get().renderer.getFont())
+    super.paint(buffer);
+    buffer.setFont(Game.get().renderer.getFont().deriveFont(
+        (float) 16 * getLevel().getScale() * 0.5F / buffer.getFontMetrics(Game.get().renderer.getFont())
             .stringWidth(lvl + "")));
-    g.drawString(lvl + "",
-        getLocation().x() * getLevel().getScale() - g.getFontMetrics().stringWidth(lvl + "") / 2
+    buffer.drawString(lvl + "",
+        getLocation().x() * getLevel().getScale() - buffer.getFontMetrics().stringWidth(lvl + "") / 2
             - 8 * getLevel().getScale(),
-        getLocation().y() * getLevel().getScale() + g.getFontMetrics().getHeight() / 2
+        getLocation().y() * getLevel().getScale() + buffer.getFontMetrics().getHeight() / 2
             - 8 * getLevel().getScale());
   }
 

@@ -127,9 +127,9 @@ public abstract class GameObject {
     }
   }
 
-  public void paint(Graphics2D g) {
+  public void paint(Graphics2D buffer) {
     if (!dead && texture != null) {
-      getTexture().paint(this, g, age);
+      getTexture().paint(this, buffer, age);
     }
   }
 
