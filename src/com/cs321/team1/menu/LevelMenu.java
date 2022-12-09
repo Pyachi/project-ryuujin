@@ -1,14 +1,13 @@
 package com.cs321.team1.menu;
 
-import com.cs321.team1.assets.audio.Music;
-import com.cs321.team1.assets.audio.Sounds;
-import com.cs321.team1.assets.audio.filters.Filters;
 import com.cs321.team1.game.Game;
 import com.cs321.team1.map.Level;
 import com.cs321.team1.map.LevelTransition;
 import com.cs321.team1.menu.elements.MenuButton;
+import com.cs321.team1.util.audio.Music;
+import com.cs321.team1.util.audio.Sounds;
+import com.cs321.team1.util.audio.filters.Filters;
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 
 public class LevelMenu extends Menu {
 
@@ -45,7 +44,7 @@ public class LevelMenu extends Menu {
       elements.add(new MenuButton("Return to Map", () -> {
         Sounds.DESELECT.play();
         game.popSegmentsTo(Level.class);
-        game.pushSegment(new LevelTransition(lvl, game.getSegmentAtIndex(1)));
+//        game.pushSegment(new LevelTransition(lvl, game.getSegmentAtIndex(1)));
         game.removeSegment(lvl);
       }));
     }
@@ -64,18 +63,13 @@ public class LevelMenu extends Menu {
   }
 
   @Override
-  public BufferedImage render() {
-    BufferedImage image = Game.get().getRenderingManager().createImage();
-    Graphics2D g = image.createGraphics();
-    Level lvl = Game.get().getHighestSegmentOfType(Level.class);
-    if (lvl == null) {
-      return super.render();
+  public void render(Graphics2D buffer) {
+    var level = Game.get().getHighestSegmentOfType(Level.class);
+    if (level == null) {
+      super.render(buffer);
+    } else {
+      level.render(buffer);
+      super.render(buffer);
     }
-    BufferedImage lvlImage = lvl.getLevelImage();
-    g.drawImage(lvlImage, (image.getWidth() - lvlImage.getWidth()) / 2,
-        (image.getHeight() - lvlImage.getHeight()) / 2, lvlImage.getWidth(), lvlImage.getHeight(),
-        null);
-    g.drawImage(super.render(), 0, 0, image.getWidth(), image.getHeight(), null);
-    return image;
   }
 }

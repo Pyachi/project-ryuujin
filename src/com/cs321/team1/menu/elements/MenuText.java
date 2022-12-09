@@ -1,10 +1,11 @@
 package com.cs321.team1.menu.elements;
 
 import com.cs321.team1.game.Game;
+import com.cs321.team1.util.ResourceUtil;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
+import java.awt.image.VolatileImage;
 
 public class MenuText extends MenuElement {
 
@@ -14,16 +15,15 @@ public class MenuText extends MenuElement {
 
   @Override
   public int getWidth(Font font) {
-    return new BufferedImage(1, 1, 1).createGraphics().getFontMetrics(font)
-        .stringWidth(getText() + "AAAA");
+    return Game.get().renderer.getFontMetrics(font).stringWidth(getText() + "AAAA");
   }
 
   @Override
-  public BufferedImage render(Font font, int timeSelected) {
-    FontMetrics fontMetrics = new BufferedImage(1, 1, 1).createGraphics().getFontMetrics(font);
+  public VolatileImage render(Font font, int timeSelected) {
+    FontMetrics fontMetrics = Game.get().renderer.getFontMetrics(font);
     int textHeight = getHeight(font);
-    BufferedImage image = new BufferedImage(Game.get().getRenderingManager().getScreenSize().x,
-        textHeight, BufferedImage.TYPE_INT_ARGB);
+    VolatileImage image = ResourceUtil.createImage(Game.get().settings.getScreenSize().x(),
+        textHeight);
     Graphics2D graphics = image.createGraphics();
     graphics.setFont(font);
     int x = fontMetrics.stringWidth("AA");

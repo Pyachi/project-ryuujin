@@ -1,8 +1,8 @@
 package com.cs321.team1.menu.elements;
 
+import com.cs321.team1.game.Game;
 import java.awt.Font;
 import java.awt.Image;
-import java.awt.image.BufferedImage;
 
 public abstract class MenuElement {
 
@@ -17,7 +17,7 @@ public abstract class MenuElement {
   }
 
   public int getHeight(Font font) {
-    return new BufferedImage(1, 1, 1).createGraphics().getFontMetrics(font).getHeight() * 2;
+    return Game.get().renderer.getFontMetrics(font).getHeight() * 2;
   }
 
   public String getText() {

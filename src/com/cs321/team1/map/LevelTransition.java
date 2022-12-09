@@ -2,9 +2,11 @@ package com.cs321.team1.map;
 
 import com.cs321.team1.game.Game;
 import com.cs321.team1.game.GameSegment;
+import com.cs321.team1.util.ResourceUtil;
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
+import java.awt.image.VolatileImage;
 
 public class LevelTransition implements GameSegment {
 
@@ -15,39 +17,38 @@ public class LevelTransition implements GameSegment {
   public LevelTransition(GameSegment from, GameSegment to) {
     this.from = from;
     this.to = to;
-    from.render();
-    to.render();
   }
 
   @Override
-  public BufferedImage render() {
-    BufferedImage image = Game.get().getRenderingManager().createImage();
-    Graphics2D g = image.createGraphics();
-    BufferedImage lvlImage = tick <= 20 ? from.render() : to.render();
-    g.setColor(Color.BLACK);
-    if (lvlImage != null) {
-      g.drawImage(lvlImage, (image.getWidth() - lvlImage.getWidth()) / 2,
-          (image.getHeight() - lvlImage.getHeight()) / 2, lvlImage.getWidth(), lvlImage.getHeight(),
-          null);
-    }
-    if (tick <= 20) {
-      g.fillRect((int) (image.getWidth() - (image.getWidth() * (tick / 20.0))), 0,
-          (int) (image.getWidth() * (tick / 20.0)), image.getHeight());
-    } else {
-      g.fillRect(0, 0, (int) (image.getWidth() * ((40.0 - tick) / 20.0)), image.getHeight());
-    }
-    return image;
+  public void render(Graphics2D buffer) {
+    from.render(buffer);
+//    VolatileImage image = ResourceUtil.createImage();
+//    Graphics g = image.getGraphics();
+//    VolatileImage lvlImage = tick <= 10 ? from.render() : to.render();
+//    g.setColor(Color.BLACK);
+//    if (lvlImage != null) {
+//      g.drawImage(lvlImage, (image.getWidth(null) - lvlImage.getWidth()) / 2,
+//          (image.getHeight() - lvlImage.getHeight()) / 2, lvlImage.getWidth(), lvlImage.getHeight(),
+//          null);
+//    }
+//    if (tick <= 10) {
+//      g.fillRect((int) (image.getWidth() - (image.getWidth() * (tick / 10.0))), 0,
+//          (int) (image.getWidth() * (tick / 10.0)), image.getHeight());
+//    } else {
+//      g.fillRect(0, 0, (int) (image.getWidth() * ((20.0 - tick) / 10.0)), image.getHeight());
+//    }
+//    return image;
   }
 
   @Override
   public void update() {
     tick++;
-    if (tick <= 20) {
+    if (tick <= 10) {
       from.update();
     } else {
       to.update();
     }
-    if (tick > 40) {
+    if (tick > 20) {
       Game.get().removeSegment(this);
     }
   }

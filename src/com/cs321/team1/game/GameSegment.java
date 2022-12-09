@@ -1,23 +1,21 @@
 package com.cs321.team1.game;
 
-import java.awt.image.BufferedImage;
+import java.awt.Graphics2D;
 
 public interface GameSegment {
-
-  default void finish() {
-  }
-
-  default void onScreenSizeChange() {
-  }
-
-  default void refresh() {
-  }
-
-  BufferedImage render();
 
   default void start() {
   }
 
+  default void restart() {
+  }
+
+  default void finish() {
+  }
+
   default void update() {
+  }
+
+  default void render(Graphics2D buffer) {
   }
 }

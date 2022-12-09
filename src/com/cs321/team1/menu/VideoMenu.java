@@ -1,69 +1,50 @@
 package com.cs321.team1.menu;
 
-import com.cs321.team1.assets.Resolutions;
-import com.cs321.team1.assets.audio.Sounds;
+import com.cs321.team1.game.Framerate;
 import com.cs321.team1.game.Game;
+import com.cs321.team1.game.Resolution;
 import com.cs321.team1.menu.elements.MenuButton;
-import com.cs321.team1.menu.elements.MenuSlider;
-import java.awt.GraphicsEnvironment;
+import com.cs321.team1.menu.elements.MenuSelection;
+import com.cs321.team1.util.audio.Sounds;
 
 public class VideoMenu extends LevelMenu {
 
-  private MenuSlider fullscreenButton;
-  private MenuSlider resolutionButton;
-  private MenuSlider monitorButton;
-  private MenuSlider fpsButton;
-  private MenuButton applyButton;
-  private int monitor;
-  private int prevMonitor;
-  private Resolutions res;
-  private Resolutions prevRes;
-  private boolean fullscreen;
-  private boolean prevFullscreen;
-  private int fps;
-  private int prevFps;
-
-  @Override
-  public void finish() {
-  }
+  private MenuSelection fullscreenButton;
+  private MenuSelection resolutionButton;
+  private MenuSelection framerateButton;
+  private MenuButton applicationButton;
+  private boolean isFullscreen;
+  private boolean wasFullscreen;
+  private Resolution newResolution;
+  private Resolution oldResolution;
+  private Framerate newFramerate;
+  private Framerate oldFramerate;
 
   @Override
   public void start() {
     resetSettings();
-    fullscreenButton = new MenuSlider("", fullscreen ? 1 : 0, 1, false, i -> {
-      fullscreen = i == 1;
+    fullscreenButton = new MenuSelection("", isFullscreen ? 1 : 0, 1, false, i -> {
+      isFullscreen = i == 1;
       updateButtons();
     });
-    monitorButton = new MenuSlider("", monitor,
-        GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices().length - 1, false,
-        i -> {
-          monitor = i;
-          updateButtons();
-        });
-    resolutionButton = new MenuSlider("", res.ordinal(), Resolutions.values().length - 1, false,
-        i -> {
-          res = Resolutions.values()[i];
-          updateButtons();
-        });
-    fpsButton = new MenuSlider("", fps, 24, false, i -> {
-      fps = i;
+    resolutionButton = new MenuSelection("", newResolution.ordinal(),
+        Resolution.values().length - 1, false, i -> {
+      newResolution = Resolution.values()[i];
       updateButtons();
     });
-    applyButton = new MenuButton("Apply Settings", () -> {
-      if (applySettings()) {
-        Sounds.SELECT.play();
-      } else {
-        Sounds.ERROR.play();
-      }
+    framerateButton = new MenuSelection("", newFramerate.ordinal(), Framerate.values().length - 1,
+        false, i -> {
+      newFramerate = Framerate.values()[i];
+      updateButtons();
+    });
+    applicationButton = new MenuButton("Apply Settings", () -> {
+      Sounds.SELECT.play();
+      applySettings();
     });
     elements.add(fullscreenButton);
-    if (fullscreen) {
-      elements.add(monitorButton);
-    } else {
-      elements.add(resolutionButton);
-    }
-    elements.add(fpsButton);
-    elements.add(applyButton);
+    elements.add(resolutionButton);
+    elements.add(framerateButton);
+    elements.add(applicationButton);
     elements.add(new MenuButton("Back", () -> {
       Sounds.DESELECT.play();
       Game.get().removeSegment(this);
@@ -71,46 +52,27 @@ public class VideoMenu extends LevelMenu {
     updateButtons();
   }
 
-  private boolean applySettings() {
-    if (haveSettingsChanged()) {
-      Game.get().getRenderingManager().setFullscreen(fullscreen);
-      if (fullscreen) {
-        Game.get().getRenderingManager().setMonitor(monitor);
-      } else {
-        Game.get().getRenderingManager().setScreenSize(res.size);
-      }
-      Game.get().getRenderingManager().setFPS(fps * 10);
-      Game.get().getRenderingManager().updateScreen();
-      resetSettings();
-      updateButtons();
-      return true;
-    }
-    return false;
-  }
-
-  private boolean haveSettingsChanged() {
-    return prevFullscreen != fullscreen || fullscreen && prevMonitor != monitor
-        || !fullscreen && prevRes != res || prevFps != fps;
+  private void applySettings() {
+    Game.get().settings.setFullscreen(isFullscreen);
+    Game.get().settings.setResolution(newResolution);
+    Game.get().settings.setFramerate(newFramerate);
+    Game.get().renderer.updateScreen();
+    resetSettings();
+    updateButtons();
   }
 
   private void resetSettings() {
-    fullscreen = prevFullscreen = Game.get().getRenderingManager().isFullscreen();
-    monitor = prevMonitor = Game.get().getRenderingManager().getMonitor();
-    res = prevRes = Resolutions.fromVec2(Game.get().getRenderingManager().getScreenSize());
-    fps = prevFps = Game.get().getRenderingManager().getFPS() / 10;
+    isFullscreen = wasFullscreen = Game.get().settings.isFullscreen();
+    newResolution = oldResolution = Game.get().settings.getResolution();
+    newFramerate = oldFramerate = Game.get().settings.getFramerate();
   }
 
   private void updateButtons() {
-    fullscreenButton.setText(21, "Mode:", (fullscreen ? "Fullscreen" : "Windowed"));
-    elements.remove(1);
-    if (fullscreen) {
-      elements.add(1, monitorButton);
-      monitorButton.setText(21, "Monitor:", "" + (monitor + 1));
-    } else {
-      elements.add(1, resolutionButton);
-      resolutionButton.setText(21, "Resolution:", res.name().replaceAll("_", ""));
-    }
-    fpsButton.setText(21, "FPS: ", fps == 0 ? "VSYNC" : (fps * 10) + "");
-    applyButton.setDisabled(!haveSettingsChanged());
+    fullscreenButton.setText(21, "Mode:", (isFullscreen ? "Fullscreen" : "Windowed"));
+    resolutionButton.setText(21, "Resolution:",
+        newResolution.size.x() + "x" + newResolution.size.y());
+    framerateButton.setText(21, "FPS: ", newFramerate.getName());
+    applicationButton.setDisabled(wasFullscreen == isFullscreen && oldResolution == newResolution
+        && oldFramerate == newFramerate);
   }
 }

@@ -1,8 +1,8 @@
 package com.cs321.team1.game;
 
-import com.cs321.team1.assets.Controls;
 import com.cs321.team1.map.Level;
 import com.cs321.team1.menu.LoadingScreen;
+import com.cs321.team1.util.Controls;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -16,12 +16,14 @@ public class Game {
   private static Game instance = null;
   private final List<GameSegment> segments = new ArrayList<>();
   private final Set<String> completedLevels = new HashSet<>();
-  private final RenderingManager renderingManager = new RenderingManager();
+  public final Renderer renderer = new Renderer();
+  public final Settings settings = new Settings();
 
   private Game() {
     instance = this;
-    renderingManager.loadOptions();
-    renderingManager.updateScreen();
+    Controls.init(renderer);
+    renderer.updateScreen();
+    renderer.start();
     startGameLogic();
   }
 
@@ -32,58 +34,57 @@ public class Game {
     return instance;
   }
 
-  public static void main(String[] args) {
-    Game.get();
-  }
-
-  public void completeLevel(String lvl) {
-    completedLevels.add(lvl);
-  }
-
   public GameSegment getHighestSegment() {
-    return segments.get(0);
+    try {
+      return segments.get(0);
+    } catch (IndexOutOfBoundsException e) {
+      return null;
+    }
   }
 
   public <T extends GameSegment> T getHighestSegmentOfType(Class<T> clazz) {
     return segments.stream().filter(clazz::isInstance).map(clazz::cast).findFirst().orElse(null);
   }
 
-  public RenderingManager getRenderingManager() {
-    return renderingManager;
-  }
-
-  public GameSegment getSegmentAtIndex(int index) {
-    return segments.get(index);
-  }
-
-  public boolean isLevelCompleted(String lvl) {
-    return completedLevels.contains(lvl);
-  }
-
   public void popSegmentsTo(Class<? extends GameSegment> clazz) {
     while (!clazz.isInstance(segments.get(0))) {
       segments.remove(0).finish();
     }
-    segments.get(0).refresh();
+    segments.get(0).restart();
   }
 
-  public void pushSegment(GameSegment seg) {
-    seg.start();
-    segments.add(0, seg);
+  public void pushSegment(GameSegment segment) {
+    segment.start();
+    segments.add(0, segment);
   }
 
-  public void pushSegments(GameSegment... segs) {
-    for (int i = 0; i < segs.length; i++) {
-      GameSegment seg = segs[i];
+  public void pushSegments(GameSegment... segments) {
+    for (int i = 0; i < segments.length; i++) {
+      var seg = segments[i];
       seg.start();
-      segments.add(i, seg);
+      this.segments.add(i, seg);
     }
   }
 
-  public void removeSegment(GameSegment seg) {
-    if (segments.remove(seg)) {
-      seg.finish();
+  public void removeSegment(GameSegment segment) {
+    if (segments.remove(segment)) {
+      segment.finish();
     }
+  }
+
+  public void replaceSegment(GameSegment segment) {
+    if (!segments.isEmpty()) {
+      segments.get(0).finish();
+    }
+    segments.set(0, segment);
+  }
+
+  public void completeLevel(String level) {
+    completedLevels.add(level);
+  }
+
+  public boolean isLevelCompleted(String level) {
+    return completedLevels.contains(level);
   }
 
   public void resetCompletedLevels() {
@@ -92,20 +93,20 @@ public class Game {
 
   public void saveGame() {
     try {
-      FileWriter file = new FileWriter("ryuujin.sav");
-      completedLevels.forEach(lvl -> {
+      var file = new FileWriter("ryuujin.sav");
+      completedLevels.forEach(level -> {
         try {
-          file.write("CMP|" + lvl + "\n");
+          file.write("CMP|" + level + "\n");
         } catch (Exception e) {
           e.printStackTrace();
         }
       });
-      segments.forEach(seg -> {
-        if (!(seg instanceof Level)) {
+      segments.forEach(segment -> {
+        if (!(segment instanceof Level)) {
           return;
         }
         try {
-          file.write(seg.toString());
+          file.write(segment.toString());
         } catch (Exception e) {
           e.printStackTrace();
         }
@@ -116,14 +117,9 @@ public class Game {
     }
   }
 
-  List<GameSegment> getSegments() {
-    return new ArrayList<>(segments);
-  }
-
   private void startGameLogic() {
     pushSegment(new LoadingScreen());
-    Timer timer = new Timer();
-    timer.scheduleAtFixedRate(new TimerTask() {
+    new Timer().scheduleAtFixedRate(new TimerTask() {
       @Override
       public void run() {
         update();
@@ -135,16 +131,20 @@ public class Game {
     try {
       if (getHighestSegmentOfType(Controls.ControlChanger.class) == null) {
         if (Controls.FULLSCREEN.isPressed()) {
-          renderingManager.toggleFullscreen();
-          renderingManager.updateScreen();
+          settings.setFullscreen(!settings.isFullscreen());
+          renderer.updateScreen();
         }
         if (Controls.DEBUG.isPressed()) {
-          renderingManager.toggleDebugMode();
+          settings.setDebug(!settings.isDebug());
         }
       }
       segments.get(0).update();
     } catch (Exception e) {
       e.printStackTrace();
     }
+  }
+
+  public static void main(String[] args) {
+    Game.get();
   }
 }

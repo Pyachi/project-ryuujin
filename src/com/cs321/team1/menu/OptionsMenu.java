@@ -1,8 +1,8 @@
 package com.cs321.team1.menu;
 
-import com.cs321.team1.assets.audio.Sounds;
 import com.cs321.team1.game.Game;
 import com.cs321.team1.menu.elements.MenuButton;
+import com.cs321.team1.util.audio.Sounds;
 
 public class OptionsMenu extends LevelMenu {
 

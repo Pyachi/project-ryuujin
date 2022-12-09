@@ -1,12 +1,12 @@
 package com.cs321.team1.menu;
 
-import com.cs321.team1.assets.audio.Music;
-import com.cs321.team1.assets.audio.Sounds;
 import com.cs321.team1.game.Game;
 import com.cs321.team1.game.GameSegment;
 import com.cs321.team1.map.Level;
 import com.cs321.team1.map.LevelTransition;
 import com.cs321.team1.menu.elements.MenuButton;
+import com.cs321.team1.util.audio.Music;
+import com.cs321.team1.util.audio.Sounds;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 public class MainMenu extends Menu {
 
   @Override
-  public void refresh() {
-    super.refresh();
+  public void restart() {
+    super.restart();
     Music.DAY.play();
   }
 
@@ -57,15 +57,13 @@ public class MainMenu extends Menu {
 
   private void loadGame() {
     try {
-      StringBuilder builder = new StringBuilder();
-      Files.lines(new File("ryuujin.sav").toPath()).forEach(builder::append);
-      String[] lvlStrings = builder.toString().split("SET");
+      var lvlStrings = Files.readString(new File("ryuujin.sav").toPath()).split("SET");
       if (!lvlStrings[0].equals("")) {
         Arrays.stream(lvlStrings[0].split("\n"))
             .forEach(it -> Game.get().completeLevel(it.split("\\|")[1]));
       }
       List<Level> levels = Arrays.stream(Arrays.copyOfRange(lvlStrings, 1, lvlStrings.length))
-          .map(it -> Level.fromString("SET" + it)).collect(Collectors.toList());
+          .map(it -> Level.fromString("SET" + it)).toList();
       List<GameSegment> segs = levels.stream().map(GameSegment.class::cast)
           .collect(Collectors.toList());
       segs.add(0, new LevelTransition(this, levels.get(0)));

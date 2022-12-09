@@ -1,13 +1,12 @@
 package com.cs321.team1.menu;
 
-import com.cs321.team1.assets.Texture;
-import com.cs321.team1.assets.audio.Music;
-import com.cs321.team1.assets.audio.Sounds;
 import com.cs321.team1.game.Game;
 import com.cs321.team1.game.GameSegment;
+import com.cs321.team1.util.Texture;
+import com.cs321.team1.util.audio.Music;
+import com.cs321.team1.util.audio.Sounds;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 
 public class LoadingScreen implements GameSegment {
 
@@ -26,14 +25,11 @@ public class LoadingScreen implements GameSegment {
   }
 
   @Override
-  public BufferedImage render() {
-    BufferedImage image = Game.get().getRenderingManager().createImage();
-    Graphics2D graphics = image.createGraphics();
-    tex.fillCanvas(graphics, 0);
-    graphics.setColor(new Color(0F, 0F, 0F, 1F - Math.min(opacity / 100F, 1F)));
-    graphics.fillRect(0, 0, Game.get().getRenderingManager().getScreenSize().x,
-        Game.get().getRenderingManager().getScreenSize().y);
-    return image;
+  public void render(Graphics2D buffer) {
+    tex.fillCanvas(buffer, 0);
+    buffer.setColor(new Color(0F, 0F, 0F, 1F - Math.min(opacity / 100F, 1F)));
+    buffer.fillRect(0, 0, Game.get().settings.getScreenSize().x(),
+        Game.get().settings.getScreenSize().y());
   }
 
   @Override
