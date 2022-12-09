@@ -50,7 +50,7 @@ public class Renderer extends JFrame {
           }
           Thread.sleep(wait);
         } catch (Exception e) {
-          Game.getLogger().warning("An error has occurred during the rendering loop!");
+          Game.getLogger().warning("RENDERING ERROR");
         }
       }
     }).start();

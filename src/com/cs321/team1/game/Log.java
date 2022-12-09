@@ -9,6 +9,7 @@ import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -43,8 +44,7 @@ public class Log {
         }
       }
       logger.setUseParentHandlers(false);
-      var handler = new FileHandler("logs/latest.log");
-      handler.setFormatter(new SimpleFormatter() {
+      var formatter = new SimpleFormatter() {
         private static final String format = "[%1$tT] [%2$-4s] %3$s %n";
 
         @Override
@@ -52,8 +52,13 @@ public class Log {
           return String.format(format, new Date(record.getMillis()),
               record.getLevel().getLocalizedName(), record.getMessage());
         }
-      });
-      logger.addHandler(handler);
+      };
+      var fileHandler = new FileHandler("logs/latest.log");
+      fileHandler.setFormatter(formatter);
+      logger.addHandler(fileHandler);
+      var consoleHandler = new ConsoleHandler();
+      consoleHandler.setFormatter(formatter);
+      logger.addHandler(consoleHandler);
     } catch (Exception e) {
       disabled = true;
     }
