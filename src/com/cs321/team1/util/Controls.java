@@ -97,19 +97,12 @@ public enum Controls {
     @Override
     public void update() {
       tick++;
-      if (tick % 60 < 30) {
-        menu.getButton(control).setText(20, control.name() + ":", "_");
-      } else {
-        menu.getButton(control).setText(20, control.name() + ":", " ");
-      }
-      if (pressedKeys.isEmpty()) {
-        return;
-      }
+      if (tick % 60 < 30) menu.getButton(control).setText(20, control.name() + ":", "_");
+      else menu.getButton(control).setText(20, control.name() + ":", " ");
+      if (pressedKeys.isEmpty()) return;
       int key = pressedKeys.stream().findAny().orElse(control.getKey());
       for (Controls other : Controls.values()) {
-        if (menu.getNewKey(other) == key && other != control) {
-          menu.setNewKey(other, -1);
-        }
+        if (menu.getNewKey(other) == key && other != control) menu.setNewKey(other, -1);
       }
       menu.setNewKey(control, key);
       pressedKeys.clear();

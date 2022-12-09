@@ -15,9 +15,7 @@ public class NavPath extends GameObject {
   }
 
   private void checkDirections() {
-    if (measured) {
-      return;
-    }
+    if (measured) return;
     measured = true;
     move(0, -16);
     boolean up = collidesWith(LevelObject.class) || collidesWith(NavPath.class);

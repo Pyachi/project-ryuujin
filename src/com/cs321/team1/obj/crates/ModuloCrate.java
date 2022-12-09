@@ -15,9 +15,8 @@ public class ModuloCrate extends Crate {
 
   @Override
   public Crate getMergedCrate(Vec2 loc, Crate other) {
-    if (other instanceof IntegerCrate) {
+    if (other instanceof IntegerCrate)
       return new IntegerCrate(loc, Math.floorMod(other.getValue(), getValue()));
-    }
     return null;
   }
 

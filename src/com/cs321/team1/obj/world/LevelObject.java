@@ -22,23 +22,17 @@ public class LevelObject extends GameObject {
   }
 
   private void onTick() {
-    if (Game.get().isLevelCompleted(lvl)) {
-      setTexture(new Texture("map/completedLevel", 2));
-    }
+    if (Game.get().isLevelCompleted(lvl)) setTexture(new Texture("map/completedLevel", 2));
     if (getCollisions(Navigator.class).stream()
         .anyMatch(it -> it.getLocation().equals(getLocation())) && Controls.SELECT.isPressed()) {
       Level level = Level.load(lvl);
-      if (level != null) {
-        Game.get().pushSegments(new LevelTransition(getLevel(), level), level);
-      }
+      if (level != null) Game.get().pushSegments(new LevelTransition(getLevel(), level), level);
     }
   }
 
   @Override
   public void paint(Graphics2D buffer) {
-    if (isDead()) {
-      return;
-    }
+    if (isDead()) return;
     super.paint(buffer);
     buffer.setFont(Game.getRenderer().getFont().deriveFont(
         (float) 16 * getLevel().getScale() * 0.5F / buffer.getFontMetrics(

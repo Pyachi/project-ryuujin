@@ -15,9 +15,7 @@ public class Particle extends GameObject {
   }
 
   private void deathClock() {
-    if (getAge() >= lifetime) {
-      kill();
-    }
+    if (getAge() >= lifetime) kill();
   }
 
   @Override

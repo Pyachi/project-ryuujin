@@ -32,15 +32,11 @@ public abstract class Menu implements GameSegment {
     if (Controls.DOWN.isPressed()) {
       tick = 0;
       selected++;
-      if (selected >= getSelectableElements().size()) {
-        selected = 0;
-      }
+      if (selected >= getSelectableElements().size()) selected = 0;
     } else if (Controls.UP.isPressed()) {
       tick = 0;
       selected--;
-      if (selected < 0) {
-        selected = getSelectableElements().size() - 1;
-      }
+      if (selected < 0) selected = getSelectableElements().size() - 1;
     }
     getSelectableElements().get(selected).update();
     if (!(this instanceof MainMenu) && Controls.BACK.isPressed()) {
@@ -83,13 +79,11 @@ public abstract class Menu implements GameSegment {
       for (MenuElement element : elements) {
         Font font = Game.getRenderer().getFont().deriveFont(((float) textSize));
         int width = element.getWidth(font);
-        if (maxWidth < width) {
-          maxWidth = width;
-        }
+        if (maxWidth < width) maxWidth = width;
         totalHeight += element.getHeight(font);
       }
-    } while (maxWidth > Game.getSettings().getScreenSize().x()
-        || totalHeight > Game.getSettings().getScreenSize().y());
+    } while (maxWidth > Game.getSettings().getScreenSize().x() || totalHeight > Game.getSettings()
+        .getScreenSize().y());
     return textSize;
   }
 }

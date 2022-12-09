@@ -5,9 +5,7 @@ import com.cs321.team1.util.Texture;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontFormatException;
 import java.awt.Graphics2D;
-import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
@@ -45,9 +43,7 @@ public class Renderer extends JFrame {
           }
           long elapsed = System.nanoTime() - start;
           long wait = (Game.getSettings().getFramerate().getInterval() - elapsed) / 1000000;
-          if (wait < 0) {
-            wait = 0;
-          }
+          if (wait < 0) wait = 0;
           Thread.sleep(wait);
         } catch (Exception e) {
           Game.getLogger().warning("RENDERING ERROR");
@@ -82,12 +78,8 @@ public class Renderer extends JFrame {
   private void render() {
     var render = ResourceUtil.createImage();
     var graphics = render.createGraphics();
-    if (Game.get().getHighestSegment() != null) {
-      Game.get().getHighestSegment().render(graphics);
-    }
-    if (Game.getSettings().isDebug()) {
-      debugOverlay.render(graphics);
-    }
+    if (Game.get().getHighestSegment() != null) Game.get().getHighestSegment().render(graphics);
+    if (Game.getSettings().isDebug()) debugOverlay.render(graphics);
     if (!disabled) {
       var buffer = (Graphics2D) getBufferStrategy().getDrawGraphics();
       buffer.setColor(Color.BLACK);

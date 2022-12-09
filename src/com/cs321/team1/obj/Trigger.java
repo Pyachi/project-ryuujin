@@ -15,9 +15,7 @@ public class Trigger extends GameObject {
   public Trigger(Vec2 loc, Vec2 size, Texture tex, String command) {
     setLocation(loc);
     setSize(size);
-    if (tex != null) {
-      setTexture(tex);
-    }
+    if (tex != null) setTexture(tex);
     this.command = command;
     run = getCommand();
     registerTick(2, this::tick);
@@ -32,9 +30,7 @@ public class Trigger extends GameObject {
   }
 
   private void tick() {
-    if (collidesWith(Player.class)) {
-      run.run();
-    }
+    if (collidesWith(Player.class)) run.run();
   }
 
   @Override
@@ -48,9 +44,8 @@ public class Trigger extends GameObject {
       case "LVL" -> () -> {
         if (Controls.SELECT.isPressed()) {
           Level lvl = Level.load(cmd[1]);
-          if (lvl != null) {
+          if (lvl != null)
             Game.get().pushSegments(new LevelTransition(Game.get().getHighestSegment(), lvl), lvl);
-          }
         }
       };
       default -> () -> {

@@ -53,11 +53,8 @@ public class MenuButton extends MenuElement {
   @Override
   public void update() {
     if (Controls.SELECT.isPressed()) {
-      if (!disabled) {
-        run.run();
-      } else {
-        Sounds.ERROR.play();
-      }
+      if (!disabled) run.run();
+      else Sounds.ERROR.play();
     }
   }
 

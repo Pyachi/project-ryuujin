@@ -40,9 +40,7 @@ public abstract class Crate extends GameObject {
   public abstract boolean canBeAppliedTo(Crate other);
 
   public boolean canMove(int x, int y) {
-    if (!isMovable()) {
-      return false;
-    }
+    if (!isMovable()) return false;
     move(x, y);
     boolean collision =
         collidesWith(Player.class) || collidesWith(UnpassableTile.class) || getCollisions(
@@ -55,9 +53,7 @@ public abstract class Crate extends GameObject {
     if (moving) {
       moveTick--;
       move(moveX, moveY);
-      if (moveTick == 0) {
-        moving = false;
-      }
+      if (moveTick == 0) moving = false;
     } else {
       getCollisions(Crate.class).stream().filter(crate -> crate.getLocation().equals(getLocation()))
           .filter(this::canBeAppliedTo).findAny().ifPresent(this::generateNew);
@@ -76,9 +72,7 @@ public abstract class Crate extends GameObject {
 
   @Override
   public void paint(Graphics2D buffer) {
-    if (isDead()) {
-      return;
-    }
+    if (isDead()) return;
     super.paint(buffer);
     buffer.setFont(Game.getRenderer().getFont().deriveFont(
         (float) 16 * getLevel().getScale() * 0.4F / buffer.getFontMetrics(
@@ -91,13 +85,9 @@ public abstract class Crate extends GameObject {
   }
 
   private void generateNew(Crate other) {
-    if (isDead()) {
-      return;
-    }
+    if (isDead()) return;
     Crate newCrate = getMergedCrate(getLocation(), other);
-    if (newCrate != null) {
-      getLevel().addObject(newCrate);
-    }
+    if (newCrate != null) getLevel().addObject(newCrate);
     Sounds.MERGE.play();
     other.kill();
     kill();

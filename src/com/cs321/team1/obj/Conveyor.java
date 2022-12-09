@@ -1,6 +1,5 @@
 package com.cs321.team1.obj;
 
-import com.cs321.team1.obj.crates.Crate;
 import com.cs321.team1.util.Texture;
 import com.cs321.team1.util.Vec2;
 
@@ -13,15 +12,10 @@ public class Conveyor extends GameObject {
     this.x = x;
     this.y = y;
     setLocation(loc);
-    if (y == -1) {
-      setTexture("map/conveyor_up_animated");
-    } else if (y == 1) {
-      setTexture("map/conveyor_down_animated");
-    } else if (x == -1) {
-      setTexture("map/conveyor_left_animated");
-    } else if (x == 1) {
-      setTexture("map/conveyor_right_animated");
-    }
+    if (y == -1) setTexture("map/conveyor_up_animated");
+    else if (y == 1) setTexture("map/conveyor_down_animated");
+    else if (x == -1) setTexture("map/conveyor_left_animated");
+    else if (x == 1) setTexture("map/conveyor_right_animated");
     registerTick(3, this::move);
   }
 

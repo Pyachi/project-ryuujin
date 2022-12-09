@@ -29,9 +29,7 @@ public class Game {
   }
 
   public static Game get() {
-    if (instance == null) {
-      instance = new Game();
-    }
+    if (instance == null) instance = new Game();
     return instance;
   }
 
@@ -80,9 +78,7 @@ public class Game {
   }
 
   public void removeSegment(GameSegment segment) {
-    if (segments.remove(segment)) {
-      segment.finish();
-    }
+    if (segments.remove(segment)) segment.finish();
   }
 
   public void completeLevel(String level) {
@@ -104,9 +100,7 @@ public class Game {
         file.write("CMP|" + level + "\n");
       }
       for (var segment : segments) {
-        if (!(segment instanceof Level)) {
-          return;
-        }
+        if (!(segment instanceof Level)) return;
         file.write(segment.toString());
       }
       file.close();
@@ -137,9 +131,7 @@ public class Game {
         settings.setFullscreen(!settings.isFullscreen());
         renderer.updateScreen();
       }
-      if (Controls.DEBUG.isPressed()) {
-        settings.setDebug(!settings.isDebug());
-      }
+      if (Controls.DEBUG.isPressed()) settings.setDebug(!settings.isDebug());
     }
     segments.get(0).update();
   }

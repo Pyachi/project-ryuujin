@@ -20,9 +20,7 @@ public class LevelMenu extends Menu {
   public void start() {
     Game game = Game.get();
     Level lvl = game.getHighestSegmentOfType(Level.class);
-    if (lvl == null) {
-      return;
-    }
+    if (lvl == null) return;
     elements.add(new MenuButton("Resume", () -> {
       Sounds.DESELECT.play();
       game.removeSegment(this);
@@ -65,9 +63,8 @@ public class LevelMenu extends Menu {
   @Override
   public void render(Graphics2D buffer) {
     var level = Game.get().getHighestSegmentOfType(Level.class);
-    if (level == null) {
-      super.render(buffer);
-    } else {
+    if (level == null) super.render(buffer);
+    else {
       level.render(buffer);
       super.render(buffer);
     }

@@ -44,7 +44,6 @@ public class Level implements GameSegment {
   public final boolean isWorld;
   private final Map<Integer, GameObject> objs = new HashMap<>();
   private final Map<String, List<String>> cmds = new HashMap<>();
-  private final boolean complete = false;
   private Music music;
 
   public Level(Vec2 size, String name, boolean isWorld) {
@@ -78,9 +77,7 @@ public class Level implements GameSegment {
 
   public void addObject(GameObject obj) {
     obj.setLevel(this);
-    if (obj.getID() == 0) {
-      obj.setId(getNextID());
-    }
+    if (obj.getID() == 0) obj.setId(getNextID());
     objs.put(obj.getID(), obj);
   }
 
@@ -91,9 +88,7 @@ public class Level implements GameSegment {
   public void addObject(int id, GameObject obj) {
     if (id != -1) {
       obj.setId(id);
-      if (objs.containsKey(id)) {
-        removeObject(objs.get(id));
-      }
+      if (objs.containsKey(id)) removeObject(objs.get(id));
     }
     addObject(obj);
   }
@@ -117,9 +112,7 @@ public class Level implements GameSegment {
 
   @Override
   public void start() {
-    if (music != null) {
-      music.play();
-    }
+    if (music != null) music.play();
   }
 
   @Override
@@ -137,17 +130,13 @@ public class Level implements GameSegment {
     ticks.entrySet().stream().sorted(Comparator.comparingInt(Map.Entry::getKey))
         .map(Map.Entry::getValue).forEach(it -> it.forEach(Runnable::run));
 
-    if (Controls.BACK.isPressed()) {
-      Game.get().pushSegment(new LevelMenu());
-    }
+    if (Controls.BACK.isPressed()) Game.get().pushSegment(new LevelMenu());
     if (!isWorld && getObjects().stream().noneMatch(UnpoweredBeacon.class::isInstance)) {
       Game.get().pushSegment(new LevelCompletion(this));
       Game.get().completeLevel(name);
     }
     cmds.forEach((condition, commandList) -> new ArrayList<>(commandList).forEach(command -> {
-      if (checkCMD(condition, command)) {
-        commandList.remove(command);
-      }
+      if (checkCMD(condition, command)) commandList.remove(command);
     }));
   }
 
@@ -171,9 +160,7 @@ public class Level implements GameSegment {
     removeBase();
     var start = "SET|" + size.toString() + "|" + name + "|" + isWorld + "\n";
     var builder = new StringBuilder();
-    if (music != null) {
-      builder.append("MSC|").append(music.name()).append("\n");
-    }
+    if (music != null) builder.append("MSC|").append(music.name()).append("\n");
     cmds.forEach((condition, commandList) -> commandList.forEach(
         command -> builder.append("CMD|").append(condition).append("->").append(command)
             .append("\n")));
@@ -234,36 +221,30 @@ public class Level implements GameSegment {
               case "R" -> Conveyor.RIGHT(loc);
             });
             case "FLR" -> {
-              if (line[2].contains("/")) {
+              if (line[2].contains("/"))
                 addObject(id, new PassableTile(loc, Texture.fromString(line[2])));
-              } else if (line.length == 4) {
+              else if (line.length == 4) {
                 addObject(id,
                     new PassableTile(loc, Vec2.fromString(line[2]), Texture.fromString(line[3])));
-              } else {
-                addObject(id, new PassableTile(loc, Vec2.fromString(line[2])));
-              }
+              } else addObject(id, new PassableTile(loc, Vec2.fromString(line[2])));
             }
             case "WAL" -> {
-              if (line[2].contains("/")) {
+              if (line[2].contains("/"))
                 addObject(id, new UnpassableTile(loc, Texture.fromString(line[2])));
-              } else if (line.length == 4) {
+              else if (line.length == 4) {
                 addObject(id,
                     new UnpassableTile(loc, Vec2.fromString(line[2]), Texture.fromString(line[3])));
-              } else {
-                addObject(id, new UnpassableTile(loc, Vec2.fromString(line[2])));
-              }
+              } else addObject(id, new UnpassableTile(loc, Vec2.fromString(line[2])));
             }
             case "TGR" -> {
               var comm = cmd.split("->")[1];
               line = cmd.split("->")[0].split("\\|");
-              if (line[2].contains("/")) {
+              if (line[2].contains("/"))
                 addObject(id, new Trigger(loc, Texture.fromString(line[2]), comm));
-              } else if (line.length == 4) {
+              else if (line.length == 4) {
                 addObject(id,
                     new Trigger(loc, Vec2.fromString(line[2]), Texture.fromString(line[3]), comm));
-              } else {
-                addObject(id, new Trigger(loc, Vec2.fromString(line[2]), comm));
-              }
+              } else addObject(id, new Trigger(loc, Vec2.fromString(line[2]), comm));
             }
           }
         }

@@ -16,15 +16,10 @@ public class MultiplyCrate extends Crate {
 
   @Override
   public Crate getMergedCrate(Vec2 loc, Crate other) {
-    if (other instanceof IntegerCrate) {
-      return new IntegerCrate(loc, other.getValue() * getValue());
-    }
-    if (other instanceof ModuloCrate) {
-      return new ModuloCrate(loc, other.getValue() * getValue());
-    }
-    if (other instanceof MultiplyCrate) {
+    if (other instanceof IntegerCrate) return new IntegerCrate(loc, other.getValue() * getValue());
+    if (other instanceof ModuloCrate) return new ModuloCrate(loc, other.getValue() * getValue());
+    if (other instanceof MultiplyCrate)
       return new MultiplyCrate(loc, other.getValue() * getValue());
-    }
     return null;
   }
 

@@ -34,9 +34,7 @@ public class LevelCompletion implements GameSegment {
 
   @Override
   public void update() {
-    if (tick < 50) {
-      tick++;
-    }
+    if (tick < 50) tick++;
     if (Controls.SELECT.isPressed() && tick == 50) {
       Game.get().removeSegment(Game.get().getHighestSegmentOfType(Level.class));
       Game.get().removeSegment(this);

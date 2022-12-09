@@ -17,9 +17,7 @@ public class NewGameConfirmationMenu extends Menu {
       Sounds.SELECT.play();
       game.resetCompletedLevels();
       Level lvl = Level.load("world");
-      if (lvl != null) {
-        game.pushSegments(new LevelTransition(this, lvl), lvl);
-      }
+      if (lvl != null) game.pushSegments(new LevelTransition(this, lvl), lvl);
       game.removeSegment(this);
     }));
     elements.add(new MenuButton("No wait...", () -> {

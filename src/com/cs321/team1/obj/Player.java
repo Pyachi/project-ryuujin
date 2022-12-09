@@ -36,15 +36,10 @@ public class Player extends GameObject {
 
   private void checkMovement() {
     if (moveTick < 5) {
-      if (Controls.UP.isHeld()) {
-        buffered = Controls.UP;
-      } else if (Controls.DOWN.isHeld()) {
-        buffered = Controls.DOWN;
-      } else if (Controls.LEFT.isHeld()) {
-        buffered = Controls.LEFT;
-      } else if (Controls.RIGHT.isHeld()) {
-        buffered = Controls.RIGHT;
-      }
+      if (Controls.UP.isHeld()) buffered = Controls.UP;
+      else if (Controls.DOWN.isHeld()) buffered = Controls.DOWN;
+      else if (Controls.LEFT.isHeld()) buffered = Controls.LEFT;
+      else if (Controls.RIGHT.isHeld()) buffered = Controls.RIGHT;
     }
     if (moving) {
       moveTick--;
@@ -58,7 +53,8 @@ public class Player extends GameObject {
           default -> setTexture("player/right_idle_animated");
         }
       }
-    } else {
+    }
+    if (!moving) {
       if (buffered == Controls.UP && canMove(0, -1)) {
         startMoving(0, -1);
         setTexture("player/up_walk_animated");

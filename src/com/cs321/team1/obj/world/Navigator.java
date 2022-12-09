@@ -23,19 +23,12 @@ public class Navigator extends GameObject {
     if (moving) {
       moveTick--;
       move(moveX, moveY);
-      if (moveTick == 0) {
-        moving = false;
-      }
+      if (moveTick == 0) moving = false;
     } else {
-      if (Controls.UP.isPressed() && canMove(0, -1)) {
-        startMoving(0, -1);
-      } else if (Controls.DOWN.isPressed() && canMove(0, 1)) {
-        startMoving(0, 1);
-      } else if (Controls.LEFT.isPressed() && canMove(-1, 0)) {
-        startMoving(-1, 0);
-      } else if (Controls.RIGHT.isPressed() && canMove(1, 0)) {
-        startMoving(1, 0);
-      }
+      if (Controls.UP.isPressed() && canMove(0, -1)) startMoving(0, -1);
+      else if (Controls.DOWN.isPressed() && canMove(0, 1)) startMoving(0, 1);
+      else if (Controls.LEFT.isPressed() && canMove(-1, 0)) startMoving(-1, 0);
+      else if (Controls.RIGHT.isPressed() && canMove(1, 0)) startMoving(1, 0);
     }
   }
 

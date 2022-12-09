@@ -19,11 +19,8 @@ public class LevelTransition implements GameSegment {
   @Override
   public void render(Graphics2D buffer) {
     from.render(buffer);
-    if (tick <= 20) {
-      from.render(buffer);
-    } else {
-      to.render(buffer);
-    }
+    if (tick <= 20) from.render(buffer);
+    else to.render(buffer);
     buffer.setColor(Color.BLACK);
     if (tick <= 20) {
       buffer.fillRect(
@@ -31,8 +28,7 @@ public class LevelTransition implements GameSegment {
               * (tick / 20.0))), 0, (int) (Game.getSettings().getScreenSize().x() * (tick / 20.0)),
           Game.getSettings().getScreenSize().y());
     } else {
-      buffer.fillRect(0, 0,
-          (int) (Game.getSettings().getScreenSize().x() * ((40.0 - tick) / 20.0)),
+      buffer.fillRect(0, 0, (int) (Game.getSettings().getScreenSize().x() * ((40.0 - tick) / 20.0)),
           Game.getSettings().getScreenSize().y());
     }
   }
@@ -40,8 +36,6 @@ public class LevelTransition implements GameSegment {
   @Override
   public void update() {
     tick++;
-    if (tick > 40) {
-      Game.get().removeSegment(this);
-    }
+    if (tick > 40) Game.get().removeSegment(this);
   }
 }

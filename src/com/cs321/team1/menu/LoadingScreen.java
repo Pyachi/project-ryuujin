@@ -38,15 +38,12 @@ public class LoadingScreen implements GameSegment {
 
   @Override
   public void update() {
-    if (reverse) {
-      opacity -= 2;
-    } else {
+    if (reverse) opacity -= 2;
+    else {
       opacity++;
       opacity = Math.min(opacity, 100);
     }
-    if (loaded && opacity == 100) {
-      reverse = true;
-    }
+    if (loaded && opacity == 100) reverse = true;
     if (reverse && opacity == 0) {
       Game.get().pushSegment(new MainMenu());
       Game.get().removeSegment(this);

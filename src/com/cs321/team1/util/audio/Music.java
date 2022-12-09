@@ -38,11 +38,8 @@ public enum Music {
       stream = new ByteArrayInputStream(filter == null ? song.data : song.filteredData.get(filter));
       stream.readNBytes(distance);
     } catch (Exception e) {
-      if (filter != null) {
-        Game.getLogger().warning("Filter could not be applied: " + filter.name());
-      } else {
-        Game.getLogger().warning("Filter could not be removed!");
-      }
+      if (filter != null) Game.getLogger().warning("Filter could not be applied: " + filter.name());
+      else Game.getLogger().warning("Filter could not be removed!");
     }
   }
 
@@ -100,9 +97,7 @@ public enum Music {
 
   public void play() {
     try {
-      if (selected != -1 && Music.values()[selected] == this) {
-        return;
-      }
+      if (selected != -1 && Music.values()[selected] == this) return;
       selected = ordinal();
       stream = new ByteArrayInputStream(data);
       distance = 0;

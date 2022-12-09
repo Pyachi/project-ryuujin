@@ -24,9 +24,7 @@ public class Log {
   Log() {
     try {
       var logFolder = new File("logs");
-      if (!logFolder.exists() && !logFolder.mkdirs()) {
-        return;
-      }
+      if (!logFolder.exists() && !logFolder.mkdirs()) return;
       var recentLog = new File("logs/latest.log");
       if (recentLog.exists()) {
         int i = 0;
@@ -65,30 +63,22 @@ public class Log {
   }
 
   public void info(String message) {
-    if (disabled) {
-      return;
-    }
+    if (disabled) return;
     logger.log(Level.INFO, message);
   }
 
   public void warning(String message) {
-    if (disabled) {
-      return;
-    }
+    if (disabled) return;
     logger.log(Level.WARNING, message);
   }
 
   public void severe(String message) {
-    if (disabled) {
-      return;
-    }
+    if (disabled) return;
     logger.log(Level.SEVERE, message);
   }
 
   public void error(String message, Exception e) {
-    if (disabled) {
-      return;
-    }
+    if (disabled) return;
     logger.log(Level.SEVERE, message);
     var buffer = new StringWriter();
     var printer = new PrintWriter(buffer);

@@ -33,12 +33,8 @@ public class MainMenu extends Menu {
       Sounds.SELECT.play();
       if (((MenuButton) elements.get(1)).isDisabled()) {
         Level lvl = Level.load("world");
-        if (lvl != null) {
-          Game.get().pushSegments(new LevelTransition(this, lvl), lvl);
-        }
-      } else {
-        Game.get().pushSegment(new NewGameConfirmationMenu());
-      }
+        if (lvl != null) Game.get().pushSegments(new LevelTransition(this, lvl), lvl);
+      } else Game.get().pushSegment(new NewGameConfirmationMenu());
     }));
     elements.add(new MenuButton("Continue", () -> {
       Sounds.SELECT.play();

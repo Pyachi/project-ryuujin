@@ -17,12 +17,8 @@ public class IntegerCrate extends Crate {
 
   @Override
   public Crate getMergedCrate(Vec2 loc, Crate other) {
-    if (other instanceof IntegerCrate) {
-      return new IntegerCrate(loc, other.getValue() + getValue());
-    }
-    if (other instanceof UnpoweredBeacon) {
-      return new PoweredBeacon(loc);
-    }
+    if (other instanceof IntegerCrate) return new IntegerCrate(loc, other.getValue() + getValue());
+    if (other instanceof UnpoweredBeacon) return new PoweredBeacon(loc);
     return null;
   }
 

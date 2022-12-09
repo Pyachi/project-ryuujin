@@ -37,9 +37,7 @@ public abstract class GameObject {
   }
 
   public boolean collidesWith(GameObject other) {
-    if (this == other || isDead() || other.isDead() || getLevel() != other.getLevel()) {
-      return false;
-    }
+    if (this == other || isDead() || other.isDead() || getLevel() != other.getLevel()) return false;
     return getLocation().x() < other.getLocation().x() + other.getSize().x()
         && getLocation().x() + getSize().x() > other.getLocation().x()
         && getLocation().y() < other.getLocation().y() + other.getSize().y()
@@ -68,9 +66,7 @@ public abstract class GameObject {
   }
 
   public void setLevel(Level lvl) {
-    if (!dead) {
-      level = lvl;
-    }
+    if (!dead) level = lvl;
   }
 
   public Vec2 getLocation() {
@@ -78,9 +74,7 @@ public abstract class GameObject {
   }
 
   public void setLocation(Vec2 vec) {
-    if (!dead) {
-      loc = vec;
-    }
+    if (!dead) loc = vec;
   }
 
   public Vec2 getSize() {
@@ -88,9 +82,7 @@ public abstract class GameObject {
   }
 
   public void setSize(Vec2 vec) {
-    if (!dead) {
-      size = vec;
-    }
+    if (!dead) size = vec;
   }
 
   public Texture getTexture() {
@@ -98,9 +90,7 @@ public abstract class GameObject {
   }
 
   public void setTexture(Texture tex) {
-    if (!dead) {
-      texture = tex;
-    }
+    if (!dead) texture = tex;
   }
 
   public void age() {
@@ -112,9 +102,7 @@ public abstract class GameObject {
   }
 
   public void kill() {
-    if (level != null) {
-      getLevel().removeObject(this);
-    }
+    if (level != null) getLevel().removeObject(this);
     texture = null;
     loc = null;
     size = null;
@@ -122,15 +110,11 @@ public abstract class GameObject {
   }
 
   public void move(int x, int y) {
-    if (!dead) {
-      setLocation(getLocation().add(x, y));
-    }
+    if (!dead) setLocation(getLocation().add(x, y));
   }
 
   public void paint(Graphics2D buffer) {
-    if (!dead && texture != null) {
-      getTexture().paint(this, buffer, age);
-    }
+    if (!dead && texture != null) getTexture().paint(this, buffer, age);
   }
 
   public void setId(int id) {

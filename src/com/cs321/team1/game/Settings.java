@@ -58,21 +58,14 @@ public class Settings {
   void loadOptions() {
     try (var file = new BufferedReader(new FileReader("options.txt"))) {
       for (var str : file.lines().toList()) {
-        if (str.startsWith("fullscreen: ")) {
+        if (str.startsWith("fullscreen: "))
           setFullscreen(Boolean.parseBoolean(str.split("fullscreen: ")[1]));
-        }
-        if (str.startsWith("resolution: ")) {
+        if (str.startsWith("resolution: "))
           setResolution(Resolution.values()[Integer.parseInt(str.split("resolution: ")[1])]);
-        }
-        if (str.startsWith("framerate: ")) {
+        if (str.startsWith("framerate: "))
           setFramerate(Framerate.values()[Integer.parseInt(str.split("framerate: ")[1])]);
-        }
-        if (str.startsWith("music: ")) {
-          Music.setVolume(Integer.parseInt(str.split("music: ")[1]));
-        }
-        if (str.startsWith("sound: ")) {
-          Sounds.setVolume(Integer.parseInt(str.split("sound: ")[1]));
-        }
+        if (str.startsWith("music: ")) Music.setVolume(Integer.parseInt(str.split("music: ")[1]));
+        if (str.startsWith("sound: ")) Sounds.setVolume(Integer.parseInt(str.split("sound: ")[1]));
       }
     } catch (Exception e) {
       Game.getLogger().warning("Could not load options from file!");

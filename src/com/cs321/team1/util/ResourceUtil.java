@@ -13,9 +13,7 @@ public class ResourceUtil {
 
   public static InputStream loadStream(String path) throws NullPointerException {
     InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
-    if (stream == null) {
-      throw new NullPointerException("Input stream cannot be found");
-    }
+    if (stream == null) throw new NullPointerException("Input stream cannot be found");
     return new BufferedInputStream(stream);
   }
 

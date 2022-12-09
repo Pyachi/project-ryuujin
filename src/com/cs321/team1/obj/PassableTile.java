@@ -6,9 +6,7 @@ import com.cs321.team1.util.Vec2;
 public class PassableTile extends GameObject {
 
   public PassableTile(Vec2 loc, Vec2 size, Texture tex) {
-    if (tex != null) {
-      setTexture(tex);
-    }
+    if (tex != null) setTexture(tex);
     setLocation(loc);
     setSize(size);
   }

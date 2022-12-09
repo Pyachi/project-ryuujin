@@ -33,23 +33,15 @@ public abstract class Filter {
   }
 
   private short getSample(int index, int channel) {
-    if (index * 4 + channel * 2 < 0) {
-      return 0;
-    }
-    if (index * 4 + channel * 2 + 1 >= buffer.length) {
-      return 0;
-    }
+    if (index * 4 + channel * 2 < 0) return 0;
+    if (index * 4 + channel * 2 + 1 >= buffer.length) return 0;
     return (short) (((buffer[index * 4 + channel * 2 + 1] & 0xFF) << 8) | (
         buffer[index * 4 + channel * 2] & 0xFF));
   }
 
   private void setSample(int index, int channel, short data) {
-    if (index * 4 + channel * 2 < 0) {
-      return;
-    }
-    if (index * 4 + channel * 2 + 1 >= buffer.length) {
-      return;
-    }
+    if (index * 4 + channel * 2 < 0) return;
+    if (index * 4 + channel * 2 + 1 >= buffer.length) return;
     this.buffer[index * 4 + channel * 2] = (byte) (data & 0xFF);
     this.buffer[index * 4 + channel * 2 + 1] = (byte) ((data >> 8) & 0xFF);
   }
